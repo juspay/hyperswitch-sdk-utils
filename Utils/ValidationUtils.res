@@ -11,3 +11,5 @@ let getobjFromCardPattern = cardBrand => {
   ->Array.get(0)
   ->Option.getOr(CardPattern.defaultCardPattern)
 }
+
+let toInt = val => val->Int.fromString->Option.getOr(0)
