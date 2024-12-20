@@ -12,5 +12,5 @@ let cvcNumberInRange = (val, cardBrand) => {
   cvcLengthInRange
 }
 let checkCardCVC = (cvcNumber, cardBrand) => {
-  cvcNumber->String.length > 0 && cvcNumberInRange(cvcNumber, cardBrand)
+  cvcNumber->String.length > 0 && cvcNmberInRange(cvcNumber, cardBrand)
 }
