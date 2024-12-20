@@ -68,8 +68,7 @@ jobs:
 
       - name: Run ReScript build check
         run: |
-          npm run rescript clean
-          npm run rescript build
+          npm run re:build
 
           if [ -n "$(git status --porcelain)" ]; then
             echo "❌ ReScript build failed or produced different output"
