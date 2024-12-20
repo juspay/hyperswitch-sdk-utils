@@ -1,4 +1,3 @@
-open ValidationUtils
 @val external sdkUrl: string = "sdkUrl"
 let isInteg = sdkUrl === "https://dev.hyperswitch.io"
 let isSandbox = sdkUrl === "https://beta.hyperswitch.io" || sdkUrl === "http://localhost:9050"

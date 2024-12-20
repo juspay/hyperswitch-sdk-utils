@@ -1,0 +1,71 @@
+name: ReScript Build Check
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  rescript-check:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Create package.json
+        run: |
+          cat > package.json << 'EOL'
+          {
+            "name": "hyperswitch-sdk-utils",
+            "scripts": {
+              "re:build": "rescript"
+            },
+            "dependencies": {
+              "@rescript/core": "^1.6.1",
+              "rescript": "^11.1.4"
+            }
+          }
+          EOL
+
+      - name: Create rescript.json
+        run: |
+          cat > rescript.json << 'EOL'
+          {
+            "name": "hyperswitch-sdk-utils",
+            "sources": [
+              {
+                "dir": "src",
+                "subdirs": true
+              }
+            ],
+            "package-specs": [
+              {
+                "module": "esmodule",
+                "in-source": true
+              }
+            ],
+            "suffix": ".bs.js",
+            "bs-dependencies": [
+              "@rescript/core"
+            ],
+            "bsc-flags": [
+              "-open RescriptCore"
+            ]
+          }
+          EOL
+
+      - name: Install dependencies
+        run: npm install --frozen-lockfile
+
+      - name: Run ReScript build check
+        run: |
+          npm run re:build
