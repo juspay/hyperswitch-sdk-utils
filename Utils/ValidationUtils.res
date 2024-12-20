@@ -14,7 +14,7 @@ type cardIssuer =
   | INTERAC
   | NOTFOUND
 
-let cardType = val => {
+let getCardType = val => {
   switch val->String.toUpperCase {
   | "VISA" => VISA
   | "MASTERCARD" => MASTERCARD
