@@ -183,6 +183,8 @@ type localeStrings = {
   invalidDigitsCardHolderNameError: string,
   nickNameLengthExceedError: string,
   invalidDigitsNickNameError: string,
+  enterValidCardNumberErrorText: string,
+  ibanEmptyText: string,
 }
 
 type constantStrings = {

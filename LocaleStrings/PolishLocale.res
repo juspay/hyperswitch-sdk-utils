@@ -162,4 +162,6 @@ let localeStrings: LocaleStringTypes.localeStrings = {
   invalidDigitsCardHolderNameError: "",
   nickNameLengthExceedError: "",
   invalidDigitsNickNameError: "",
+  enterValidCardNumberErrorText: "",
+  ibanEmptyText: "",
 }
