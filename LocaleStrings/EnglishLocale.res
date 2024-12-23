@@ -159,6 +159,8 @@ let localeStrings: LocaleStringTypes.localeStrings = {
   walletDisclaimer: "Wallet details will be saved upon selection",
   deletePaymentMethod: "Delete",
   invalidDigitsCardHolderNameError: "",
-  invalidDigitsNickNameError: "",
+  invalidDigitsNickNameError: "Nickname cannot have more than 2 digits", // from web
   nickNameLengthExceedError: "",
+  enterValidCardNumberErrorText: "",
+  ibanEmptyText: "IBAN cannot be empty", // from web
 }
