@@ -39,8 +39,8 @@ let localeStrings: LocaleStringTypes.localeStrings = {
   useExisitingSavedCards: "Kasuta salvestatud deebet-/krediitkaarte",
   saveCardDetails: "Salvesta kaardi andmed",
   addBankAccount: "Lisa kontonumber",
-  achBankDebitTerms: str =>
-    `Oma kontonumbrit esitades ja seda makset kinnitades lubad ettevõttel ${str} ja meie makseteenuse pakkujal Hyperswitchil saata oma pangale maksekorraldus sinu konto debiteerimiseks ja pangal oma kontot debiteerida vastavalt käesolevatele juhistele. Sul on õigus saada oma pangalt raha tagasi vastavalt panga ja sinu vahel sõlmitud lepingu tingimustele. Pead taotlema tagasimakset 8 nädala jooksul alates kuupäevast, mil sinu kontolt raha võeti.`,
+  achBankDebitTerms: _ =>
+    `Your ACH Debit Authorization will be set up now, but we'll confirm the amount and let you know before future payments are taken.`,
   sepaDebitTerms: str =>
     `Oma makseandmeid esitades ja seda makset kinnitades lubad a) ettevõttel ${str} ja meie makseteenuse pakkujal Hyperswitchil ja/või ettevõttel PPRO (viimase kohalikul teenusepakkujal) saata oma pangale maksekorraldus sinu konto debiteerimiseks ja b) pangal debiteerida oma kontot vastavalt käesolevatele juhistele. Muuhulgas on sul õigus saada oma pangalt raha tagasi vastavalt panga ja sinu vahel sõlmitud lepingu tingimustele. Pead taotlema tagasimakset 8 nädala jooksul alates kuupäevast, mil sinu kontolt raha võeti. Sinu õigusi selgitatakse väljavõttes, mida võid oma pangalt küsida. Nõustud saama teateid tulevastest debiteerimistest kuni 2 päeva enne nende toimumist.`,
   becsDebitTerms: "Oma pangakonto andmeid esitades ja seda makset kinnitades nõustud käesoleva otsekorralduse taotluse ja otsekorralduse taotluse teenuselepinguga ning lubad ettevõttel Hyperswitch Payments Australia Pty Ltd ACN 160 180 343, otsekorralduse kasutajatunnus 507156 („Hyperswitch“) debiteerida oma kontot elektroonilise hulgimakse süsteemi (BECS) kaudu Hyperswitchi makse vidina („Kaupmees“) nimel mis tahes summades, millest Kaupmees on sulle eraldi teatanud. Kinnitad, et oled ülaltoodud konto omanik või volitatud kasutaja.",
@@ -157,10 +157,10 @@ let localeStrings: LocaleStringTypes.localeStrings = {
   pixKeyEmptyText: `Pix-sleutel mag niet leeg zijn`,
   pixKeyPlaceholder: `Voer Pix-sleutel in`,
   pixKeyLabel: `Pix-sleutel`,
-  deletePaymentMethod: "",
-  invalidDigitsCardHolderNameError: "",
-  invalidDigitsNickNameError: "",
-  nickNameLengthExceedError: "",
-  enterValidCardNumberErrorText: "",
-  ibanEmptyText: "",
+  deletePaymentMethod: "verwijderen",
+  invalidDigitsCardHolderNameError: "De naam van de kaarthouder mag geen cijfers bevatten",
+  invalidDigitsNickNameError: "Bijnaam mag niet meer dan 2 cijfers bevatten",
+  nickNameLengthExceedError: "Nickname cannot exceed 12 characters",
+  enterValidCardNumberErrorText: "Voer een geldig kaartnummer in.",
+  ibanEmptyText: "IBAN mag niet leeg zijn",
 }

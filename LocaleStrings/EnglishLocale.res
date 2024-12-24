@@ -40,6 +40,8 @@ let localeStrings: LocaleStringTypes.localeStrings = {
   useExisitingSavedCards: "Use saved debit/credit cards",
   saveCardDetails: "Save card details",
   addBankAccount: "Add bank account",
+  achBankDebitTerms: _ =>
+    `Your ACH Debit Authorization will be set up now, but we'll confirm the amount and let you know before future payments are taken.`,
   sepaDebitTerms: str =>
     `By providing your payment information and confirming to this mandate form, you authorise (A) ${str}, the Creditor and/or our payment service provider(s) to send instructions to your bank to debit your account and (B) your bank to debit your account in accordance with the instructions from ${str}. As part of your rights, you are entitled to a refund from your bank under the terms and conditions of your agreement with your bank. A refund must be claimed within 8 weeks starting from the date on which your account was debited. Your rights are explained in a statement that you can obtain from your bank.`,
   becsDebitTerms: `By providing your bank account details and confirming this payment, you agree to this Direct Debit Request and the Direct Debit Request service agreement and authorise Hyperswitch Payments Australia Pty Ltd ACN 160 180 343 Direct Debit User ID number 507156 (“Hyperswitch”) to debit your account through the Bulk Electronic Clearing System (BECS) on behalf of Hyperswitch Payment Widget (the "Merchant") for any amounts separately communicated to you by the Merchant. You certify that you are either an account holder or an authorised signatory on the account listed above.`,
@@ -84,9 +86,9 @@ let localeStrings: LocaleStringTypes.localeStrings = {
   currencyNetwork: `Currency Networks`,
   expiryPlaceholder: `MM / YY`,
   dateOfBirth: `Date of Birth`,
-  vpaIdLabel: "Vpa Id",
-  vpaIdEmptyText: "Vpa Id cannot be empty",
-  vpaIdInvalidText: "Invalid Vpa Id address",
+  vpaIdLabel: "VPA Id",
+  vpaIdEmptyText: "VPA Id cannot be empty",
+  vpaIdInvalidText: "Invalid VPA Id address",
   dateofBirthRequiredText: `Date of birth is required`,
   dateOfBirthInvalidText: `Age should be greater than or equal to 18 years`,
   dateOfBirthPlaceholderText: `Enter Date of Birth`,
@@ -146,8 +148,6 @@ let localeStrings: LocaleStringTypes.localeStrings = {
   pixKeyEmptyText: `Pix key cannot be empty`,
   pixKeyPlaceholder: `Enter Pix key`,
   pixKeyLabel: `Pix key`,
-  achBankDebitTerms: str =>
-    `By providing your account number and confirming this payment, you are authorizing ${str} and Hyperswitch, our payment service provider, to send instructions to your bank to debit your account and your bank to debit your account in accordance with those instructions. You are entitled to a refund from your bank under the terms and conditions of your agreement with your bank. A refund must be claimed within 8 weeks starting from the date on which your account was debited.`,
   firstName: "First name",
   lastName: "Last name",
   billingDetails: "Billing Details",
@@ -158,9 +158,9 @@ let localeStrings: LocaleStringTypes.localeStrings = {
   cardHolderNameRequiredText: "Card Holder's name required",
   walletDisclaimer: "Wallet details will be saved upon selection",
   deletePaymentMethod: "Delete",
-  invalidDigitsCardHolderNameError: "",
-  invalidDigitsNickNameError: "Nickname cannot have more than 2 digits", // from web
-  nickNameLengthExceedError: "",
-  enterValidCardNumberErrorText: "",
-  ibanEmptyText: "IBAN cannot be empty", // from web
+  invalidDigitsCardHolderNameError: "Card Holder's name cannot have digits",
+  invalidDigitsNickNameError: "Nickname cannot have more than 2 digits",
+  nickNameLengthExceedError: "Nickname cannot exceed 12 characters",
+  enterValidCardNumberErrorText: "Please enter a valid card number.",
+  ibanEmptyText: "IBAN cannot be empty",
 }

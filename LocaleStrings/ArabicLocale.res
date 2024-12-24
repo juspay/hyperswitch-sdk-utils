@@ -5,6 +5,7 @@ let localeStrings: LocaleStringTypes.localeStrings = {
   inValidCardErrorText: `رقم البطاقة غير صالحة`,
   inCompleteCVCErrorText: `رمز أمان بطاقتك غير مكتمل`,
   inCompleteExpiryErrorText: `تاريخ انتهاء صلاحية بطاقتك غير مكتمل`,
+  enterValidCardNumberErrorText: `الرجاء إدخال رقم بطاقة صالح.`,
   pastExpiryErrorText: `انقضت سنة انتهاء صلاحية بطاقتك`,
   poweredBy: `مدعوم من هيبيرسويتش`,
   validThruText: `صالحة من خلال`,
@@ -12,6 +13,7 @@ let localeStrings: LocaleStringTypes.localeStrings = {
   accountNumberText: `رقم حساب`,
   cvcTextLabel: `رمز الحماية`,
   emailLabel: `البريد الإلكتروني`,
+  ibanEmptyText: `لا يمكن أن يكون رقم IBAN فارغًا`,
   emailEmptyText: `لا يمكن أن يكون البريد الإلكتروني فارغًا`,
   emailInvalidText: `عنوان البريد الإلكتروني غير صالح`,
   fullNameLabel: `الاسم الكامل`,
@@ -55,14 +57,14 @@ let localeStrings: LocaleStringTypes.localeStrings = {
   selectPaymentMethodText: `الرجاء تحديد طريقة الدفع والمحاولة مرة أخرى`,
   card: `بطاقة`,
   surchargeMsgAmount: (currency, str) => <>
-    {React.string(`سيتم تطبيق مبلغ إضافي من${CommonUtils.nbsp}`)}
+    {React.string(`سيتم تطبيق مبلغ إضافي من${Utils.nbsp}`)}
     <strong> {React.string(`${currency} ${str}`)} </strong>
-    {React.string(`${CommonUtils.nbsp}على هذه المعاملة`)}
+    {React.string(`${Utils.nbsp}على هذه المعاملة`)}
   </>,
   surchargeMsgAmountForCard: (currency, str) => <>
-    {React.string(`سيتم تطبيق مبلغ إضافي يصل إلى${CommonUtils.nbsp}`)}
+    {React.string(`سيتم تطبيق مبلغ إضافي يصل إلى${Utils.nbsp}`)}
     <strong> {React.string(`${currency} ${str}`)} </strong>
-    {React.string(`${CommonUtils.nbsp}على هذه المعاملة`)}
+    {React.string(`${Utils.nbsp}على هذه المعاملة`)}
   </>,
   surchargeMsgAmountForOneClickWallets: `رسوم إضافية قابلة للتطبيق`,
   billingNameLabel: `اسم الفواتير`,
@@ -159,11 +161,9 @@ let localeStrings: LocaleStringTypes.localeStrings = {
   addPaymentMethodLabel: `أضف طريقة دفع جديدة`,
   cardHolderNameRequiredText: `اسم حامل البطاقة مطلوب`,
   walletDisclaimer: `سيتم حفظ تفاصيل المحفظة عند الاختيار`,
-  deletePaymentMethod: "",
+  deletePaymentMethod: "يمسح",
   cardDetailsLabel: "تفاصيل البطاقة",
-  invalidDigitsCardHolderNameError: "",
-  invalidDigitsNickNameError: "",
-  nickNameLengthExceedError: "",
-  enterValidCardNumberErrorText: "",
-  ibanEmptyText: "",
+  invalidDigitsCardHolderNameError: "لا يمكن أن يحتوي اسم حامل البطاقة على أرقام",
+  invalidDigitsNickNameError: "لا يمكن أن يحتوي اللقب على أكثر من رقمين",
+  nickNameLengthExceedError: "لا يمكن أن يتجاوز اللقب 12 حرفًا",
 }
