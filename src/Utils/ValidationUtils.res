@@ -1,7 +1,7 @@
 type cardIssuer =
   | VISA
   | MASTERCARD
-  | AMEX
+  | AMERICANEXPRESS
   | MAESTRO
   | DINERSCLUB
   | DISCOVER
@@ -18,7 +18,7 @@ let getCardType = val => {
   switch val->String.toUpperCase {
   | "VISA" => VISA
   | "MASTERCARD" => MASTERCARD
-  | "AMEX" => AMEX
+  | "AMERICANEXPRESS" => AMERICANEXPRESS
   | "MAESTRO" => MAESTRO
   | "DINERSCLUB" => DINERSCLUB
   | "DISCOVER" => DISCOVER
@@ -38,7 +38,7 @@ let getCardStringFromType = val => {
   switch val {
   | VISA => "Visa"
   | MASTERCARD => "Mastercard"
-  | AMEX => "AmericanExpress"
+  | AMERICANEXPRESS => "AmericanExpress"
   | MAESTRO => "Maestro"
   | DINERSCLUB => "DinersClub"
   | DISCOVER => "Discover"
@@ -86,7 +86,8 @@ let formatCVCNumber = (val, cardType) => {
 let formatCardNumber = (val, cardType) => {
   let clearValue = val->clearSpaces
   let formatedCard = switch cardType {
-  | AMEX => `${clearValue->slice(0, 4)} ${clearValue->slice(4, 10)} ${clearValue->slice(10, 15)}`
+  | AMERICANEXPRESS =>
+    `${clearValue->slice(0, 4)} ${clearValue->slice(4, 10)} ${clearValue->slice(10, 15)}`
   | DINERSCLUB =>
     `${clearValue->slice(0, 4)} ${clearValue->slice(4, 10)} ${clearValue->slice(10, 14)}`
   | MASTERCARD
