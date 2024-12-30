@@ -88,8 +88,7 @@ let formatCardNumber = (val, cardType) => {
   let formatedCard = switch cardType {
   | AMERICANEXPRESS =>
     `${clearValue->slice(0, 4)} ${clearValue->slice(4, 10)} ${clearValue->slice(10, 15)}`
-  | DINERSCLUB =>
-    `${clearValue->slice(0, 4)} ${clearValue->slice(4, 10)} ${clearValue->slice(10, 14)}`
+  | DINERSCLUB
   | MASTERCARD
   | DISCOVER
   | SODEXO
