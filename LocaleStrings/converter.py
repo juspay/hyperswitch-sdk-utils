@@ -54,11 +54,11 @@ def gzip_files_in_folder(folder_path, output_folder_path):
 
 if __name__ == "__main__":
     # folder_path = input("Enter the folder path: ")
-    files = list_files_in_folder(os.path.dirname(__file__) + "/LocaleStrings/json")
+    files = list_files_in_folder(os.path.dirname(__file__) + "/jsons")
 
     # if files:
     #     print("\nFiles in the folder:")
     #     for file in files:
-    gzip_files_in_folder(os.path.dirname(__file__) + "/LocaleStrings/jsons", os.path.dirname(__file__) + "/" + "locales")
+    gzip_files_in_folder(os.path.dirname(__file__) + "/jsons", os.path.dirname(__file__) + "/" + "locales")
     # else:
     #     print("\nNo files found or invalid folder path.")
