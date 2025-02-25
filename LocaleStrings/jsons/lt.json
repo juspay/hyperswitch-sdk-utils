@@ -169,5 +169,6 @@
   "invalidNickNameError": "Il soprannome non può contenere più di 2 cifre",
   "cardTermsPart1": "Fornendo i dati della tua carta, autorizzi",
   "cardTermsPart2": "ad addebitare sulla tua carta pagamenti futuri in conformità con i suoi termini.",
-  "useExisitingSavedCardsWeb": "Utilizza carte di debito/credito salvate"
+  "useExisitingSavedCardsWeb": "Utilizza carte di debito/credito salvate",
+  "unsupportedCardErrorText":"Kortelės prekės ženklas nepalaikomas"
 }

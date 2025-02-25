@@ -169,5 +169,6 @@
   "invalidNickNameError": "Der Spitzname darf nicht mehr als 2 Ziffern enthalten",
   "cardTermsPart1": "Durch die Angabe Ihrer Karteninformationen stimmen Sie zu",
   "cardTermsPart2": "Ihre Karte gemäß deren Bedingungen für zukünftige Zahlungen zu belasten.",
-  "useExisitingSavedCardsWeb": "Verwenden Sie gespeicherte Debit-/Kreditkarten"
+  "useExisitingSavedCardsWeb": "Verwenden Sie gespeicherte Debit-/Kreditkarten",
+  "unsupportedCardErrorText":"Kartenmarke wird nicht unterstützt"
 }
