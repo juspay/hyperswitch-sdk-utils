@@ -169,5 +169,6 @@
   "invalidNickNameError": "Smeknamnet får inte innehålla mer än 2 siffror",
   "cardTermsPart1": "Genom att ange din kortinformation tillåter du att",
   "cardTermsPart2": "debiterar ditt kort för framtida betalningar i enlighet med deras villkor.",
-  "useExisitingSavedCardsWeb": "Använd sparade betal-/kreditkort"
+  "useExisitingSavedCardsWeb": "Använd sparade betal-/kreditkort",
+  "unsupportedCardErrorText":"Kortmärket stöds inte"
 }

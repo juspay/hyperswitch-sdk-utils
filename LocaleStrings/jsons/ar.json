@@ -169,5 +169,6 @@
   "invalidNickNameError": "لا يمكن أن يحتوي الاسم المستعار على أكثر من رقمين",
   "cardTermsPart1": "من خلال تقديم معلومات بطاقتك ، فإنك تسمح لـ",
   "cardTermsPart2": "بشحن بطاقتك للمدفوعات المستقبلية وفقًا لشروطها.",
-  "useExisitingSavedCardsWeb": "استخدم البطاقات المحفوظة الموجودة"
+  "useExisitingSavedCardsWeb": "استخدم البطاقات المحفوظة الموجودة",
+  "unsupportedCardErrorText":"لا يتم دعم ماركة البطاقة"
 }

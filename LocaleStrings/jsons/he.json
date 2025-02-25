@@ -169,5 +169,6 @@
   "invalidNickNameError": "הכינוי לא יכול לכלול יותר משתי ספרות",
   "cardTermsPart1": "על ידי הזנת פרטי הכרטיס שלך, אתה מאפשר ל",
   "cardTermsPart2": "לחייב את הכרטיס שלך עבור תשלומים עתידיים על פי תנאיהם.",
-  "useExisitingSavedCardsWeb": "שימוש בכרטיסי חיוב/ אשראי שמורים"
+  "useExisitingSavedCardsWeb": "שימוש בכרטיסי חיוב/ אשראי שמורים",
+  "unsupportedCardErrorText":"מותג הכרטיס אינו נתמך"
 }

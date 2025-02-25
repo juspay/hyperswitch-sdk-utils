@@ -169,5 +169,6 @@
   "invalidNickNameError": "O apelido não pode conter mais de 2 dígitos",
   "cardTermsPart1": "Ao fornecer as informações do seu cartão, permite ",
   "cardTermsPart2": " o débito do seu cartão para pagamentos futuros de acordo com as respetivas condições.",
-  "useExisitingSavedCardsWeb": "Usar cartões de débito/crédito guardados"
+  "useExisitingSavedCardsWeb": "Usar cartões de débito/crédito guardados",
+  "unsupportedCardErrorText":"A marca do cartão não é suportada"
 }
