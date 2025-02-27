@@ -80,7 +80,7 @@
   "surchargeMsgAmountForCardPart2": "se aplicará para esta transacción",
   "surchargeMsgAmountForOneClickWallets": "Tarifa adicional aplicable",
   "on": "en",
-  "and": "y",
+  "\"and": "y",
   "nameEmptyText": "Por favor proporcione su ",
   "completeNameEmptyText": "Por favor proporcione su completo ",
   "billingDetailsText": "Detalles de facturación",
