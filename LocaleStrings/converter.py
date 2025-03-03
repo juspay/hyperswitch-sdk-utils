@@ -59,6 +59,6 @@ if __name__ == "__main__":
     # if files:
     #     print("\nFiles in the folder:")
     #     for file in files:
-    gzip_files_in_folder(os.path.dirname(__file__) + "/jsons", os.path.dirname(__file__) + "/" + "locales")
+    gzip_files_in_folder(os.path.dirname(__file__) + "/jsons", os.path.dirname(__file__) + "/../assets/jsons/" + "locales")
     # else:
     #     print("\nNo files found or invalid folder path.")
