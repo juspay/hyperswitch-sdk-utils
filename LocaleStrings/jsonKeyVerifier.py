@@ -34,5 +34,5 @@ def verify_keys(directory):
             #     print(f"{file_name} contains all keys from en.json")
 
 if __name__ == "__main__":
-    directory = os.path.join(os.getcwd(), "LocaleStrings","jsons")
+    directory = os.path.join(os.getcwd(),"jsons")
     verify_keys(directory)
