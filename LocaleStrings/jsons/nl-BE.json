@@ -69,5 +69,6 @@
     "addPaymentMethodLabel": "Nieuwe betaalmethode toevoegen",
     "cardHolderNameRequiredText": "Naam van de kaarthouder vereist",
     "walletDisclaimer": "Portemonneegegevens worden opgeslagen bij selectie",
-    "unsupportedCardErrorText": "Het kaartmerk wordt niet ondersteund"
+    "unsupportedCardErrorText": "Het kaartmerk wordt niet ondersteund",
+    "selectCardBrand": "Selecteer een kaartmerk"
 }

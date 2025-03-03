@@ -170,5 +170,6 @@
   "cardTermsPart1": "Podając dane swojej karty, zezwalasz ",
   "cardTermsPart2": " na obciążenie jej przyszłymi płatnościami zgodnie z jej warunkami.",
   "useExisitingSavedCardsWeb": "Użyj zapisanych kart debetowych lub kredytowych",
-  "unsupportedCardErrorText":"Marka karty nie jest obsługiwana"
+  "unsupportedCardErrorText":"Marka karty nie jest obsługiwana",
+  "selectCardBrand": "Wybierz markę karty"
 }

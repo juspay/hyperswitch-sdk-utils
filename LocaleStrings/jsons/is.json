@@ -69,5 +69,6 @@
     "addPaymentMethodLabel": "Bæta við nýrri greiðsluaðferð",
     "cardHolderNameRequiredText": "Nafn korthafa krafist",
     "walletDisclaimer": "Upplýsingar um veski verða vistaðar við val",
-    "unsupportedCardErrorText": "Vörumerki korta er ekki stutt"
+    "unsupportedCardErrorText": "Vörumerki korta er ekki stutt",
+    "selectCardBrand": "Veldu kortategund"
 }

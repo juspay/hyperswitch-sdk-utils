@@ -69,5 +69,6 @@
     "addPaymentMethodLabel": " Ychwanegu dull talu newydd",
     "cardHolderNameRequiredText": "Angen enw Deiliad y Cerdyn",
     "walletDisclaimer": "Bydd manylion waled yn cael eu cadw wrth ddewis",
-    "unsupportedCardErrorText": "Nid yw brand y cerdyn yn cael ei gefnogi"
+    "unsupportedCardErrorText": "Nid yw brand y cerdyn yn cael ei gefnogi",
+    "selectCardBrand": "Dewiswch frand cerdyn"
 }

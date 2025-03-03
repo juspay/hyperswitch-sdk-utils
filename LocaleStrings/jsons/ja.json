@@ -170,5 +170,6 @@
   "cardTermsPart1": "カード情報を提供することにより、",
   "cardTermsPart2": "が規約に従って将来の支払いをカードに請求できるようになります。",
   "useExisitingSavedCardsWeb": "既存の保存済みカードを使用する",
-  "unsupportedCardErrorText":"カードブランドはサポートされていません"
+  "unsupportedCardErrorText":"カードブランドはサポートされていません",
+  "selectCardBrand": "カードブランドを選択"
 }

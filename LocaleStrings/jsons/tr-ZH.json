@@ -107,5 +107,6 @@
   "cardTermsPart1": "通過提供您的卡片信息，您允許",
   "cardTermsPart2": "根據其條款從您的卡片中扣款以進行未來的付款。",
   "useExisitingSavedCardsWeb": "使用已保存的信用卡/借記卡",
-  "unsupportedCardErrorText":"Kart markası desteklenmiyor"
+  "unsupportedCardErrorText":"Kart markası desteklenmiyor",
+  "selectCardBrand": "选择卡品牌"
 }

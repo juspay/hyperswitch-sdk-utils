@@ -69,5 +69,6 @@
     "addPaymentMethodLabel": "Aggiungi un nuovo metodo di pagamento",
     "cardHolderNameRequiredText": "Il nome del titolare della carta è obbligatorio",
     "walletDisclaimer": "I dettagli del portafoglio verranno salvati al momento della selezione",
-    "unsupportedCardErrorText": "Il marchio della carta non è supportato"
+    "unsupportedCardErrorText": "Il marchio della carta non è supportato",
+    "selectCardBrand": "Seleziona una marca di carta"
 }

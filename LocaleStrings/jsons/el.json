@@ -69,5 +69,6 @@
     "addPaymentMethodLabel": "Προσθήκη νέας μεθόδου πληρωμής",
     "cardHolderNameRequiredText": "Απαιτείται το όνομα του κατόχου της κάρτας",
     "walletDisclaimer": "Τα στοιχεία του πορτοφολιού θα αποθηκευτούν κατά την επιλογή",
-    "unsupportedCardErrorText": "Η μάρκα της κάρτας δεν υποστηρίζεται"
+    "unsupportedCardErrorText": "Η μάρκα της κάρτας δεν υποστηρίζεται",
+    "selectCardBrand": "Επιλέξτε μια μάρκα κάρτας"
 }
