@@ -171,5 +171,9 @@
   "cardTermsPart2": "til at debitere dit kort for fremtidige betalinger i overensstemmelse med deres vilkår.",
   "useExisitingSavedCardsWeb": "Brug gemte debet-/kreditkort.",
   "unsupportedCardErrorText":"Het kaartmerk wordt niet ondersteund",
-  "selectCardBrand": "Selecteer een kaartmerk"
+  "selectCardBrand": "Selecteer een kaartmerk",
+  "enterValidDigitsText": "Voer een geldige",
+  "digitsText": "cijfers",
+  "enterValidIban": "Voer een geldig IBAN in",
+  "mandatoryFieldText": "This field is mandatory"
 }

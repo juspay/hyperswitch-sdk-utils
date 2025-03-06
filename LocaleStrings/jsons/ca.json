@@ -171,5 +171,9 @@
   "cardTermsPart2": " que faci càrrecs a la targeta per a pagaments futurs d'acord amb les seves condicions.",
   "useExisitingSavedCardsWeb": "Faci servir les targetes de dèbit o crèdit desades",
   "unsupportedCardErrorText":"La marca de la targeta no és compatible",
-  "selectCardBrand": "Selecciona una marca de targeta"
+  "selectCardBrand": "Selecciona una marca de targeta",
+  "enterValidDigitsText": "Introduïu vàlid",
+  "digitsText": "dígits",
+  "enterValidIban": "Introduïu un Iban vàlid",
+  "mandatoryFieldText": "Aquest camp és obligatori"
 }

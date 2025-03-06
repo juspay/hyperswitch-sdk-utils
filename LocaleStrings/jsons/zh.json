@@ -108,5 +108,9 @@
   "cardTermsPart2": "根据其条款向您的卡片收费。",
   "useExisitingSavedCardsWeb": "使用保存的信用卡/借记卡",
   "unsupportedCardErrorText":"不支持的卡品牌",
-  "selectCardBrand": "选择卡品牌"
+  "selectCardBrand": "选择卡品牌",
+  "enterValidDigitsText": "請輸入有效的",
+  "digitsText": "数字",
+  "enterValidIban": "請輸入有效的伊班語",
+  "mandatoryFieldText": "此字段为必填项"
 }

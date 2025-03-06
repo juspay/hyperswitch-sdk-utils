@@ -171,5 +171,9 @@
   "cardTermsPart2": "بشحن بطاقتك للمدفوعات المستقبلية وفقًا لشروطها.",
   "useExisitingSavedCardsWeb": "استخدم البطاقات المحفوظة الموجودة",
   "unsupportedCardErrorText":"لا يتم دعم ماركة البطاقة",
-  "selectCardBrand": "حدد علامة تجارية للبطاقة"
+  "selectCardBrand": "حدد علامة تجارية للبطاقة",
+  "enterValidDigitsText": "الرجاء إدخال كلمة صالحة",
+  "digitsText": "ارقام",
+  "enterValidIban": "الرجاء إدخال رقم Iban صالح",
+  "mandatoryFieldText": "هذا الحقل إلزامي."
 }

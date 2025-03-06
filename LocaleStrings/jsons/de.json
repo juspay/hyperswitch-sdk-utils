@@ -171,5 +171,9 @@
   "cardTermsPart2": "Ihre Karte gemäß deren Bedingungen für zukünftige Zahlungen zu belasten.",
   "useExisitingSavedCardsWeb": "Verwenden Sie gespeicherte Debit-/Kreditkarten",
   "unsupportedCardErrorText":"Kartenmarke wird nicht unterstützt",
-  "selectCardBrand": "Wählen Sie eine Kartenmarke"
+  "selectCardBrand": "Wählen Sie eine Kartenmarke",
+  "enterValidDigitsText": "Bitte gültig eingeben.",
+  "digitsText": "Ziffern",
+  "enterValidIban": "Bitte geben Sie eine gültige IBAN ein",
+  "mandatoryFieldText": "Dieses Feld ist obligatorisch"
 }

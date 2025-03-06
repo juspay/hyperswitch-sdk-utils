@@ -171,5 +171,9 @@
   "cardTermsPart2": "à débiter votre carte pour les paiements futurs conformément à leurs conditions.",
   "useExisitingSavedCardsWeb": "Utiliser les cartes de débit/crédit enregistrées",
   "unsupportedCardErrorText":"La marque de la carte n'est pas prise en charge",
-  "selectCardBrand": "Sélectionnez une marque de carte"
+  "selectCardBrand": "Sélectionnez une marque de carte",
+  "enterValidDigitsText": "Veuillez entrer valide.",
+  "digitsText": "Chiffres",
+  "enterValidIban": "Veuillez entrer un IBAN valide.",
+  "mandatoryFieldText": "Ce champ est obligatoire"
 }

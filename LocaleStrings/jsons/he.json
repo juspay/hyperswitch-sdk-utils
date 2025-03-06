@@ -171,5 +171,9 @@
   "cardTermsPart2": "לחייב את הכרטיס שלך עבור תשלומים עתידיים על פי תנאיהם.",
   "useExisitingSavedCardsWeb": "שימוש בכרטיסי חיוב/ אשראי שמורים",
   "unsupportedCardErrorText":"מותג הכרטיס אינו נתמך",
-  "selectCardBrand": "בחר מותג כרטיס"
+  "selectCardBrand": "בחר מותג כרטיס",
+  "enterValidDigitsText": "נא להזין חוקי",
+  "digitsText": "ספרות",
+  "enterValidIban": "נא להזין Iban חוקי",
+  "mandatoryFieldText": "שדה זה הוא חובה"
 }

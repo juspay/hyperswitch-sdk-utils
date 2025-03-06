@@ -70,5 +70,9 @@
     "cardHolderNameRequiredText": "Kart Sahibinin adı gereklidir",
     "walletDisclaimer": "Cüzdan bilgileri seçim sırasında kaydedilecektir",
     "unsupportedCardErrorText": "Kart markası desteklenmiyor",
-    "selectCardBrand": "Bir kart markası seçin"
+    "selectCardBrand": "Bir kart markası seçin",
+    "enterValidDigitsText": "Lütfen geçerli bir ad girin",
+    "digitsText": "rakamlar",
+    "enterValidIban": "Lütfen geçerli bir Iban giriniz",
+    "mandatoryFieldText": "Bu alan zorunludur"
 }

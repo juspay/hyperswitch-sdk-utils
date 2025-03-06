@@ -171,5 +171,9 @@
   "cardTermsPart2": "debiterar ditt kort för framtida betalningar i enlighet med deras villkor.",
   "useExisitingSavedCardsWeb": "Använd sparade betal-/kreditkort",
   "unsupportedCardErrorText":"Kortmärket stöds inte",
-  "selectCardBrand": "Välj ett kortmärke"
+  "selectCardBrand": "Välj ett kortmärke",
+  "enterValidDigitsText": "Vänligen ange en giltig",
+  "digitsText": "siffror",
+  "enterValidIban": "Lütfen geçerli bir Iban giriniz",
+  "mandatoryFieldText": "Detta fält är obligatoriskt"
 }

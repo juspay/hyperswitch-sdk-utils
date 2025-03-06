@@ -70,5 +70,9 @@
     "cardHolderNameRequiredText": "Kortholders navn kreves",
     "walletDisclaimer": "Lommebokdetaljer vil bli lagret ved valg",
     "unsupportedCardErrorText": "Kortmerket støttes ikke",
-    "selectCardBrand": "Velg et kortmerke"
+    "selectCardBrand": "Velg et kortmerke",
+    "enterValidDigitsText": "Vennligst skriv inn gyldig",
+    "digitsText": "sifre",
+    "enterValidIban": "Vennligst skriv inn en gyldig Iban",
+    "mandatoryFieldText": "Dette feltet er obligatorisk"
 }

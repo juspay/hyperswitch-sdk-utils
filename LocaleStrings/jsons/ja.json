@@ -171,5 +171,9 @@
   "cardTermsPart2": "が規約に従って将来の支払いをカードに請求できるようになります。",
   "useExisitingSavedCardsWeb": "既存の保存済みカードを使用する",
   "unsupportedCardErrorText":"カードブランドはサポートされていません",
-  "selectCardBrand": "カードブランドを選択"
+  "selectCardBrand": "カードブランドを選択",
+  "enterValidDigitsText": "有効なものを入力してください",
+  "digitsText": "数字",
+  "enterValidIban": "有効なイバンを入力してください",
+  "mandatoryFieldText": "このフィールドは必須です"
 }

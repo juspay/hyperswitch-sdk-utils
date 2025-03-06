@@ -171,5 +171,9 @@
   "cardTermsPart2": "ad addebitare sulla tua carta pagamenti futuri in conformità con i suoi termini.",
   "useExisitingSavedCardsWeb": "Utilizza carte di debito/credito salvate",
   "unsupportedCardErrorText":"Kortelės prekės ženklas nepalaikomas",
-  "selectCardBrand": "Pasirinkite kortelės prekės ženklą"
+  "selectCardBrand": "Pasirinkite kortelės prekės ženklą",
+  "enterValidDigitsText": "Įveskite galiojantį",
+  "digitsText": "skaitmenys",
+  "enterValidIban": "Įveskite tinkamą Iban kodą",
+  "mandatoryFieldText": "Šis laukas yra privalomas"
 }

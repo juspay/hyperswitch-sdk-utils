@@ -171,5 +171,9 @@
   "cardTermsPart2": " o débito do seu cartão para pagamentos futuros de acordo com as respetivas condições.",
   "useExisitingSavedCardsWeb": "Usar cartões de débito/crédito guardados",
   "unsupportedCardErrorText":"A marca do cartão não é suportada",
-  "selectCardBrand": "Selecione uma marca de cartão"
+  "selectCardBrand": "Selecione uma marca de cartão",
+  "enterValidDigitsText": "Por favor, introduza um valor válido",
+  "digitsText": "dígitos",
+  "enterValidIban": "Por favor, introduza um Iban válido",
+  "mandatoryFieldText": "Este campo é obrigatório"
 }
