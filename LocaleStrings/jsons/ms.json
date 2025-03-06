@@ -70,5 +70,9 @@
     "cardHolderNameRequiredText": "Nama Pemegang Kad diperlukan",
     "walletDisclaimer": "Butiran dompet akan disimpan semasa pemilihan",
     "unsupportedCardErrorText": "Jenama kad tidak disokong",
-    "selectCardBrand": "Pilih jenama kad"
+    "selectCardBrand": "Pilih jenama kad",
+    "enterValidDigitsText": "Sila masukkan yang sah",
+    "digitsText": "digit",
+    "enterValidIban": "Sila masukkan Iban yang sah",
+    "mandatoryFieldText": "Bidang ini adalah wajib"
 }

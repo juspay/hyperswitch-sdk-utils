@@ -70,5 +70,9 @@
     "cardHolderNameRequiredText": "Kortholders navn påkrævet",
     "walletDisclaimer": "Tegnebogsoplysninger gemmes ved valg",
     "unsupportedCardErrorText": " Kortmærket understøttes ikke",
-    "selectCardBrand": "Vælg et kortmærke"
+    "selectCardBrand": "Vælg et kortmærke",
+    "enterValidDigitsText": "Indtast venligst gyldig",
+    "digitsText": "cifre",
+    "enterValidIban": "Indtast venligst en gyldig Iban",
+    "mandatoryFieldText": "Dette felt er obligatorisk"
 }

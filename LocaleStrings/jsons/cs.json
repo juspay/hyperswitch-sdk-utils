@@ -70,5 +70,9 @@
     "cardHolderNameRequiredText": "Je vyžadováno jméno držitele karty",
     "walletDisclaimer": "Podrobnosti o peněžence se po výběru uloží",
     "unsupportedCardErrorText": "Značka karty není podporována",
-    "selectCardBrand": "Vyberte značku karty"
+    "selectCardBrand": "Vyberte značku karty",
+    "enterValidDigitsText": "Zadejte prosím platné",
+    "digitsText": "číslic",
+    "enterValidIban": "Zadejte prosím platný Iban",
+    "mandatoryFieldText": "Toto pole je povinné"
 }

@@ -70,5 +70,9 @@
     "cardHolderNameRequiredText": "Angen enw Deiliad y Cerdyn",
     "walletDisclaimer": "Bydd manylion waled yn cael eu cadw wrth ddewis",
     "unsupportedCardErrorText": "Nid yw brand y cerdyn yn cael ei gefnogi",
-    "selectCardBrand": "Dewiswch frand cerdyn"
+    "selectCardBrand": "Dewiswch frand cerdyn",
+    "enterValidDigitsText": "Rhowch ddilys",
+    "digitsText": "digidau",
+    "enterValidIban": "Rhowch Iban dilys",
+    "mandatoryFieldText": "Mae'r maes hwn yn orfodol"
 }

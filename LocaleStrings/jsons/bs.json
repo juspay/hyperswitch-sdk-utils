@@ -70,5 +70,9 @@
     "cardHolderNameRequiredText": "Potrebno je ime vlasnika kartice",
     "walletDisclaimer": "Detalji novčanika će biti sačuvani nakon odabira",
     "unsupportedCardErrorText": "Brend kartice nije podržan",
-    "selectCardBrand": "Odaberite brend kartice"
+    "selectCardBrand": "Odaberite brend kartice",
+    "enterValidDigitsText": "Unesite važeći",
+    "digitsText": "cifre",
+    "enterValidIban": "Unesite važeći Iban",
+    "mandatoryFieldText": "Ovo polje je obavezno"
 }

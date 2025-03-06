@@ -171,5 +171,9 @@
   "cardTermsPart2": " to charge your card for future payments in accordance with their terms.",
   "useExisitingSavedCardsWeb": "Use saved debit/credit cards.",
   "unsupportedCardErrorText":"Card brand is not supported.",
-  "selectCardBrand": "Select a card brand"
+  "selectCardBrand": "Select a card brand",
+  "enterValidDigitsText": "Please enter valid",
+  "digitsText": "digits",
+  "enterValidIban": "Please enter a valid Iban",
+  "mandatoryFieldText": "This field is required"
 }

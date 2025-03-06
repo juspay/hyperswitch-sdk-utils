@@ -171,5 +171,9 @@
   "cardTermsPart2": "списать средства с вашей карты для будущих платежей в соответствии с ее условиями.",
   "useExisitingSavedCardsWeb": "Использовать сохраненные дебетовые/кредитные карты",
   "unsupportedCardErrorText":"Бренд карты не поддерживается",
-  "selectCardBrand": "Выберите бренд карты"
+  "selectCardBrand": "Выберите бренд карты",
+  "enterValidDigitsText": "Por favor, introduza um válido",
+  "digitsText": "цифры",
+  "enterValidIban": "Пожалуйста, введите действительный Iban",
+  "mandatoryFieldText": "Это поле обязательно для заполнения."
 }

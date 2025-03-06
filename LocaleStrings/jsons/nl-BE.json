@@ -70,5 +70,9 @@
     "cardHolderNameRequiredText": "Naam van de kaarthouder vereist",
     "walletDisclaimer": "Portemonneegegevens worden opgeslagen bij selectie",
     "unsupportedCardErrorText": "Het kaartmerk wordt niet ondersteund",
-    "selectCardBrand": "Selecteer een kaartmerk"
+    "selectCardBrand": "Selecteer een kaartmerk",
+    "enterValidDigitsText": "Gelieve geldig in te voeren",
+    "digitsText": "Cijfers",
+    "enterValidIban": "Gelieve een geldig IBAN in te voeren.",
+    "mandatoryFieldText": "Dit veld is verplicht"
 }

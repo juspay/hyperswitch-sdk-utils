@@ -70,5 +70,9 @@
     "cardHolderNameRequiredText": "Il nome del titolare della carta è obbligatorio",
     "walletDisclaimer": "I dettagli del portafoglio verranno salvati al momento della selezione",
     "unsupportedCardErrorText": "Il marchio della carta non è supportato",
-    "selectCardBrand": "Seleziona una marca di carta"
+    "selectCardBrand": "Seleziona una marca di carta",
+    "enterValidDigitsText": "Inserisci un valore valido",
+    "digitsText": "cifre",
+    "enterValidIban": "Inserisci un Iban valido",
+    "mandatoryFieldText": "Questo campo è obbligatorio"
 }

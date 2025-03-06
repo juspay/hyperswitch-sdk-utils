@@ -107,6 +107,10 @@
   "cardTermsPart1": "通過提供您的卡片信息，您允許",
   "cardTermsPart2": "根據其條款從您的卡片中扣款以進行未來的付款。",
   "useExisitingSavedCardsWeb": "使用已保存的信用卡/借記卡",
-  "unsupportedCardErrorText":"Kart markası desteklenmiyor",
-  "selectCardBrand": "选择卡品牌"
+  "unsupportedCardErrorText":"不支持卡品牌。",
+  "selectCardBrand": "选择卡品牌",
+  "enterValidDigitsText": "請輸入有效的",
+  "digitsText": "數位",
+  "enterValidIban": "請輸入有效的伊班語。",
+  "mandatoryFieldText": "此欄位為必填項"
 }

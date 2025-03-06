@@ -171,5 +171,9 @@
   "cardTermsPart2": " que realice cargos en su tarjeta para futuros pagos de acuerdo con sus términos.",
   "useExisitingSavedCardsWeb": "Utilizar las tarjetas de débito/crédito guardadas",
   "unsupportedCardErrorText":"La marca de la tarjeta no es compatible",
-  "selectCardBrand": "Seleccione una marca de tarjeta"
+  "selectCardBrand": "Seleccione una marca de tarjeta",
+  "enterValidDigitsText": "Por favor ingrese un válido",
+  "digitsText": "dígitos",
+  "enterValidIban": "Por favor, introduzca un Iban válido",
+  "mandatoryFieldText": "Este campo es obligatorio"
 }

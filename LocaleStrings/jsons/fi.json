@@ -70,5 +70,9 @@
     "cardHolderNameRequiredText": "Kortinhaltijan nimi vaaditaan",
     "walletDisclaimer": "Lompakon tiedot tallennetaan valinnan yhteydessä",
     "unsupportedCardErrorText": "Korttimerkkiä ei tueta",
-    "selectCardBrand": "Valitse korttimerkki"
+    "selectCardBrand": "Valitse korttimerkki",
+    "enterValidDigitsText": "Anna kelvollinen",
+    "digitsText": "numeroita",
+    "enterValidIban": "Anna kelvollinen Iban",
+    "mandatoryFieldText": "Tämä kenttä on pakollinen"
 }

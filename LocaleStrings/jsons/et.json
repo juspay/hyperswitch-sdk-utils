@@ -70,5 +70,9 @@
     "cardHolderNameRequiredText": "Vajalik on kaardi omaniku nimi",
     "walletDisclaimer": "Rahakoti andmed salvestatakse valimisel",
     "unsupportedCardErrorText": "Kaardibränd ei ole toetatud",
-    "selectCardBrand": "Valige kaardi bränd"
+    "selectCardBrand": "Valige kaardi bränd",
+    "enterValidDigitsText": "Sisestage kehtiv",
+    "digitsText": "numbrid",
+    "enterValidIban": "Sisestage kehtiv Iban",
+    "mandatoryFieldText": "See väli on kohustuslik"
 }
