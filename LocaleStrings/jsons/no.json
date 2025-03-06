@@ -69,5 +69,6 @@
     "addPaymentMethodLabel": "Legg til en ny betalingsmåte",
     "cardHolderNameRequiredText": "Kortholders navn kreves",
     "walletDisclaimer": "Lommebokdetaljer vil bli lagret ved valg",
-    "unsupportedCardErrorText": "Kortmerket støttes ikke"
+    "unsupportedCardErrorText": "Kortmerket støttes ikke",
+    "selectCardBrand": "Velg et kortmerke"
 }

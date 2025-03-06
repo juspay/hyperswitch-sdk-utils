@@ -69,5 +69,6 @@
     "addPaymentMethodLabel": "Dodajte novi način plaćanja",
     "cardHolderNameRequiredText": "Potrebno je ime vlasnika kartice",
     "walletDisclaimer": "Detalji novčanika će biti sačuvani nakon odabira",
-    "unsupportedCardErrorText": "Brend kartice nije podržan"
+    "unsupportedCardErrorText": "Brend kartice nije podržan",
+    "selectCardBrand": "Odaberite brend kartice"
 }

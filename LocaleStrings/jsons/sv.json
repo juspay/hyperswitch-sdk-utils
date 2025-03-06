@@ -170,5 +170,6 @@
   "cardTermsPart1": "Genom att ange din kortinformation tillåter du att",
   "cardTermsPart2": "debiterar ditt kort för framtida betalningar i enlighet med deras villkor.",
   "useExisitingSavedCardsWeb": "Använd sparade betal-/kreditkort",
-  "unsupportedCardErrorText":"Kortmärket stöds inte"
+  "unsupportedCardErrorText":"Kortmärket stöds inte",
+  "selectCardBrand": "Välj ett kortmärke"
 }

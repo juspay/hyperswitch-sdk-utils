@@ -69,5 +69,6 @@
     "addPaymentMethodLabel": "Yeni ödeme yöntemi ekle",
     "cardHolderNameRequiredText": "Kart Sahibinin adı gereklidir",
     "walletDisclaimer": "Cüzdan bilgileri seçim sırasında kaydedilecektir",
-    "unsupportedCardErrorText": "Kart markası desteklenmiyor"
+    "unsupportedCardErrorText": "Kart markası desteklenmiyor",
+    "selectCardBrand": "Bir kart markası seçin"
 }

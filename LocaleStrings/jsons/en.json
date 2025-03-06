@@ -171,5 +171,6 @@
   "cardTermsPart1": "By providing your card information, you allow ",
   "cardTermsPart2": " to charge your card for future payments in accordance with their terms.",
   "useExisitingSavedCardsWeb": "Use saved debit/credit cards.",
-  "unsupportedCardErrorText":"Card brand is not supported."
+  "unsupportedCardErrorText":"Card brand is not supported.",
+  "selectCardBrand": "Select a card brand"
 }

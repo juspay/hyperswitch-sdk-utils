@@ -69,5 +69,6 @@
     "addPaymentMethodLabel": "Tambah kaedah pembayaran baru",
     "cardHolderNameRequiredText": "Nama Pemegang Kad diperlukan",
     "walletDisclaimer": "Butiran dompet akan disimpan semasa pemilihan",
-    "unsupportedCardErrorText": "Jenama kad tidak disokong"
+    "unsupportedCardErrorText": "Jenama kad tidak disokong",
+    "selectCardBrand": "Pilih jenama kad"
 }

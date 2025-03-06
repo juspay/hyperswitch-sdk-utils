@@ -69,5 +69,6 @@
     "addPaymentMethodLabel": "Pridať nový spôsob platby",
     "cardHolderNameRequiredText": "Vyžaduje sa meno držiteľa karty",
     "walletDisclaimer": "Podrobnosti o peňaženke sa po výbere uložia",
-    "unsupportedCardErrorText": "Značka karty nie je podporovaná"
+    "unsupportedCardErrorText": "Značka karty nie je podporovaná",
+    "selectCardBrand": "Vyberte značku karty"
 }

@@ -170,5 +170,6 @@
   "cardTermsPart1": "Fornendo i dati della tua carta, autorizzi",
   "cardTermsPart2": "ad addebitare sulla tua carta pagamenti futuri in conformità con i suoi termini.",
   "useExisitingSavedCardsWeb": "Utilizza carte di debito/credito salvate",
-  "unsupportedCardErrorText":"Kortelės prekės ženklas nepalaikomas"
+  "unsupportedCardErrorText":"Kortelės prekės ženklas nepalaikomas",
+  "selectCardBrand": "Pasirinkite kortelės prekės ženklą"
 }

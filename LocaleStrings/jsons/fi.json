@@ -69,5 +69,6 @@
     "addPaymentMethodLabel": "Lisää uusi maksutapa",
     "cardHolderNameRequiredText": "Kortinhaltijan nimi vaaditaan",
     "walletDisclaimer": "Lompakon tiedot tallennetaan valinnan yhteydessä",
-    "unsupportedCardErrorText": "Korttimerkkiä ei tueta"
+    "unsupportedCardErrorText": "Korttimerkkiä ei tueta",
+    "selectCardBrand": "Valitse korttimerkki"
 }

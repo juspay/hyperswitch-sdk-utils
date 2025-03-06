@@ -170,5 +170,6 @@
   "cardTermsPart1": "Al proporcionar la información de su tarjeta, permite a ",
   "cardTermsPart2": " que realice cargos en su tarjeta para futuros pagos de acuerdo con sus términos.",
   "useExisitingSavedCardsWeb": "Utilizar las tarjetas de débito/crédito guardadas",
-  "unsupportedCardErrorText":"La marca de la tarjeta no es compatible"
+  "unsupportedCardErrorText":"La marca de la tarjeta no es compatible",
+  "selectCardBrand": "Seleccione una marca de tarjeta"
 }

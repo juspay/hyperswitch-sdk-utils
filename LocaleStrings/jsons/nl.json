@@ -170,5 +170,6 @@
   "cardTermsPart1": "Ved at angive dine kortoplysninger giver du tilladelse",
   "cardTermsPart2": "til at debitere dit kort for fremtidige betalinger i overensstemmelse med deres vilkår.",
   "useExisitingSavedCardsWeb": "Brug gemte debet-/kreditkort.",
-  "unsupportedCardErrorText":"Het kaartmerk wordt niet ondersteund"
+  "unsupportedCardErrorText":"Het kaartmerk wordt niet ondersteund",
+  "selectCardBrand": "Selecteer een kaartmerk"
 }

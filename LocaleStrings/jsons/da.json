@@ -69,5 +69,6 @@
     "addPaymentMethodLabel": "Tilføj ny betalingsmetode",
     "cardHolderNameRequiredText": "Kortholders navn påkrævet",
     "walletDisclaimer": "Tegnebogsoplysninger gemmes ved valg",
-    "unsupportedCardErrorText": " Kortmærket understøttes ikke"
+    "unsupportedCardErrorText": " Kortmærket understøttes ikke",
+    "selectCardBrand": "Vælg et kortmærke"
 }

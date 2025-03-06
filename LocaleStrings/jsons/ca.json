@@ -170,5 +170,6 @@
   "cardTermsPart1": "En facilitar la informació de la targeta, permet a ",
   "cardTermsPart2": " que faci càrrecs a la targeta per a pagaments futurs d'acord amb les seves condicions.",
   "useExisitingSavedCardsWeb": "Faci servir les targetes de dèbit o crèdit desades",
-  "unsupportedCardErrorText":"La marca de la targeta no és compatible"
+  "unsupportedCardErrorText":"La marca de la targeta no és compatible",
+  "selectCardBrand": "Selecciona una marca de targeta"
 }

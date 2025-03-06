@@ -107,5 +107,6 @@
   "cardTermsPart1": "通过提供您的卡片信息，您允许",
   "cardTermsPart2": "根据其条款向您的卡片收费。",
   "useExisitingSavedCardsWeb": "使用保存的信用卡/借记卡",
-  "unsupportedCardErrorText":"不支持的卡品牌"
+  "unsupportedCardErrorText":"不支持的卡品牌",
+  "selectCardBrand": "选择卡品牌"
 }

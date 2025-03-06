@@ -69,5 +69,6 @@
     "addPaymentMethodLabel": "Lisa uus makseviis",
     "cardHolderNameRequiredText": "Vajalik on kaardi omaniku nimi",
     "walletDisclaimer": "Rahakoti andmed salvestatakse valimisel",
-    "unsupportedCardErrorText": "Kaardibränd ei ole toetatud"
+    "unsupportedCardErrorText": "Kaardibränd ei ole toetatud",
+    "selectCardBrand": "Valige kaardi bränd"
 }

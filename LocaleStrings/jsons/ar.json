@@ -170,5 +170,6 @@
   "cardTermsPart1": "من خلال تقديم معلومات بطاقتك ، فإنك تسمح لـ",
   "cardTermsPart2": "بشحن بطاقتك للمدفوعات المستقبلية وفقًا لشروطها.",
   "useExisitingSavedCardsWeb": "استخدم البطاقات المحفوظة الموجودة",
-  "unsupportedCardErrorText":"لا يتم دعم ماركة البطاقة"
+  "unsupportedCardErrorText":"لا يتم دعم ماركة البطاقة",
+  "selectCardBrand": "حدد علامة تجارية للبطاقة"
 }
