@@ -79,7 +79,7 @@ let cardPatterns = [
   {
     issuer: "AmericanExpress",
     pattern: %re("/^3[47]/"),
-    cvcLength: [3, 4],
+    cvcLength: [4],
     length: [14, 15],
     maxCVCLength: 4,
     pincodeRequired: true,
