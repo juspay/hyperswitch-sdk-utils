@@ -94,7 +94,12 @@
           "America/Argentina/San_Juan",
           "America/Argentina/San_Luis",
           "America/Argentina/Tucuman",
-          "America/Argentina/Ushuaia"
+          "America/Argentina/Ushuaia",
+          "America/Buenos_Aires",
+          "America/Catamarca",
+          "America/Cordoba",
+          "America/Jujuy",
+          "America/Mendoza"
         ]
       },
       {
@@ -344,7 +349,8 @@
           "America/Vancouver",
           "America/Whitehorse",
           "America/Winnipeg",
-          "America/Yellowknife"
+          "America/Yellowknife",
+          "America/Coral_Harbour"
         ]
       },
       {
@@ -553,7 +559,8 @@
         "isoAlpha2": "ER",
         "value": "Eritrea",
         "timeZones": [
-          "Africa/Asmara"
+          "Africa/Asmara",
+          "Africa/Asmera"
         ]
       },
       {
@@ -588,7 +595,8 @@
         "isoAlpha2": "FO",
         "value": "Faroe Islands",
         "timeZones": [
-          "Atlantic/Faroe"
+          "Atlantic/Faroe",
+          "Atlantic/Faeroe"
         ]
       },
       {
@@ -685,7 +693,8 @@
           "America/Danmarkshavn",
           "America/Nuuk",
           "America/Scoresbysund",
-          "America/Thule"
+          "America/Thule",
+          "America/Godthab"
         ]
       },
       {
@@ -893,7 +902,8 @@
         "timeZones": [
           "Pacific/Enderbury",
           "Pacific/Kiritimati",
-          "Pacific/Tarawa"
+          "Pacific/Tarawa",
+          "Pacific/Kanton"
         ]
       },
       {
@@ -1096,7 +1106,9 @@
         "timeZones": [
           "Pacific/Chuuk",
           "Pacific/Kosrae",
-          "Pacific/Pohnpei"
+          "Pacific/Pohnpei",
+          "Pacific/Truk",
+          "Pacific/Ponape"
         ]
       },
       {
@@ -1154,7 +1166,8 @@
         "isoAlpha2": "MM",
         "value": "Myanmar",
         "timeZones": [
-          "Asia/Yangon"
+          "Asia/Yangon",
+          "Asia/Rangoon"
         ]
       },
       {
@@ -1175,7 +1188,8 @@
         "isoAlpha2": "NP",
         "value": "Nepal",
         "timeZones": [
-          "Asia/Kathmandu"
+          "Asia/Kathmandu",
+          "Asia/Katmandu"
         ]
       },
       {
@@ -1777,7 +1791,8 @@
           "Europe/Kiev",
           "Europe/Simferopol",
           "Europe/Uzhgorod",
-          "Europe/Zaporozhye"
+          "Europe/Zaporozhye",
+          "Europe/Kyiv"
         ]
       },
       {
@@ -1826,7 +1841,9 @@
           "America/Phoenix",
           "America/Sitka",
           "America/Yakutat",
-          "Pacific/Honolulu"
+          "Pacific/Honolulu",
+          "America/Indianapolis",
+          "America/Louisville"
         ]
       },
       {
@@ -1877,7 +1894,8 @@
         "isoAlpha2": "VN",
         "value": "Vietnam",
         "timeZones": [
-          "Asia/Ho_Chi_Minh"
+          "Asia/Ho_Chi_Minh",
+          "Asia/Saigon"
         ]
       },
       {
