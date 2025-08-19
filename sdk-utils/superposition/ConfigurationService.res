@@ -11,10 +11,7 @@ type context = {
 
 @send external evaluateConfig: (configurationService, context) => resolvedConfig = "evaluateConfig"
 
-@val
-external fetch: string => Promise.t<'response> = "fetch"
-
-@send external json: 'response => Promise.t<JSON.t> = "json"
+let configData = %raw(`require('../../config.json')`)
 
 type t = {
   mutable cacClient: option<configurationService>,
@@ -31,19 +28,18 @@ let make = {
 }
 
 let initialize = (service): Promise.t<bool> => {
-  fetch("config.json")
-  ->then(res => res->json)
-  ->then(json => {
-    service.configData = Some(json)
-    let cacReader = %raw(`new (require("./superposition.js")).CacReader(json)`)
+  try {
+    service.configData = Some(configData)
+    let cacReader = %raw(`new (require("./superposition.js")).CacReader(configData)`)
     service.cacClient = Some(cacReader)
     Console.log("SuperpositionClient initialized successfully")
     resolve(true)
-  })
-  ->catch(_err => {
-    Console.error2("Error loading configuration:", _err)
-    resolve(false)
-  })
+  } catch {
+  | _err => {
+      Console.error2("Error loading configuration:", _err)
+      resolve(false)
+    }
+  }
 }
 
 let evaluateConfiguration = (service, context): option<resolvedConfig> => {
