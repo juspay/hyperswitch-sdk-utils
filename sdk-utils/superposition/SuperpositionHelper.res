@@ -1,114 +1,48 @@
 open CommonUtils
 open ConfigurationService
-type fieldConfig = {
-  name: string,
-  displayName: string,
-  fieldType: string,
-  required: bool,
-  options: array<string>,
-  outputPath: string,
-  defaultValue: string,
-  component?: string,
+open SuperpositionTypes
+
+@new external makeSet: unit => Js.t<'a> = "Set"
+@send external add: (Js.t<'a>, string) => unit = "add"
+@send external has: (Js.t<'a>, string) => bool = "has"
+
+let defaultFieldConfig = {
+  name: "",
+  displayName: "",
+  fieldType: TextInput,
+  required: false,
+  options: [],
+  mergedFields: [],
+  outputPath: "",
+  defaultValue: "",
+  component: Other,
 }
 
-let developmentContext: ConfigurationService.context = {
-  connector: "Airwallex",
+let developmentContext = {
+  eligibleConnectors: ["Stripe", "Adyen", "Cybersource", "Airwallex"],
   payment_method: "Card",
   payment_method_type: Some("Trustly"),
   country: Some("US"),
   mandate_type: Some("non_mandate"),
+  collect_shipping_details_from_wallet_connector: Some("required"),
+  collect_billing_details_from_wallet_connector: Some("required"),
 }
 
-let componentsRenderPriority = [
-  "card",
-  "billing",
-  "shipping",
-  "bank",
-  "wallet",
-  "crypto",
-  "upi",
-  "voucher",
-  "gift_card",
-  "mobile_payment",
-  "other",
-]
+let filterRequiredFields = fields => fields->Array.filter(field => field.required)
 
-let configInputTypes = [
-  "text_input",
-  "password_input",
-  "month_select",
-  "year_select",
-  "dropdown_select",
-  "country_select",
-  "email_input",
-  "phone_input",
-  "country_code_select",
-  "date_picker",
-  "currency_select",
-]
-
-let filterRequiredFields = (fields: array<fieldConfig>) => {
-  fields->Array.filter(field => field.required)
-}
-
-let determineComponent = (baseField: string): string => {
-  switch baseField {
-  | field if field->String.startsWith("card.") => "card"
-  | field if field->String.startsWith("billing.") => "billing"
-  | field if field->String.startsWith("shipping.") => "shipping"
-  | field
-    if field->String.startsWith("bank_debit.") ||
-    field->String.startsWith("bank_redirect.") ||
-    field->String.startsWith("bank_transfer.") => "bank"
-  | field if field->String.startsWith("wallet.") => "wallet"
-  | field if field->String.startsWith("crypto.") => "crypto"
-  | field if field->String.startsWith("upi.") => "upi"
-  | field if field->String.startsWith("voucher.") => "voucher"
-  | field if field->String.startsWith("gift_card.") => "gift_card"
-  | field if field->String.startsWith("mobile_payment.") => "mobile_payment"
-  | field if field->String.startsWith("order_details.") => "other"
-  | "email" => "billing"
-  | _ => "other"
-  }
-}
-
-let extractFieldFromConfig = (key: string, value: JSON.t): option<fieldConfig> => {
-  switch value->JSON.Classify.classify {
-  | Object(dict) => {
-      let name = key
-      let displayName = dict->getString("display_name", key)
-      let fieldType = dict->getString("field_type", "")
-      let required = dict->getBool("required", false)
-      let options = dict->getStrArray("options")
-      let outputPath = dict->getString("output_path", key)
-      let defaultValue = dict->getString("default_value", "")
-
-      Some({
-        name,
-        displayName,
-        fieldType,
-        required,
-        options,
-        outputPath,
-        defaultValue,
-      })
-    }
-  | _ => None
-  }
-}
-
-let getFieldNameFromOutputPath = (outputPath: string): string => {
+let getFieldNameFromOutputPath = (outputPath, ~level=1) => {
   let parts = outputPath->String.split(".")
   if parts->Array.length > 0 {
-    parts->Array.get(parts->Array.length - 1)->Option.getOr("")
+    parts->Array.get(parts->Array.length - level)->Option.getOr("")
   } else {
     ""
   }
 }
 
-let parseResolvedConfigToFields = (resolvedConfig: ConfigurationService.resolvedConfig): array<
-  fieldConfig,
-> => {
+let getParentPathFromOutputPath = outputPath =>
+  outputPath->String.split(".")->Array.slice(~start=0, ~end=-1)->Array.join(".")
+
+let parseResolvedConfigToFields = resolvedConfig => {
   let fieldGroups = Dict.make()
 
   resolvedConfig
@@ -135,25 +69,19 @@ let parseResolvedConfigToFields = (resolvedConfig: ConfigurationService.resolved
   fieldGroups
   ->Dict.toArray
   ->Array.map(((baseName, metadata)) => {
-    let displayName =
-      metadata->Dict.get("display_name")->Option.flatMap(JSON.Decode.string)->Option.getOr(baseName)
-    let fieldType =
-      metadata->Dict.get("field_type")->Option.flatMap(JSON.Decode.string)->Option.getOr("")
-    let required =
-      metadata->Dict.get("required")->Option.flatMap(JSON.Decode.bool)->Option.getOr(false)
-    let outputPath =
-      metadata->Dict.get("output_path")->Option.flatMap(JSON.Decode.string)->Option.getOr(baseName)
-    let defaultValue =
-      metadata->Dict.get("default_value")->Option.flatMap(JSON.Decode.string)->Option.getOr("")
+    let displayName = metadata->getString("display_name", baseName)
+    let fieldType = metadata->getString("field_type", "")
+    let required = metadata->getBool("required", false)
+    let outputPath = metadata->getString("output_path", baseName)
+    let defaultValue = metadata->getString("default_value", "")
     let options =
       metadata
-      ->Dict.get("options")
-      ->Option.flatMap(JSON.Decode.array)
+      ->getOptionalArrayFromDict("options")
       ->Option.flatMap(arr =>
         arr
         ->Array.map(JSON.Decode.string)
         ->Array.filter(Option.isSome)
-        ->Array.map(opt => opt->Option.getExn)
+        ->Array.map(opt => opt->Option.getOr(""))
         ->Some
       )
       ->Option.getOr([])
@@ -161,44 +89,162 @@ let parseResolvedConfigToFields = (resolvedConfig: ConfigurationService.resolved
     {
       name: baseName,
       displayName,
-      fieldType,
+      fieldType: stringToFieldType(fieldType),
       required,
       options,
       outputPath,
       defaultValue,
-      component: determineComponent(baseName),
+      component: determineComponentFromField(baseName),
+      mergedFields: [],
     }
   })
 }
 
-let initSuperpositionAndGetRequiredFields = async () => {
+let mergeFields = (fields, fieldsToMerge, outputName, displayName, ~parent="") => {
+  let foundFields =
+    fieldsToMerge->Array.map(fieldName =>
+      fields->Array.find(field => getFieldNameFromOutputPath(field.outputPath) === fieldName)
+    )
+
+  let allFieldsFound = foundFields->Array.every(field => field->Option.isSome)
+  let hasSameParent = foundFields->Array.every(field =>
+    switch field {
+    | Some(f) => parent === "" || f.outputPath->getFieldNameFromOutputPath(~level=2) === parent
+    | None => false
+    }
+  )
+
+  if allFieldsFound && hasSameParent {
+    let baseField = foundFields->Array.get(0)->Option.flatMap(x => x)->Option.getExn
+
+    let mergedField = {
+      ...baseField,
+      name: baseField.name->getParentPathFromOutputPath ++ "." ++ outputName,
+      displayName,
+      outputPath: baseField.outputPath->getParentPathFromOutputPath ++ "." ++ outputName,
+      mergedFields: foundFields->Array.map(f => f->Option.getOr(defaultFieldConfig)),
+    }
+
+    fields
+    ->Array.filter(field => {
+      let fieldName = getFieldNameFromOutputPath(field.outputPath)
+      !(fieldsToMerge->Array.some(mergeFieldName => mergeFieldName === fieldName))
+    })
+    ->Array.concat([mergedField])
+  } else {
+    fields
+  }
+}
+
+let sortFields = (fields, componentType) => {
+  let getFieldPriority = (field: fieldConfig): int => {
+    let fieldName = getFieldNameFromOutputPath(field.outputPath)
+    switch componentType {
+    | Card =>
+      let cardField = stringToCardFieldName(fieldName)
+      getCardFieldPriority(cardField)
+    | Shipping
+    | Billing =>
+      let addressField = stringToAddressFieldName(fieldName)
+      getAddressFieldPriority(addressField)
+    | _ => 2
+    }
+  }
+
+  fields->Array.toSorted((a, b) => {
+    let priorityA = getFieldPriority(a)
+    let priorityB = getFieldPriority(b)
+    Belt.Int.toFloat(priorityA - priorityB)
+  })
+}
+
+let getCombinedRequiredFieldsFromAllConnectors = contextWithConnectorArray => {
+  let combinedRequiredFieldsFromAllConnectors = []
+  let {
+    eligibleConnectors,
+    payment_method,
+    payment_method_type,
+    country,
+    mandate_type,
+    collect_shipping_details_from_wallet_connector,
+    collect_billing_details_from_wallet_connector,
+  } = contextWithConnectorArray
+  eligibleConnectors->Array.forEach(connector => {
+    let resolvedConfig = configurationService->evaluateConfiguration({
+      connector,
+      payment_method,
+      payment_method_type,
+      country,
+      mandate_type,
+      collect_shipping_details_from_wallet_connector,
+      collect_billing_details_from_wallet_connector,
+    })
+    let fields = resolvedConfig->Option.map(parseResolvedConfigToFields)
+    let requiredFields = fields->Option.map(filterRequiredFields)
+    // let requiredFields = fields
+    let _ =
+      requiredFields->Option.map(fields =>
+        fields->Array.forEach(field => combinedRequiredFieldsFromAllConnectors->Array.push(field))
+      )
+  })
+  combinedRequiredFieldsFromAllConnectors
+}
+
+let groupFieldsByComponentAndSortByPriority = fields => {
+  let fieldsByComponent = Dict.make()
+
+  fields->Array.forEach(field => {
+    let component =
+      field.component
+      ->Option.getOr(Other)
+      ->componentTypeToString
+    let existingFields = fieldsByComponent->Dict.get(component)->Option.getOr([])
+    fieldsByComponent->Dict.set(component, Array.concat(existingFields, [field]))
+  })
+
+  Some(
+    componentsRenderPriorityEnum
+    ->Array.map(componentType => {
+      let componentName = componentTypeToString(componentType)
+      let componentFields = fieldsByComponent->Dict.get(componentName)->Option.getOr([])
+      (componentName, componentFields)
+    })
+    ->Array.filter(((_, fields)) => Array.length(fields) > 0),
+  )
+}
+
+let removeDuplicateByOutputPath = fields => {
+  let seen = makeSet()
+
+  fields->Array.filter(f =>
+    if has(seen, f.outputPath) {
+      false
+    } else {
+      add(seen, f.outputPath)
+      true
+    }
+  )
+}
+
+let initSuperpositionAndGetRequiredFields = async (~contextWithConnectorArray) => {
   try {
-    let res = await configurationService->initialize
+    let res = if configurationService->isInitialized {
+      true
+    } else {
+      await configurationService->initialize
+    }
     if res {
-      let resolvedConfig = configurationService->evaluateConfiguration(developmentContext)
-      let fields = resolvedConfig->Option.map(parseResolvedConfigToFields)
-      let requiredFields = fields->Option.map(filterRequiredFields)
-      // let requiredFields = fields
-      switch requiredFields {
-      | Some(fields) => {
-          let fieldsByComponent = Dict.make()
+      // let combinedRequiredFields = developmentContext->getCombinedRequiredFieldsFromAllConnectors
 
-          fields->Array.forEach(field => {
-            let component = field.component->Option.getOr("other")
-            let existingFields = fieldsByComponent->Dict.get(component)->Option.getOr([])
-            fieldsByComponent->Dict.set(component, Array.concat(existingFields, [field]))
-          })
+      let combinedRequiredFields =
+        contextWithConnectorArray->getCombinedRequiredFieldsFromAllConnectors
 
-          Some(
-            componentsRenderPriority
-            ->Array.map(componentName => {
-              let componentFields = fieldsByComponent->Dict.get(componentName)->Option.getOr([])
-              (componentName, componentFields)
-            })
-            ->Array.filter(((_, fields)) => Array.length(fields) > 0),
-          )
-        }
-      | None => None
+      if combinedRequiredFields->Array.length > 0 {
+        combinedRequiredFields
+        ->removeDuplicateByOutputPath
+        ->groupFieldsByComponentAndSortByPriority
+      } else {
+        None
       }
     } else {
       Console.error("Configuration not initialized, cannot get required fields")

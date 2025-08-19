@@ -112,3 +112,16 @@ let convertDictToArrayOfKeyStringTuples = dict => {
     (x, val->JSON.Decode.string->Option.getOr(""))
   })
 }
+
+let getStringFromOptionalJson = (json, default) => {
+  json->Option.flatMap(JSON.Decode.string)->Option.getOr(default)
+}
+
+let snakeToPascalCase = str => {
+  let words = str->String.split("_")
+  words
+  ->Array.map(item => {
+    item->String.charAt(0)->String.toUpperCase ++ item->String.sliceToEnd(~start=1)
+  })
+  ->Array.join("")
+}

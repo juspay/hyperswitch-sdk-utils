@@ -12,7 +12,7 @@ type fieldRenderPropsCustomInput<'t> = {
   onBlur: ReactEvent.Focus.t => unit,
   onChange: 't => unit,
   onFocus: ReactEvent.Focus.t => unit,
-  value: JSON.t,
+  value: 't,
   checked: bool,
 }
 
