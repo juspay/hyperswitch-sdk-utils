@@ -67,7 +67,7 @@ let determineComponent = (baseField: string): string => {
   | field if field->String.startsWith("gift_card.") => "gift_card"
   | field if field->String.startsWith("mobile_payment.") => "mobile_payment"
   | field if field->String.startsWith("order_details.") => "other"
-  | "email" => "billing"
+  | "email"
   | _ => "other"
   }
 }
@@ -177,8 +177,8 @@ let initSuperpositionAndGetRequiredFields = async () => {
     if res {
       let resolvedConfig = configurationService->evaluateConfiguration(developmentContext)
       let fields = resolvedConfig->Option.map(parseResolvedConfigToFields)
-      let requiredFields = fields->Option.map(filterRequiredFields)
-      //   let requiredFields = fields
+      // let requiredFields = fields->Option.map(filterRequiredFields)
+      let requiredFields = fields
       switch requiredFields {
       | Some(fields) => {
           let fieldsByComponent = Dict.make()
