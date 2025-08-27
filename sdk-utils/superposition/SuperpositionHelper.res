@@ -33,6 +33,33 @@ let componentsRenderPriority = [
   "other",
 ]
 
+let cardFieldsPriority = [
+  "card_number_network_merged",
+  "card_number",
+  "card_network",
+  "card_expiry_cvc_merged",
+  "card_exp_month",
+  "card_exp_year",
+  "card_cvc",
+]
+
+let addressFieldsPriority = [
+  "full_name",
+  "first_name",
+  "last_name",
+  "email",
+  "phone_number_with_country_code",
+  "country_code",
+  "number",
+  "line1",
+  "line2",
+  "line3",
+  "city",
+  "zip",
+  "state",
+  "country",
+]
+
 let configInputTypes = [
   "text_input",
   "password_input",
@@ -97,14 +124,17 @@ let extractFieldFromConfig = (key: string, value: JSON.t): option<fieldConfig> =
   }
 }
 
-let getFieldNameFromOutputPath = (outputPath: string): string => {
+let getFieldNameFromOutputPath = (outputPath, ~level=1) => {
   let parts = outputPath->String.split(".")
   if parts->Array.length > 0 {
-    parts->Array.get(parts->Array.length - 1)->Option.getOr("")
+    parts->Array.get(parts->Array.length - level)->Option.getOr("")
   } else {
     ""
   }
 }
+
+let getParentPathFromOutputPath = outputPath =>
+  outputPath->String.split(".")->Array.slice(~start=0, ~end=-1)->Array.join(".")
 
 let parseResolvedConfigToFields = (resolvedConfig: ConfigurationService.resolvedConfig): array<
   fieldConfig,
@@ -171,9 +201,72 @@ let parseResolvedConfigToFields = (resolvedConfig: ConfigurationService.resolved
   })
 }
 
+let mergeFields = (fields, fieldsToMerge, outputName, displayName, ~parent="") => {
+  let foundFields =
+    fieldsToMerge->Array.map(fieldName =>
+      fields->Array.find(field => getFieldNameFromOutputPath(field.outputPath) === fieldName)
+    )
+
+  let allFieldsFound = foundFields->Array.every(field => field->Option.isSome)
+  let hasSameParent = foundFields->Array.every(field =>
+    switch field {
+    | Some(f) => parent === "" || f.outputPath->getFieldNameFromOutputPath(~level=2) === parent
+    | None => false
+    }
+  )
+
+  if allFieldsFound && hasSameParent {
+    let baseField = foundFields->Array.get(0)->Option.flatMap(x => x)->Option.getExn
+
+    let mergedField = {
+      ...baseField,
+      name: baseField.name->getParentPathFromOutputPath ++ "." ++ outputName,
+      displayName,
+      outputPath: baseField.outputPath->getParentPathFromOutputPath ++ "." ++ outputName,
+    }
+
+    fields
+    ->Array.filter(field => {
+      let fieldName = getFieldNameFromOutputPath(field.outputPath)
+      !(fieldsToMerge->Array.some(mergeFieldName => mergeFieldName === fieldName))
+    })
+    ->Array.concat([mergedField])
+  } else {
+    fields
+  }
+}
+
+let getPriority = (~priorityArray, ~fieldName) => {
+  let index = priorityArray->Array.findIndex(name => name === fieldName)
+  index === -1 ? priorityArray->Array.length + 1 : index + 1
+}
+
+let sortFields = (fields, componentName) => {
+  let getFieldPriority = (field: fieldConfig): int => {
+    let fieldName = getFieldNameFromOutputPath(field.outputPath)
+    switch componentName {
+    | "card" => getPriority(~priorityArray=cardFieldsPriority, ~fieldName)
+    | "shipping"
+    | "billing" =>
+      getPriority(~priorityArray=addressFieldsPriority, ~fieldName)
+    | _ => 2
+    }
+  }
+
+  fields->Array.toSorted((a, b) => {
+    let priorityA = getFieldPriority(a)
+    let priorityB = getFieldPriority(b)
+    Belt.Int.toFloat(priorityA - priorityB)
+  })
+}
+
 let initSuperpositionAndGetRequiredFields = async () => {
   try {
-    let res = await configurationService->initialize
+    let res = if configurationService->isInitialized {
+      true
+    } else {
+      await configurationService->initialize
+    }
     if res {
       let resolvedConfig = configurationService->evaluateConfiguration(developmentContext)
       let fields = resolvedConfig->Option.map(parseResolvedConfigToFields)
