@@ -251,7 +251,7 @@ let sortFields = (fields, componentName) => {
   })
 }
 
-let initSuperpositionAndGetRequiredFields = async () => {
+let initSuperpositionAndGetRequiredFields = async (~context=developmentContext) => {
   try {
     let res = if configurationService->isInitialized {
       true
@@ -259,10 +259,10 @@ let initSuperpositionAndGetRequiredFields = async () => {
       await configurationService->initialize
     }
     if res {
-      let resolvedConfig = configurationService->evaluateConfiguration(developmentContext)
+      let resolvedConfig = configurationService->evaluateConfiguration(context)
       let fields = resolvedConfig->Option.map(parseResolvedConfigToFields)
-      // let requiredFields = fields->Option.map(filterRequiredFields)
-      let requiredFields = fields
+      let requiredFields = fields->Option.map(filterRequiredFields)
+      // let requiredFields = fields
       switch requiredFields {
       | Some(fields) => {
           let fieldsByComponent = Dict.make()
