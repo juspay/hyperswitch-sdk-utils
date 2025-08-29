@@ -1,14 +1,27 @@
 open CommonUtils
 open ConfigurationService
-type fieldConfig = {
+type rec fieldConfig = {
   name: string,
   displayName: string,
   fieldType: string,
   required: bool,
   options: array<string>,
+  mergedFields: array<fieldConfig>,
   outputPath: string,
   defaultValue: string,
   component?: string,
+}
+
+let defaultFieldConfig = {
+  name: "",
+  displayName: "",
+  fieldType: "",
+  required: false,
+  options: [],
+  mergedFields: [],
+  outputPath: "",
+  defaultValue: "",
+  component: "",
 }
 
 let developmentContext: ConfigurationService.context = {
@@ -56,6 +69,7 @@ let addressFieldsPriority = [
   "line3",
   "city",
   "zip",
+  "city_state_merged",
   "state",
   "country",
 ]
@@ -96,31 +110,6 @@ let determineComponent = (baseField: string): string => {
   | field if field->String.startsWith("order_details.") => "other"
   | "email"
   | _ => "other"
-  }
-}
-
-let extractFieldFromConfig = (key: string, value: JSON.t): option<fieldConfig> => {
-  switch value->JSON.Classify.classify {
-  | Object(dict) => {
-      let name = key
-      let displayName = dict->getString("display_name", key)
-      let fieldType = dict->getString("field_type", "")
-      let required = dict->getBool("required", false)
-      let options = dict->getStrArray("options")
-      let outputPath = dict->getString("output_path", key)
-      let defaultValue = dict->getString("default_value", "")
-
-      Some({
-        name,
-        displayName,
-        fieldType,
-        required,
-        options,
-        outputPath,
-        defaultValue,
-      })
-    }
-  | _ => None
   }
 }
 
@@ -197,6 +186,7 @@ let parseResolvedConfigToFields = (resolvedConfig: ConfigurationService.resolved
       outputPath,
       defaultValue,
       component: determineComponent(baseName),
+      mergedFields: [],
     }
   })
 }
@@ -223,6 +213,7 @@ let mergeFields = (fields, fieldsToMerge, outputName, displayName, ~parent="") =
       name: baseField.name->getParentPathFromOutputPath ++ "." ++ outputName,
       displayName,
       outputPath: baseField.outputPath->getParentPathFromOutputPath ++ "." ++ outputName,
+      mergedFields: foundFields->Array.map(f => f->Option.getOr(defaultFieldConfig)),
     }
 
     fields
