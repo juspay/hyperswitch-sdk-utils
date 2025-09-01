@@ -259,7 +259,9 @@ let initSuperpositionAndGetRequiredFields = async (~context=developmentContext) 
       await configurationService->initialize
     }
     if res {
+      let x = ["a", "b", "c", "d"]
       let resolvedConfig = configurationService->evaluateConfiguration(context)
+      Console.log2("Resolved Configuration:", resolvedConfig)
       let fields = resolvedConfig->Option.map(parseResolvedConfigToFields)
       let requiredFields = fields->Option.map(filterRequiredFields)
       // let requiredFields = fields
