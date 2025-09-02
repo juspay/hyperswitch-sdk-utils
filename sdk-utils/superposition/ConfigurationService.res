@@ -1,6 +1,7 @@
 open Promise
 type configurationService
 type resolvedConfig = Dict.t<JSON.t>
+
 type context = {
   connector: string,
   payment_method: string,
@@ -49,9 +50,8 @@ let evaluateConfiguration = (service, context): option<resolvedConfig> => {
     None
   | Some(client) =>
     try {
-      Console.log("Evaluating context:")
       let resolvedConfig = client->evaluateConfig(context)
-      Console.log("Resolved config:")
+      Console.log2("Context", context) // Debug log
       Some(resolvedConfig)
     } catch {
     | e =>

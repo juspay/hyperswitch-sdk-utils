@@ -1,5 +1,11 @@
 open CommonUtils
 open ConfigurationService
+
+// JS Set bindings
+@new external makeSet: unit => Js.t<'a> = "Set"
+@send external add: (Js.t<'a>, string) => unit = "add"
+@send external has: (Js.t<'a>, string) => bool = "has"
+
 type rec fieldConfig = {
   name: string,
   displayName: string,
@@ -24,8 +30,16 @@ let defaultFieldConfig = {
   component: "",
 }
 
-let developmentContext: ConfigurationService.context = {
-  connector: "Airwallex",
+type connectorArrayContext = {
+  eligibleConnectors: array<string>,
+  payment_method: string,
+  payment_method_type: option<string>,
+  country: option<string>,
+  mandate_type: option<string>,
+}
+
+let developmentContext = {
+  eligibleConnectors: ["Stripe", "Adyen", "Cybersource", "Airwallex"],
   payment_method: "Card",
   payment_method_type: Some("Trustly"),
   country: Some("US"),
@@ -251,7 +265,67 @@ let sortFields = (fields, componentName) => {
   })
 }
 
-let initSuperpositionAndGetRequiredFields = async (~context=developmentContext) => {
+let getCombinedRequiredFieldsFromAllConnectors = contextWithConnectorArray => {
+  let combinedRequiredFieldsFromAllConnectors = []
+  let {
+    eligibleConnectors,
+    payment_method,
+    payment_method_type,
+    country,
+    mandate_type,
+  } = contextWithConnectorArray
+  eligibleConnectors->Array.forEach(connector => {
+    let resolvedConfig = configurationService->evaluateConfiguration({
+      connector,
+      payment_method,
+      payment_method_type,
+      country,
+      mandate_type,
+    })
+    let fields = resolvedConfig->Option.map(parseResolvedConfigToFields)
+    let requiredFields = fields->Option.map(filterRequiredFields)
+    // let requiredFields = fields
+    let _ =
+      requiredFields->Option.map(fields =>
+        fields->Array.forEach(field => combinedRequiredFieldsFromAllConnectors->Array.push(field))
+      )
+  })
+  combinedRequiredFieldsFromAllConnectors
+}
+
+let groupFieldsByComponentAndSortByPriority = (fields: array<fieldConfig>) => {
+  let fieldsByComponent = Dict.make()
+
+  fields->Array.forEach(field => {
+    let component = field.component->Option.getOr("other")
+    let existingFields = fieldsByComponent->Dict.get(component)->Option.getOr([])
+    fieldsByComponent->Dict.set(component, Array.concat(existingFields, [field]))
+  })
+
+  Some(
+    componentsRenderPriority
+    ->Array.map(componentName => {
+      let componentFields = fieldsByComponent->Dict.get(componentName)->Option.getOr([])
+      (componentName, componentFields)
+    })
+    ->Array.filter(((_, fields)) => Array.length(fields) > 0),
+  )
+}
+
+let removeDuplicateByOutputPath = (fields: array<fieldConfig>): array<fieldConfig> => {
+  let seen = makeSet()
+
+  fields->Array.filter(f =>
+    if has(seen, f.outputPath) {
+      false
+    } else {
+      add(seen, f.outputPath)
+      true
+    }
+  )
+}
+
+let initSuperpositionAndGetRequiredFields = async (~contextWithConnectorArray) => {
   try {
     let res = if configurationService->isInitialized {
       true
@@ -259,32 +333,19 @@ let initSuperpositionAndGetRequiredFields = async (~context=developmentContext) 
       await configurationService->initialize
     }
     if res {
-      let x = ["a", "b", "c", "d"]
-      let resolvedConfig = configurationService->evaluateConfiguration(context)
-      Console.log2("Resolved Configuration:", resolvedConfig)
-      let fields = resolvedConfig->Option.map(parseResolvedConfigToFields)
-      let requiredFields = fields->Option.map(filterRequiredFields)
-      // let requiredFields = fields
-      switch requiredFields {
-      | Some(fields) => {
-          let fieldsByComponent = Dict.make()
+      // let combinedRequiredFields = developmentContext->getCombinedRequiredFieldsFromAllConnectors
 
-          fields->Array.forEach(field => {
-            let component = field.component->Option.getOr("other")
-            let existingFields = fieldsByComponent->Dict.get(component)->Option.getOr([])
-            fieldsByComponent->Dict.set(component, Array.concat(existingFields, [field]))
-          })
+      let combinedRequiredFields =
+        contextWithConnectorArray->getCombinedRequiredFieldsFromAllConnectors
 
-          Some(
-            componentsRenderPriority
-            ->Array.map(componentName => {
-              let componentFields = fieldsByComponent->Dict.get(componentName)->Option.getOr([])
-              (componentName, componentFields)
-            })
-            ->Array.filter(((_, fields)) => Array.length(fields) > 0),
-          )
-        }
-      | None => None
+      if combinedRequiredFields->Array.length > 0 {
+        let grouppedRequiredFields =
+          combinedRequiredFields
+          ->removeDuplicateByOutputPath
+          ->groupFieldsByComponentAndSortByPriority
+        grouppedRequiredFields
+      } else {
+        None
       }
     } else {
       Console.error("Configuration not initialized, cannot get required fields")
