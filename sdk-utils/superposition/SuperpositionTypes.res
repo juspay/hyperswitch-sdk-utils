@@ -271,7 +271,7 @@ let componentsRenderPriorityEnum = [
   Other,
 ]
 
-let cardFieldsPriorityEnum = [
+let cardFieldsPriorityArray = [
   CardNumberNetworkMerged,
   CardNumber,
   CardNetwork,
@@ -282,7 +282,7 @@ let cardFieldsPriorityEnum = [
   Other,
 ]
 
-let addressFieldsPriorityEnum = [
+let addressFieldsPriorityArray = [
   FullName,
   FirstName,
   LastName,
@@ -300,44 +300,3 @@ let addressFieldsPriorityEnum = [
   Country,
   Other,
 ]
-
-let determineComponentFromField = (baseField: string): componentType => {
-  switch baseField {
-  | field if field->String.startsWith("card.") => Card
-  | field if field->String.startsWith("billing.") => Billing
-  | field if field->String.startsWith("shipping.") => Shipping
-  | field
-    if field->String.startsWith("bank_debit.") ||
-    field->String.startsWith("bank_redirect.") ||
-    field->String.startsWith("bank_transfer.") =>
-    Bank
-  | field if field->String.startsWith("wallet.") => Wallet
-  | field if field->String.startsWith("crypto.") => Crypto
-  | field if field->String.startsWith("upi.") => Upi
-  | field if field->String.startsWith("voucher.") => Voucher
-  | field if field->String.startsWith("gift_card.") => GiftCard
-  | field if field->String.startsWith("mobile_payment.") => MobilePayment
-  | field if field->String.startsWith("order_details.") => Other
-  | "email" => Other
-  | _ => Other
-  }
-}
-
-let getFieldPriority = (
-  ~priorityArray: array<'a>,
-  ~fieldName: 'a,
-  ~compareFn: ('a, 'a) => bool,
-): int => {
-  let index = priorityArray->Array.findIndex(name => compareFn(name, fieldName))
-  index === -1 ? priorityArray->Array.length + 1 : index + 1
-}
-
-let getCardFieldPriority = (fieldName): int => {
-  getFieldPriority(~priorityArray=cardFieldsPriorityEnum, ~fieldName, ~compareFn=(a, b) => a === b)
-}
-
-let getAddressFieldPriority = fieldName => {
-  getFieldPriority(~priorityArray=addressFieldsPriorityEnum, ~fieldName, ~compareFn=(a, b) =>
-    a === b
-  )
-}

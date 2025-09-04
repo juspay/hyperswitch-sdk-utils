@@ -18,15 +18,15 @@ let defaultFieldConfig = {
   component: Other,
 }
 
-let developmentContext = {
-  eligibleConnectors: ["Stripe", "Adyen", "Cybersource", "Airwallex"],
-  payment_method: "Card",
-  payment_method_type: Some("Trustly"),
-  country: Some("US"),
-  mandate_type: Some("non_mandate"),
-  collect_shipping_details_from_wallet_connector: Some("required"),
-  collect_billing_details_from_wallet_connector: Some("required"),
-}
+// let developmentContext = {
+//   eligibleConnectors: ["Stripe", "Adyen", "Cybersource", "Airwallex"],
+//   payment_method: "Card",
+//   payment_method_type: Some("Trustly"),
+//   country: Some("US"),
+//   mandate_type: Some("non_mandate"),
+//   collect_shipping_details_from_wallet_connector: Some("required"),
+//   collect_billing_details_from_wallet_connector: Some("required"),
+// }
 
 let filterRequiredFields = fields => fields->Array.filter(field => field.required)
 
@@ -41,6 +41,33 @@ let getFieldNameFromOutputPath = (outputPath, ~level=1) => {
 
 let getParentPathFromOutputPath = outputPath =>
   outputPath->String.split(".")->Array.slice(~start=0, ~end=-1)->Array.join(".")
+
+let determineComponentFromField = (baseField: string): componentType => {
+  switch baseField {
+  | field if field->String.startsWith("card.") => Card
+  | field if field->String.startsWith("billing.") => Billing
+  | field if field->String.startsWith("shipping.") => Shipping
+  | field
+    if field->String.startsWith("bank_debit.") ||
+    field->String.startsWith("bank_redirect.") ||
+    field->String.startsWith("bank_transfer.") =>
+    Bank
+  | field if field->String.startsWith("wallet.") => Wallet
+  | field if field->String.startsWith("crypto.") => Crypto
+  | field if field->String.startsWith("upi.") => Upi
+  | field if field->String.startsWith("voucher.") => Voucher
+  | field if field->String.startsWith("gift_card.") => GiftCard
+  | field if field->String.startsWith("mobile_payment.") => MobilePayment
+  | field if field->String.startsWith("order_details.") => Other
+  | "email" => Other
+  | _ => Other
+  }
+}
+
+let getFieldPriority = (~priorityArray, ~fieldName) => {
+  let index = priorityArray->Array.findIndex(name => name === fieldName)
+  index === -1 ? priorityArray->Array.length + 1 : index + 1
+}
 
 let parseResolvedConfigToFields = resolvedConfig => {
   let fieldGroups = Dict.make()
@@ -142,11 +169,11 @@ let sortFields = (fields, componentType) => {
     switch componentType {
     | Card =>
       let cardField = stringToCardFieldName(fieldName)
-      getCardFieldPriority(cardField)
+      getFieldPriority(~priorityArray=cardFieldsPriorityArray, ~fieldName=cardField)
     | Shipping
     | Billing =>
       let addressField = stringToAddressFieldName(fieldName)
-      getAddressFieldPriority(addressField)
+      getFieldPriority(~priorityArray=addressFieldsPriorityArray, ~fieldName=addressField)
     | _ => 2
     }
   }
@@ -154,7 +181,7 @@ let sortFields = (fields, componentType) => {
   fields->Array.toSorted((a, b) => {
     let priorityA = getFieldPriority(a)
     let priorityB = getFieldPriority(b)
-    Belt.Int.toFloat(priorityA - priorityB)
+    Int.toFloat(priorityA - priorityB)
   })
 }
 
@@ -181,7 +208,6 @@ let getCombinedRequiredFieldsFromAllConnectors = contextWithConnectorArray => {
     })
     let fields = resolvedConfig->Option.map(parseResolvedConfigToFields)
     let requiredFields = fields->Option.map(filterRequiredFields)
-    // let requiredFields = fields
     let _ =
       requiredFields->Option.map(fields =>
         fields->Array.forEach(field => combinedRequiredFieldsFromAllConnectors->Array.push(field))
@@ -234,8 +260,6 @@ let initSuperpositionAndGetRequiredFields = async (~contextWithConnectorArray) =
       await configurationService->initialize
     }
     if res {
-      // let combinedRequiredFields = developmentContext->getCombinedRequiredFieldsFromAllConnectors
-
       let combinedRequiredFields =
         contextWithConnectorArray->getCombinedRequiredFieldsFromAllConnectors
 
