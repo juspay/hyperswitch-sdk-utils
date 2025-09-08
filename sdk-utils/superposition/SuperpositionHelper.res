@@ -1,46 +1,11 @@
 open CommonUtils
-open ConfigurationService
 open SuperpositionTypes
 
 @new external makeSet: unit => Js.t<'a> = "Set"
 @send external add: (Js.t<'a>, string) => unit = "add"
 @send external has: (Js.t<'a>, string) => bool = "has"
 
-let defaultFieldConfig = {
-  name: "",
-  displayName: "",
-  fieldType: TextInput,
-  required: false,
-  options: [],
-  mergedFields: [],
-  outputPath: "",
-  defaultValue: "",
-  component: Other,
-}
-
-// let developmentContext = {
-//   eligibleConnectors: ["Stripe", "Adyen", "Cybersource", "Airwallex"],
-//   payment_method: "Card",
-//   payment_method_type: Some("Trustly"),
-//   country: Some("US"),
-//   mandate_type: Some("non_mandate"),
-//   collect_shipping_details_from_wallet_connector: Some("required"),
-//   collect_billing_details_from_wallet_connector: Some("required"),
-// }
-
-let filterRequiredFields = fields => fields->Array.filter(field => field.required)
-
-let getFieldNameFromOutputPath = (outputPath, ~level=1) => {
-  let parts = outputPath->String.split(".")
-  if parts->Array.length > 0 {
-    parts->Array.get(parts->Array.length - level)->Option.getOr("")
-  } else {
-    ""
-  }
-}
-
-let getParentPathFromOutputPath = outputPath =>
-  outputPath->String.split(".")->Array.slice(~start=0, ~end=-1)->Array.join(".")
+type configurationService = {evaluateConfig: SuperpositionTypes.superpositionContext => Dict.t<JSON.t>}
 
 let determineComponentFromField = (baseField: string): componentType => {
   switch baseField {
@@ -100,7 +65,6 @@ let parseResolvedConfigToFields = resolvedConfig => {
     let fieldType = metadata->getString("field_type", "")
     let required = metadata->getBool("required", false)
     let outputPath = metadata->getString("output_path", baseName)
-    let defaultValue = metadata->getString("default_value", "")
     let options =
       metadata
       ->getOptionalArrayFromDict("options")
@@ -120,12 +84,34 @@ let parseResolvedConfigToFields = resolvedConfig => {
       required,
       options,
       outputPath,
-      defaultValue,
       component: determineComponentFromField(baseName),
       mergedFields: [],
     }
   })
 }
+
+let getFieldNameFromOutputPath = (outputPath, ~level=1) => {
+  let parts = outputPath->String.split(".")
+  if parts->Array.length > 0 {
+    parts->Array.get(parts->Array.length - level)->Option.getOr("")
+  } else {
+    ""
+  }
+}
+
+let defaultFieldConfig = {
+  name: "",
+  displayName: "",
+  fieldType: TextInput,
+  required: false,
+  options: [],
+  mergedFields: [],
+  outputPath: "",
+  component: Other,
+}
+
+let getParentPathFromOutputPath = outputPath =>
+  outputPath->String.split(".")->Array.slice(~start=0, ~end=-1)->Array.join(".")
 
 let mergeFields = (fields, fieldsToMerge, outputName, displayName, ~parent="") => {
   let foundFields =
@@ -185,36 +171,7 @@ let sortFields = (fields, componentType) => {
   })
 }
 
-let getCombinedRequiredFieldsFromAllConnectors = contextWithConnectorArray => {
-  let combinedRequiredFieldsFromAllConnectors = []
-  let {
-    eligibleConnectors,
-    payment_method,
-    payment_method_type,
-    country,
-    mandate_type,
-    collect_shipping_details_from_wallet_connector,
-    collect_billing_details_from_wallet_connector,
-  } = contextWithConnectorArray
-  eligibleConnectors->Array.forEach(connector => {
-    let resolvedConfig = configurationService->evaluateConfiguration({
-      connector,
-      payment_method,
-      payment_method_type,
-      country,
-      mandate_type,
-      collect_shipping_details_from_wallet_connector,
-      collect_billing_details_from_wallet_connector,
-    })
-    let fields = resolvedConfig->Option.map(parseResolvedConfigToFields)
-    let requiredFields = fields->Option.map(filterRequiredFields)
-    let _ =
-      requiredFields->Option.map(fields =>
-        fields->Array.forEach(field => combinedRequiredFieldsFromAllConnectors->Array.push(field))
-      )
-  })
-  combinedRequiredFieldsFromAllConnectors
-}
+let filterRequiredFields = fields => fields->Array.filter(field => field.required)
 
 let groupFieldsByComponentAndSortByPriority = fields => {
   let fieldsByComponent = Dict.make()
@@ -250,33 +207,4 @@ let removeDuplicateByOutputPath = fields => {
       true
     }
   )
-}
-
-let initSuperpositionAndGetRequiredFields = async (~contextWithConnectorArray) => {
-  try {
-    let res = if configurationService->isInitialized {
-      true
-    } else {
-      await configurationService->initialize
-    }
-    if res {
-      let combinedRequiredFields =
-        contextWithConnectorArray->getCombinedRequiredFieldsFromAllConnectors
-
-      if combinedRequiredFields->Array.length > 0 {
-        combinedRequiredFields
-        ->removeDuplicateByOutputPath
-        ->groupFieldsByComponentAndSortByPriority
-      } else {
-        None
-      }
-    } else {
-      Console.error("Configuration not initialized, cannot get required fields")
-      None
-    }
-  } catch {
-  | err =>
-    Console.error2("Error evaluating configuration:", err)
-    None
-  }
 }

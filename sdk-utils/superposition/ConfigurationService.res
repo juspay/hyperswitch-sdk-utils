@@ -1,73 +1,84 @@
-open Promise
-type configurationService
-type resolvedConfig = Dict.t<JSON.t>
+open SuperpositionHelper
 
-type context = {
-  connector: string,
-  payment_method: string,
-  payment_method_type: option<string>,
-  country: option<string>,
-  mandate_type: option<string>,
-  collect_shipping_details_from_wallet_connector: option<string>,
-  collect_billing_details_from_wallet_connector: option<string>,
-}
+external importJSON: string => promise<JSON.t> = "import"
+@module("./superposition.js") @new
+external cacReader: JSON.t => Nullable.t<configurationService> = "CacReader"
 
-@send external evaluateConfig: (configurationService, context) => resolvedConfig = "evaluateConfig"
+let service = ref(None)
 
-let configData = %raw(`require('./config.json')`)
-
-type t = {
-  mutable cacClient: option<configurationService>,
-  mutable configData: option<JSON.t>,
-}
-
-type superpositionModule = {"CacReader": configurationService}
-
-let make = {
-  {
-    cacClient: None,
-    configData: None,
-  }
-}
-
-let initialize = (service): Promise.t<bool> => {
-  try {
-    service.configData = Some(configData)
-    let cacReader = %raw(`new (require("./superposition.js")).CacReader(configData)`)
-    service.cacClient = Some(cacReader)
-    resolve(true)
-  } catch {
-  | _err => {
-      Console.error2("Error loading configuration:", _err)
-      resolve(false)
+let useConfigurationService = () => {
+  React.useEffect0(() => {
+    let initializeService = async () => {
+      try {
+        let configData = await importJSON("./config.json")
+        let configService = cacReader(configData)->Nullable.toOption
+        service.contents = configService
+      } catch {
+      | _ex => ()
+      }
     }
-  }
-}
-
-let evaluateConfiguration = (service, context): option<resolvedConfig> => {
-  switch service.cacClient {
-  | None =>
-    Console.error("Configuration service not initialized")
+    if service.contents->Option.isNone {
+      initializeService()->ignore
+    }
     None
-  | Some(client) =>
-    try {
-      let resolvedConfig = client->evaluateConfig(context)
-      Some(resolvedConfig)
-    } catch {
-    | e =>
-      Console.error2("Error evaluating configuration:", e)
-      None
+  })
+
+  let getResolvedConfig = (context: SuperpositionTypes.superpositionContext) => {
+    switch service.contents {
+    | None => None
+    | Some(svc) =>
+      try {
+        let newContext = {
+          ...context,
+          connector: context.connector->CommonUtils.snakeToPascalCase,
+          payment_method: context.payment_method->CommonUtils.snakeToPascalCase,
+          payment_method_type: context.payment_method_type->CommonUtils.snakeToPascalCase,
+        }
+        Console.log2("aaa", newContext)
+        let resolvedConfig = svc.evaluateConfig(newContext)
+        Console.log2("xyz", resolvedConfig)
+        Some(resolvedConfig)
+      } catch {
+      | _ex => None
+      }
     }
   }
+
+  (context: SuperpositionTypes.connectorArrayContext) => {
+    let combinedRequiredFieldsFromAllConnectors = []
+    let {
+      eligibleConnectors,
+      payment_method,
+      payment_method_type,
+      country,
+      mandate_type,
+      collect_shipping_details_from_wallet_connector,
+      collect_billing_details_from_wallet_connector,
+    } = context
+
+    eligibleConnectors->Array.forEach(connector => {
+      let context: SuperpositionTypes.superpositionContext = {
+        connector,
+        payment_method,
+        payment_method_type,
+        country,
+        mandate_type,
+        collect_shipping_details_from_wallet_connector,
+        collect_billing_details_from_wallet_connector,
+      }
+
+      let resolvedConfig = getResolvedConfig(context)
+
+      let fields = resolvedConfig->Option.map(parseResolvedConfigToFields)
+      let requiredFields = fields->Option.map(filterRequiredFields)
+      let _ =
+        requiredFields->Option.map(fields =>
+          fields->Array.forEach(field => combinedRequiredFieldsFromAllConnectors->Array.push(field))
+        )
+    })
+
+    combinedRequiredFieldsFromAllConnectors
+    ->removeDuplicateByOutputPath
+    ->groupFieldsByComponentAndSortByPriority
+  }
 }
-
-let isInitialized = (service): bool => service.cacClient !== None
-
-let getConfigData = (service): option<JSON.t> => service.configData
-
-let reset = (service): unit => {
-  service.cacClient = None
-  service.configData = None
-}
-
-let configurationService = make

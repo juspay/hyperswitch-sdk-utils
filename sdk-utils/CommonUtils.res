@@ -120,8 +120,11 @@ let getStringFromOptionalJson = (json, default) => {
 let snakeToPascalCase = str => {
   let words = str->String.split("_")
   words
+  ->Array.filter(item => item->String.length > 0)
   ->Array.map(item => {
-    item->String.charAt(0)->String.toUpperCase ++ item->String.sliceToEnd(~start=1)
+    let firstChar = item->String.charAt(0)->String.toUpperCase
+    let restOfString = item->String.length > 1 ? item->String.sliceToEnd(~start=1) : ""
+    firstChar ++ restOfString
   })
   ->Array.join("")
 }
