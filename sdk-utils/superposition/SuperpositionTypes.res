@@ -106,6 +106,7 @@ type rec fieldConfig = {
   outputPath: string,
   component?: componentType,
   priority: int,
+  shouldHide: bool,
 }
 
 type requiredFields = array<fieldConfig>

@@ -100,6 +100,7 @@ let parseResolvedConfigToFields = resolvedConfig => {
       component: determineComponentFromField(baseName),
       mergedFields: [],
       priority,
+      shouldHide: false,
     }
   })
 }
@@ -115,6 +116,7 @@ let defaultFieldConfig = {
   outputPath: "",
   component: Other,
   priority: 999999,
+  shouldHide: false,
 }
 
 let getParentPathFromOutputPath = outputPath =>
@@ -164,34 +166,27 @@ let mergeFields = (fields, fieldsToMerge, outputName, displayName, ~parent="") =
   }
 }
 
-let sortFields = (fields, componentType) => {
-  let getFieldPriority = (field: fieldConfig): int => {
-    let fieldName = getFieldNameFromOutputPath(field.outputPath)
-    switch componentType {
-    | Card =>
-      let cardField = stringToFieldName(fieldName)
-      getFieldPriority(~priorityArray=cardFieldsPriorityArray, ~fieldName=cardField)
-    | Shipping
-    | Billing =>
-      let addressField = stringToFieldName(fieldName)
-      getFieldPriority(~priorityArray=addressFieldsPriorityArray, ~fieldName=addressField)
-    | _ => 2
-    }
+let filterRequiredFields = fields => fields->Array.filter(field => field.required)
+let toggleShouldHide = field => {
+  switch field.fieldNameType {
+  | Email => {...field, shouldHide: !field.shouldHide}
+  | _ => field
   }
-
-  fields->Array.toSorted((a, b) => {
-    let priorityA = getFieldPriority(a)
-    let priorityB = getFieldPriority(b)
-    Int.toFloat(priorityA - priorityB)
-  })
 }
 
-let filterRequiredFields = fields => fields->Array.filter(field => field.required)
-
 let groupFieldsByComponentAndSortByPriority = fields => {
+  let seen = makeSet()
   let fieldsByComponent = Dict.make()
   fields->Array.sort((a, b) => Int.toFloat(a.priority - b.priority))
-  fields->Array.forEach(field => {
+  let finialFields = fields->Array.map(field => {
+    if has(seen, field.fieldNameType->fieldNameToString) {
+      field
+    } else {
+      add(seen, field.fieldNameType->fieldNameToString)
+      field->toggleShouldHide
+    }
+  })
+  finialFields->Array.forEach(field => {
     let component =
       field.component
       ->Option.getOr(Other)
