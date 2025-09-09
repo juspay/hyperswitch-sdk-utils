@@ -5,7 +5,9 @@ open SuperpositionTypes
 @send external add: (Js.t<'a>, string) => unit = "add"
 @send external has: (Js.t<'a>, string) => bool = "has"
 
-type configurationService = {evaluateConfig: SuperpositionTypes.superpositionContext => Dict.t<JSON.t>}
+type configurationService = {
+  evaluateConfig: SuperpositionTypes.superpositionContext => Dict.t<JSON.t>,
+}
 
 let determineComponentFromField = (baseField: string): componentType => {
   switch baseField {
@@ -32,6 +34,15 @@ let determineComponentFromField = (baseField: string): componentType => {
 let getFieldPriority = (~priorityArray, ~fieldName) => {
   let index = priorityArray->Array.findIndex(name => name === fieldName)
   index === -1 ? priorityArray->Array.length + 1 : index + 1
+}
+
+let getFieldNameFromOutputPath = (outputPath, ~level=1) => {
+  let parts = outputPath->String.split(".")
+  if parts->Array.length > 0 {
+    parts->Array.get(parts->Array.length - level)->Option.getOr("")
+  } else {
+    ""
+  }
 }
 
 let parseResolvedConfigToFields = resolvedConfig => {
@@ -81,6 +92,7 @@ let parseResolvedConfigToFields = resolvedConfig => {
       name: baseName,
       displayName,
       fieldType: stringToFieldType(fieldType),
+      fieldNameType: outputPath->getFieldNameFromOutputPath->stringToFieldName,
       required,
       options,
       outputPath,
@@ -90,19 +102,11 @@ let parseResolvedConfigToFields = resolvedConfig => {
   })
 }
 
-let getFieldNameFromOutputPath = (outputPath, ~level=1) => {
-  let parts = outputPath->String.split(".")
-  if parts->Array.length > 0 {
-    parts->Array.get(parts->Array.length - level)->Option.getOr("")
-  } else {
-    ""
-  }
-}
-
 let defaultFieldConfig = {
   name: "",
   displayName: "",
   fieldType: TextInput,
+  fieldNameType: Other,
   required: false,
   options: [],
   mergedFields: [],
@@ -116,7 +120,9 @@ let getParentPathFromOutputPath = outputPath =>
 let mergeFields = (fields, fieldsToMerge, outputName, displayName, ~parent="") => {
   let foundFields =
     fieldsToMerge->Array.map(fieldName =>
-      fields->Array.find(field => getFieldNameFromOutputPath(field.outputPath) === fieldName)
+      fields->Array.find(field =>
+        getFieldNameFromOutputPath(field.outputPath)->stringToFieldName === fieldName
+      )
     )
 
   let allFieldsFound = foundFields->Array.every(field => field->Option.isSome)
@@ -132,16 +138,18 @@ let mergeFields = (fields, fieldsToMerge, outputName, displayName, ~parent="") =
 
     let mergedField = {
       ...baseField,
-      name: baseField.name->getParentPathFromOutputPath ++ "." ++ outputName,
+      name: baseField.name->getParentPathFromOutputPath ++ "." ++ outputName->fieldNameToString,
+      fieldNameType: outputName,
       displayName,
-      outputPath: baseField.outputPath->getParentPathFromOutputPath ++ "." ++ outputName,
+      outputPath: baseField.outputPath->getParentPathFromOutputPath ++
+      "." ++
+      outputName->fieldNameToString,
       mergedFields: foundFields->Array.map(f => f->Option.getOr(defaultFieldConfig)),
     }
 
     fields
     ->Array.filter(field => {
-      let fieldName = getFieldNameFromOutputPath(field.outputPath)
-      !(fieldsToMerge->Array.some(mergeFieldName => mergeFieldName === fieldName))
+      !(fieldsToMerge->Array.some(mergeFieldName => mergeFieldName === field.fieldNameType))
     })
     ->Array.concat([mergedField])
   } else {
@@ -154,11 +162,11 @@ let sortFields = (fields, componentType) => {
     let fieldName = getFieldNameFromOutputPath(field.outputPath)
     switch componentType {
     | Card =>
-      let cardField = stringToCardFieldName(fieldName)
+      let cardField = stringToFieldName(fieldName)
       getFieldPriority(~priorityArray=cardFieldsPriorityArray, ~fieldName=cardField)
     | Shipping
     | Billing =>
-      let addressField = stringToAddressFieldName(fieldName)
+      let addressField = stringToFieldName(fieldName)
       getFieldPriority(~priorityArray=addressFieldsPriorityArray, ~fieldName=addressField)
     | _ => 2
     }
@@ -195,6 +203,9 @@ let groupFieldsByComponentAndSortByPriority = fields => {
     ->Array.filter(((_, fields)) => Array.length(fields) > 0),
   )
 }
+
+let getFieldFromMergedFields = (field: fieldConfig, index) =>
+  field.mergedFields->Array.get(index)->Option.getOr(defaultFieldConfig)
 
 let removeDuplicateByOutputPath = fields => {
   let seen = makeSet()

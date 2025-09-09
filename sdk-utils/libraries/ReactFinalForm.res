@@ -7,14 +7,14 @@ type fieldRenderPropsInput = {
   checked: bool,
 }
 
-// type fieldRenderPropsCustomInput<'t> = {
-//   name: string,
-//   onBlur: ReactEvent.Focus.t => unit,
-//   onChange: 't => unit,
-//   onFocus: ReactEvent.Focus.t => unit,
-//   value: 't,
-//   checked: bool,
-// }
+type fieldRenderPropsCustomInput<'t> = {
+  name: string,
+  onBlur: ReactEvent.Focus.t => unit,
+  onChange: 't => unit,
+  onFocus: ReactEvent.Focus.t => unit,
+  value: 't,
+  checked: bool,
+}
 
 let makeInputRecord = (val, setVal): fieldRenderPropsInput => {
   {
@@ -27,7 +27,7 @@ let makeInputRecord = (val, setVal): fieldRenderPropsInput => {
   }
 }
 
-// external toTypedField: fieldRenderPropsInput => fieldRenderPropsCustomInput<'t> = "%identity"
+external toTypedField: fieldRenderPropsInput => fieldRenderPropsCustomInput<'t> = "%identity"
 
 type fieldRenderPropsMeta = {
   active: bool,
@@ -236,6 +236,17 @@ let makeFakeInput = (
     checked: true,
   }
   input
+}
+
+module FormSpy = {
+  @module("react-final-form") @react.component
+  external make: (
+    ~children: formState => React.element,
+    ~component: bool=?,
+    ~onChange: bool=?,
+    ~render: formState => React.element=?,
+    ~subscription: formSubscription,
+  ) => React.element = "FormSpy"
 }
 
 let fakeFieldRenderProps = {

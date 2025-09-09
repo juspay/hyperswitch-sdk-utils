@@ -27,19 +27,6 @@ type fieldType =
   | DatePicker
   | CurrencySelect
 
-type rec fieldConfig = {
-  name: string,
-  displayName: string,
-  fieldType: fieldType,
-  required: bool,
-  options: array<string>,
-  mergedFields: array<fieldConfig>,
-  outputPath: string,
-  component?: componentType,
-}
-
-type requiredFields = array<fieldConfig>
-
 type context = {
   payment_method: string,
   payment_method_type: string,
@@ -59,7 +46,7 @@ type connectorArrayContext = {
   eligibleConnectors: array<string>,
 }
 
-type cardFieldName =
+type paymentFieldEnums =
   | CardNumberNetworkMerged
   | CardNumber
   | CardNetwork
@@ -67,9 +54,6 @@ type cardFieldName =
   | CardExpMonth
   | CardExpYear
   | CardCvc
-  | Other
-
-type paymentFieldEnums =
   | FullName
   | FirstName
   | LastName
@@ -111,6 +95,20 @@ type paymentFieldEnums =
   | ZipCountryMerged
   | Other
 
+type rec fieldConfig = {
+  name: string,
+  displayName: string,
+  fieldType: fieldType,
+  fieldNameType: paymentFieldEnums,
+  required: bool,
+  options: array<string>,
+  mergedFields: array<fieldConfig>,
+  outputPath: string,
+  component?: componentType,
+}
+
+type requiredFields = array<fieldConfig>
+
 let stringToComponentType = str => {
   switch str {
   | "card" => Card
@@ -149,7 +147,7 @@ let stringToFieldType = str => {
   }
 }
 
-let stringToCardFieldName = str => {
+let stringToFieldName = str => {
   switch str {
   | "card_number_network_merged" => CardNumberNetworkMerged
   | "card_number" => CardNumber
@@ -158,12 +156,6 @@ let stringToCardFieldName = str => {
   | "card_exp_month" => CardExpMonth
   | "card_exp_year" => CardExpYear
   | "card_cvc" => CardCvc
-  | _ => Other
-  }
-}
-
-let stringToAddressFieldName = str => {
-  switch str {
   | "full_name" => FullName
   | "first_name" => FirstName
   | "last_name" => LastName
@@ -204,6 +196,58 @@ let stringToAddressFieldName = str => {
   | "product_name" => ProductName
   | "zip_country_merged" => ZipCountryMerged
   | _ => Other
+  }
+}
+
+let fieldNameToString = fieldName => {
+  switch fieldName {
+  | CardNumberNetworkMerged => "card_number_network_merged"
+  | CardNumber => "card_number"
+  | CardNetwork => "card_network"
+  | CardExpiryCvcMerged => "card_expiry_cvc_merged"
+  | CardExpMonth => "card_exp_month"
+  | CardExpYear => "card_exp_year"
+  | CardCvc => "card_cvc"
+  | FullName => "full_name"
+  | FirstName => "first_name"
+  | LastName => "last_name"
+  | Email => "email"
+  | PhoneNumberWithCountryCode => "phone_number_with_country_code"
+  | CountryCode => "country_code"
+  | Number => "number"
+  | Line1 => "line1"
+  | Line2 => "line2"
+  | Line3 => "line3"
+  | City => "city"
+  | Zip => "zip"
+  | CityStateMerged => "city_state_merged"
+  | State => "state"
+  | Country => "country"
+  | AccountNumber => "account_number"
+  | RoutingNumber => "routing_number"
+  | SortCode => "sort_code"
+  | BsbNumber => "bsb_number"
+  | BecsSortCode => "becs_sort_code"
+  | Iban => "iban"
+  | BlikCode => "blik_code"
+  | BankName => "bank_name"
+  | Issuer => "issuer"
+  | Cnpj => "cnpj"
+  | Cpf => "cpf"
+  | Key => "key"
+  | SourceBankAccountId => "source_bank_account_id"
+  | DateOfBirth => "date_of_birth"
+  | LanguagePreference => "language_preference"
+  | Network => "network"
+  | PayCurrency => "pay_currency"
+  | VpaId => "vpa_id"
+  | SocialSecurityNumber => "social_security_number"
+  | Cvc => "cvc"
+  | ClientUid => "client_uid"
+  | Msisdn => "msisdn"
+  | ProductName => "product_name"
+  | ZipCountryMerged => "zip_country_merged"
+  | Other => "other"
   }
 }
 
