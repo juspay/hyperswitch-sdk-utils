@@ -76,6 +76,7 @@ let parseResolvedConfigToFields = resolvedConfig => {
     let fieldType = metadata->getString("field_type", "")
     let required = metadata->getBool("required", false)
     let outputPath = metadata->getString("output_path", baseName)
+    let priority = metadata->getInt("priority", 999999)
     let options =
       metadata
       ->getOptionalArrayFromDict("options")
@@ -98,6 +99,7 @@ let parseResolvedConfigToFields = resolvedConfig => {
       outputPath,
       component: determineComponentFromField(baseName),
       mergedFields: [],
+      priority,
     }
   })
 }
@@ -112,6 +114,7 @@ let defaultFieldConfig = {
   mergedFields: [],
   outputPath: "",
   component: Other,
+  priority: 999999,
 }
 
 let getParentPathFromOutputPath = outputPath =>
@@ -134,24 +137,28 @@ let mergeFields = (fields, fieldsToMerge, outputName, displayName, ~parent="") =
   )
 
   if allFieldsFound && hasSameParent {
-    let baseField = foundFields->Array.get(0)->Option.flatMap(x => x)->Option.getExn
+    let mergedFields = {
+      let baseField = foundFields->Array.get(0)->Option.flatMap(x => x)->Option.getExn
 
-    let mergedField = {
-      ...baseField,
-      name: baseField.name->getParentPathFromOutputPath ++ "." ++ outputName->fieldNameToString,
-      fieldNameType: outputName,
-      displayName,
-      outputPath: baseField.outputPath->getParentPathFromOutputPath ++
-      "." ++
-      outputName->fieldNameToString,
-      mergedFields: foundFields->Array.map(f => f->Option.getOr(defaultFieldConfig)),
+      let mergedField = {
+        ...baseField,
+        name: baseField.name->getParentPathFromOutputPath ++ "." ++ outputName->fieldNameToString,
+        fieldNameType: outputName,
+        displayName,
+        outputPath: baseField.outputPath->getParentPathFromOutputPath ++
+        "." ++
+        outputName->fieldNameToString,
+        mergedFields: foundFields->Array.map(f => f->Option.getOr(defaultFieldConfig)),
+      }
+
+      fields
+      ->Array.filter(field => {
+        !(fieldsToMerge->Array.some(mergeFieldName => mergeFieldName === field.fieldNameType))
+      })
+      ->Array.concat([mergedField])
     }
-
-    fields
-    ->Array.filter(field => {
-      !(fieldsToMerge->Array.some(mergeFieldName => mergeFieldName === field.fieldNameType))
-    })
-    ->Array.concat([mergedField])
+    mergedFields->Array.sort((a, b) => Int.toFloat(a.priority - b.priority))
+    mergedFields
   } else {
     fields
   }
@@ -183,7 +190,7 @@ let filterRequiredFields = fields => fields->Array.filter(field => field.require
 
 let groupFieldsByComponentAndSortByPriority = fields => {
   let fieldsByComponent = Dict.make()
-
+  fields->Array.sort((a, b) => Int.toFloat(a.priority - b.priority))
   fields->Array.forEach(field => {
     let component =
       field.component

@@ -105,6 +105,7 @@ type rec fieldConfig = {
   mergedFields: array<fieldConfig>,
   outputPath: string,
   component?: componentType,
+  priority: int,
 }
 
 type requiredFields = array<fieldConfig>
@@ -283,30 +284,31 @@ let componentsRenderPriorityEnum = [
 
 let cardFieldsPriorityArray = [
   CardNumberNetworkMerged,
-  CardNumber,
-  CardNetwork,
+  // CardNumber,
+  // CardNetwork,
   CardExpiryCvcMerged,
-  CardExpMonth,
-  CardExpYear,
-  CardCvc,
+  // CardExpMonth,
+  // CardExpYear,
+  // CardCvc,
   Other,
 ]
 
 let addressFieldsPriorityArray = [
   FullName,
-  FirstName,
-  LastName,
-  Email,
+  // FirstName,
+  // LastName,
+  // Email,
   PhoneNumberWithCountryCode,
-  CountryCode,
-  Number,
-  Line1,
-  Line2,
-  Line3,
-  City,
-  Zip,
+  // CountryCode,
+  // Number,
+  // Line1,
+  // Line2,
+  // Line3,
+  // City,
+  // Zip,
   CityStateMerged,
-  State,
-  Country,
+  ZipCountryMerged,
+  // State,
+  // Country,
   Other,
 ]
