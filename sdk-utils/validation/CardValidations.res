@@ -1,4 +1,4 @@
-let toInt = val => val->Int.fromString->Option.getOr(0) 
+let toInt = val => val->Int.fromString->Option.getOr(0)
 
 let getobjFromCardPattern = cardBrand => {
   let patternsDict = CardPattern.cardPatterns
@@ -11,7 +11,7 @@ let getobjFromCardPattern = cardBrand => {
 }
 
 let clearSpaces = value => {
-  value->String.replaceRegExp(%re("/\D+/g"), "") 
+  value->String.replaceRegExp(%re("/\D+/g"), "")
 }
 
 let slice = (val, start: int, end: int) => {
@@ -62,7 +62,7 @@ let formatCardExpiryNumber = val => {
   }
 
   if clearValue->String.length >= 3 {
-    `${formatted->slice(0, 2)} / ${formatted->slice(2, 4)}` 
+    `${formatted->slice(0, 2)} / ${formatted->slice(2, 4)}`
   } else {
     formatted
   }

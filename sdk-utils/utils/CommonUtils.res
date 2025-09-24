@@ -133,10 +133,43 @@ let getArrayElement = (arr: array<'a>, index: int, default: 'a): 'a => {
   arr->Array.get(index)->Option.getOr(default)
 }
 
-let mergeDict = (dict1: Dict.t<JSON.t>, dict2: Dict.t<JSON.t>): Dict.t<JSON.t> => {
+let rec mergeDict = (dict1: Dict.t<JSON.t>, dict2: Dict.t<JSON.t>): Dict.t<JSON.t> => {
   let mergedDict = dict1->Dict.copy
-  dict2->Dict.toArray->Array.forEach(((key, value)) => {
-    mergedDict->Dict.set(key, value)
+  dict2
+  ->Dict.toArray
+  ->Array.forEach(((key, value)) => {
+    switch (mergedDict->Dict.get(key), value) {
+    | (Some(existingValue), newValue) =>
+      switch (existingValue->JSON.Decode.object, newValue->JSON.Decode.object) {
+      | (Some(existingObj), Some(newObj)) =>
+        let mergedObj = mergeDict(existingObj, newObj)
+        mergedDict->Dict.set(key, mergedObj->JSON.Encode.object)
+      | _ => mergedDict->Dict.set(key, newValue)
+      }
+    | (None, newValue) => mergedDict->Dict.set(key, newValue)
+    }
   })
   mergedDict
+}
+
+let getDisplayName = text => {
+  let transformText = switch text {
+  | "credit" => "Card"
+  | "crypto_currency" => "Crypto"
+  | "afterpay_clearpay" => "Afterpay"
+  | "bnb_smart_chain" => "BNB Smart Chain"
+  | "ach" | "sepa" | "bacs" | "becs" => text ++ " Debit"
+  | other => other
+  }
+
+  let capitalizeWord = str =>
+    switch str->String.get(0) {
+    | Some(firstChar) => firstChar->String.toUpperCase ++ str->String.sliceToEnd(~start=1)
+    | None => str
+    }
+
+  transformText
+  ->String.split("_")
+  ->Array.map(capitalizeWord)
+  ->Array.join(" ")
 }

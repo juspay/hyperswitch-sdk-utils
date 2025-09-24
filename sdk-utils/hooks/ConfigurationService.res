@@ -5,7 +5,7 @@ type configurationService = {
 }
 
 external importJSON: string => promise<JSON.t> = "import"
-@module("./superposition.js") @new
+@module("./../superposition/superposition.js") @new
 external cacReader: JSON.t => Nullable.t<configurationService> = "CacReader"
 
 let service = ref(None)
@@ -15,7 +15,7 @@ let useConfigurationService = () => {
     let initializeService = async () => {
       if service.contents->Option.isNone {
         try {
-          let configData = await importJSON("./config.json")
+          let configData = await importJSON("./../superposition/config.json")
           let configService = cacReader(configData)->Nullable.toOption
           service.contents = configService
         } catch {
@@ -31,7 +31,6 @@ let useConfigurationService = () => {
     eligibleConnectors: array<RescriptCore.JSON.t>,
     configParams: SuperpositionTypes.superpositionBaseContext,
     requiredFieldsFromPML,
-    showAllFields,
   ) => {
     let requiredFieldsFromSuperPosition = switch (
       service.contents,
@@ -41,6 +40,7 @@ let useConfigurationService = () => {
     | (None, false) => []
     | (Some(svc), false) =>
       eligibleConnectors
+      ->removeDuplicateConnectors
       ->Array.reduce([], (acc, connector) => {
         try {
           switch connector->JSON.Decode.string {
@@ -64,18 +64,17 @@ let useConfigurationService = () => {
         }
         acc
       })
-      ->removeDuplicateFieldsByOutputPath
+      ->removeShippingAndDuplicateFields
       ->sortFieldsByPriorityOrder
     }
 
-    let filteredRequiredFields = filterFieldsBasedOnMissingData(
+    let missingRequiredFields = filterFieldsBasedOnMissingData(
       requiredFieldsFromSuperPosition,
       requiredFieldsFromPML,
-      showAllFields,
     )
 
     let initialValues = convertFlatDictToNestedObject(requiredFieldsFromPML)
 
-    (filteredRequiredFields, initialValues)
+    (requiredFieldsFromSuperPosition, missingRequiredFields, initialValues)
   }
 }

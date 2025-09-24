@@ -12,6 +12,7 @@ type fieldType =
   | CountryCodeSelect
   | DatePicker
   | CurrencySelect
+  | DropdownSelect
 
 type rec fieldConfig = {
   name: string,
@@ -30,9 +31,9 @@ type superpositionBaseContext = {
   payment_method: string,
   payment_method_type: string,
   country: string,
-  mandate_type: option<string>,
-  collect_shipping_details_from_wallet_connector: bool,
-  collect_billing_details_from_wallet_connector: bool,
+  mandate_type: string,
+  collect_shipping_details_from_wallet_connector: string,
+  collect_billing_details_from_wallet_connector: string,
 }
 
 type superpositionContext = {
@@ -55,6 +56,7 @@ let stringToFieldType = str => {
   | "state_select" => StateSelect
   | "card_number_text_input" => CardNumberTextInput
   | "cvc_pasword_input" => CvcPasswordInput
+  | "dropdown_select" => DropdownSelect
   | _ => TextInput
   }
 }

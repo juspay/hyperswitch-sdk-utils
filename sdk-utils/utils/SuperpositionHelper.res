@@ -50,11 +50,24 @@ let sortFieldsByPriorityOrder = fields => {
   fields
 }
 
-let removeDuplicateFieldsByOutputPath = fields => {
+let removeDuplicateConnectors = fields => {
   let seen = Set.make()
 
   fields->Array.filter(f =>
-    if Set.has(seen, f.outputPath) {
+    if Set.has(seen, f) {
+      false
+    } else {
+      Set.add(seen, f)
+      true
+    }
+  )
+}
+
+let removeShippingAndDuplicateFields = fields => {
+  let seen = Set.make()
+
+  fields->Array.filter(f =>
+    if f.name->String.startsWith("shipping.") || Set.has(seen, f.outputPath) {
       false
     } else {
       Set.add(seen, f.outputPath)
@@ -88,62 +101,57 @@ let extractFieldValuesFromPML = (required_fields: Dict.t<JSON.t>) => {
 let filterFieldsBasedOnMissingData = (
   requiredFieldsFromSuperPosition: SuperpositionTypes.requiredFields,
   requiredFieldsFromPML,
-  showAllFields,
 ) => {
-  showAllFields
-    ? requiredFieldsFromSuperPosition
-    : {
-        let firstNamePattern = "billing.address.first_name"
-        let lastNamePattern = "billing.address.last_name"
-        let phonePattern = "billing.phone"
-        let addressPattern = "billing.address."
+  let firstNamePattern = "billing.address.first_name"
+  let lastNamePattern = "billing.address.last_name"
+  let phonePattern = "billing.phone"
+  let addressPattern = "billing.address."
 
-        let isFieldMissing = path => {
-          switch requiredFieldsFromPML->Dict.get(path) {
-          | Some("") | None => true
-          | _ => false
-          }
-        }
+  let isFieldMissing = path => {
+    switch requiredFieldsFromPML->Dict.get(path) {
+    | Some("") | None => true
+    | _ => false
+    }
+  }
 
-        let (
-          fieldCategories,
-          nameFieldsMissing,
-          phoneFieldsMissing,
-          addressFieldsMissing,
-        ) = requiredFieldsFromSuperPosition->Array.reduce(([], false, false, false), (
-          (acc, nameMissing, phoneMissing, addressMissing),
-          field,
-        ) => {
-          let path = field.outputPath
-          let fieldMissing = isFieldMissing(path)
+  let (
+    fieldCategories,
+    nameFieldsMissing,
+    phoneFieldsMissing,
+    addressFieldsMissing,
+  ) = requiredFieldsFromSuperPosition->Array.reduce(([], false, false, false), (
+    (acc, nameMissing, phoneMissing, addressMissing),
+    field,
+  ) => {
+    let path = field.outputPath
+    let fieldMissing = isFieldMissing(path)
 
-          let isNameField =
-            path->String.includes(firstNamePattern) || path->String.includes(lastNamePattern)
-          let isPhoneField = path->String.includes(phonePattern)
-          let isAddressField = path->String.includes(addressPattern) && !isNameField
+    let isNameField =
+      path->String.includes(firstNamePattern) || path->String.includes(lastNamePattern)
+    let isPhoneField = path->String.includes(phonePattern)
+    let isAddressField = path->String.includes(addressPattern) && !isNameField
 
-          let fieldCategory = (field, isNameField, isPhoneField, isAddressField)
+    let fieldCategory = (field, isNameField, isPhoneField, isAddressField)
 
-          let newNameMissing = nameMissing || (isNameField && fieldMissing)
-          let newPhoneMissing = phoneMissing || (isPhoneField && fieldMissing)
-          let newAddressMissing = addressMissing || (isAddressField && fieldMissing)
+    let newNameMissing = nameMissing || (isNameField && fieldMissing)
+    let newPhoneMissing = phoneMissing || (isPhoneField && fieldMissing)
+    let newAddressMissing = addressMissing || (isAddressField && fieldMissing)
 
-          acc->Array.push(fieldCategory)
-          (acc, newNameMissing, newPhoneMissing, newAddressMissing)
-        })
+    acc->Array.push(fieldCategory)
+    (acc, newNameMissing, newPhoneMissing, newAddressMissing)
+  })
 
-        fieldCategories->Array.filterMap(((field, isNameField, isPhoneField, isAddressField)) => {
-          let path = field.outputPath
+  fieldCategories->Array.filterMap(((field, isNameField, isPhoneField, isAddressField)) => {
+    let path = field.outputPath
 
-          let shouldInclude =
-            (isNameField && nameFieldsMissing) ||
-            isPhoneField && phoneFieldsMissing ||
-            isAddressField && addressFieldsMissing ||
-            (!isNameField && !isPhoneField && !isAddressField && isFieldMissing(path))
+    let shouldInclude =
+      (isNameField && nameFieldsMissing) ||
+      isPhoneField && phoneFieldsMissing ||
+      isAddressField && addressFieldsMissing ||
+      (!isNameField && !isPhoneField && !isAddressField && isFieldMissing(path))
 
-          shouldInclude ? Some(field) : None
-        })
-      }
+    shouldInclude ? Some(field) : None
+  })
 }
 
 let getOrCreateNestedDictionary = (dict: Dict.t<JSON.t>, key: string): Dict.t<JSON.t> => {
@@ -153,14 +161,16 @@ let getOrCreateNestedDictionary = (dict: Dict.t<JSON.t>, key: string): Dict.t<JS
   }
 }
 
-let setValueAtNestedPath = (dict: Dict.t<JSON.t>, keys: array<string>, value: string): Dict.t<JSON.t> => {
+let setValueAtNestedPath = (dict: Dict.t<JSON.t>, keys: array<string>, value: string): Dict.t<
+  JSON.t,
+> => {
   let keysLength = keys->Array.length
 
   if keysLength === 0 {
     dict
   } else if keysLength === 1 {
     let key = CommonUtils.getArrayElement(keys, 0, "")
-    if key !== "" {
+    if key !== "" && value !== "" {
       dict->Dict.set(key, value->JSON.Encode.string)
     }
     dict
@@ -178,7 +188,7 @@ let setValueAtNestedPath = (dict: Dict.t<JSON.t>, keys: array<string>, value: st
     }
 
     let finalKey = CommonUtils.getArrayElement(keys, pathLength, "")
-    if finalKey !== "" {
+    if finalKey !== "" && value !== "" {
       currentDict.contents->Dict.set(finalKey, value->JSON.Encode.string)
     }
 

@@ -80,3 +80,24 @@ let useFormStateHandler = (
   }, (formProps.values, formProps.valid))
 }
 
+type useFieldConfig<'a> = {
+  afterSubmit?: unit => unit,
+  allowNull?: bool,
+  beforeSubmit?: unit => option<bool>,
+  component?: React.component<'a>,
+  data?: Dict.t<'a>,
+  defaultValue?: 'a,
+  format?: ('a, string) => 'a,
+  formatOnBlur?: bool,
+  initialValue?: 'a,
+  isEqual?: ('a, 'a) => bool,
+  multiple?: bool,
+  parse?: ('a, string) => 'a,
+  type_?: string,
+  validate?: 'a => option<string>,
+  validateFields?: array<string>,
+  value?: 'a,
+}
+
+@module("react-final-form")
+external useField: (string, ~config: useFieldConfig<'a>=?, unit) => Field.fieldProps = "useField"
