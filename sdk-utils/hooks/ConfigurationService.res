@@ -16,8 +16,6 @@ let useConfigurationService = () => {
       if service.contents->Option.isNone {
         try {
           let configData = try {
-            let headers = Dict.make()
-            headers->Dict.set("Accept-Encoding", "br, gzip")
             let response = await Fetch.fetch(
               "https://checkout.hyperswitch.io/assets/v1/configs/superposition.config.json",
             )
