@@ -15,7 +15,19 @@ let useConfigurationService = () => {
     let initializeService = async () => {
       if service.contents->Option.isNone {
         try {
-          let configData = await importJSON("./../superposition/config.json")
+          let configData = try {
+            let headers = Dict.make()
+            headers->Dict.set("Accept-Encoding", "br, gzip")
+            let response = await Fetch.fetch(
+              "https://checkout.hyperswitch.io/assets/v1/configs/superposition.config.json",
+            )
+            await response->Fetch.Response.json
+          } catch {
+          | err =>
+            Console.log(err)
+            await importJSON("./../superposition/config.json")
+          }
+
           let configService = cacReader(configData)->Nullable.toOption
           service.contents = configService
         } catch {
