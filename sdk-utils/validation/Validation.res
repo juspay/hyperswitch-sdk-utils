@@ -28,10 +28,12 @@ type validationRule =
   | MinLength(int)
   | MaxLength(int)
   | CardNumber
-  | CardExpiry
+  | CardExpiry(string)
   | CardCVC(string)
+  | CardNetwork(array<string>)
   | Email
-  | FullName
+  | FirstName
+  | LastName
   | Phone
   | PostalCode(string)
   | IBAN
@@ -522,6 +524,7 @@ let validateField = (
   value: string,
   rules: array<validationRule>,
   ~enabledCardSchemes: array<string>,
+  ~localeObject: LocaleDataType.localeStrings,
 ) => {
   rules->Array.reduce(None, (acc, rule) => {
     switch acc {
@@ -531,7 +534,7 @@ let validateField = (
       | Required => {
           let trimmedValue = value->String.trim
           if trimmedValue === "" {
-            Some("This field is required")
+            Some(localeObject.mandatoryFieldText)
           } else {
             None
           }
@@ -548,26 +551,61 @@ let validateField = (
         } else {
           None
         }
-      | CardNumber => {
+      | CardNumber =>
+        if value->String.length === 0 {
+          Some(localeObject.cardNumberEmptyText)
+        } else {
           let validCardBrand = getFirstValidCardScheme(~cardNumber=value, ~enabledCardSchemes)
           let cardBrand = validCardBrand === "" ? getCardBrand(value) : validCardBrand
           let formattedNumber = formatCardNumber(value, cardType(cardBrand))
-          cardValid(formattedNumber, cardBrand) ? None : Some("Enter a valid card number")
+          cardValid(formattedNumber, cardBrand) ? None : Some(localeObject.inValidCardErrorText)
         }
-      | CardExpiry => checkCardExpiry(value) ? None : Some("Enter a valid expiry date")
-      | CardCVC(cardBrand) => checkCardCVC(value, cardBrand) ? None : Some("Enter a valid CVC")
+      | CardExpiry(value) =>
+        if value->String.length === 0 {
+          Some(localeObject.cardExpiryDateEmptyText)
+        } else if checkCardExpiry(value) {
+          None
+        } else {
+          Some(localeObject.inValidExpiryErrorText)
+        }
+      | CardCVC(cardBrand) =>
+        if value->String.length === 0 {
+          Some(localeObject.cvcNumberEmptyText)
+        } else if checkCardCVC(value, cardBrand) {
+          None
+        } else {
+          Some(localeObject.inValidCVCErrorText)
+        }
+      | CardNetwork(enabledCardSchemes) =>
+        enabledCardSchemes->Array.find(v => v === value)->Option.isSome
+          ? None
+          : Some(localeObject.unsupportedCardErrorText)
       | Email =>
-        switch value->isEmailValid {
-        | Some(true) => None
-        | Some(false) => Some("Invalid email address")
-        | None => None
+        if value->String.length === 0 {
+          Some(localeObject.emailEmptyText)
+        } else {
+          switch value->isEmailValid {
+          | Some(true) => None
+          | Some(false) => Some(localeObject.emailInvalidText)
+          | None => None
+          }
         }
-      | FullName => {
+      | FirstName => {
           let trimmedValue = value->String.trim
-          if trimmedValue->String.length < 2 {
-            Some("Name must be at least 2 characters")
-          } else if containsMoreThanTwoDigits(trimmedValue) {
-            Some("Name cannot contain more than 2 digits")
+          if trimmedValue->String.length < 1 {
+            Some(localeObject.cardHolderNameRequiredText)
+          } else if containsDigit(trimmedValue) {
+            Some(localeObject.invalidDigitsCardHolderNameError)
+          } else {
+            None
+          }
+        }
+      | LastName => {
+          let trimmedValue = value->String.trim
+          if trimmedValue->String.length < 1 {
+            Some(localeObject.lastNameRequiredText)
+          } else if containsDigit(trimmedValue) {
+            Some(localeObject.invalidDigitsCardHolderNameError)
           } else {
             None
           }
@@ -588,41 +626,20 @@ let validateField = (
   })
 }
 
-let createFieldValidator = (validationRule: validationRule, ~enabledCardSchemes: array<string>) => {
-  let rules = []
-  rules->Array.push(Required)->ignore
-  rules->Array.push(validationRule)->ignore
-
-  (value: option<string>) => {
-    validateField(value->Option.getOr(""), rules, ~enabledCardSchemes)
-  }
-}
-
-let createFieldValidatorWithRules = (
-  validationRules: array<validationRule>,
-  ~enabledCardSchemes: array<string>,
-) => {
-  (value: option<string>) => {
-    validateField(value->Option.getOr(""), validationRules, ~enabledCardSchemes)
-  }
-}
-
-let createFieldValidatorOptional = (
+let createFieldValidator = (
   validationRule: validationRule,
   ~enabledCardSchemes: array<string>,
+  ~localeObject,
 ) => {
-  let rules = []
-  rules->Array.push(validationRule)->ignore
-
   (value: option<string>) => {
-    validateField(value->Option.getOr(""), rules, ~enabledCardSchemes)
+    validateField(value->Option.getOr(""), [validationRule], ~enabledCardSchemes, ~localeObject)
   }
 }
 
 let getKeyboardType = (validationRule: validationRule) => {
   switch validationRule {
   | CardNumber => #numeric
-  | CardExpiry => #numeric
+  | CardExpiry(_) => #numeric
   | CardCVC(_) => #numeric
   | Email => #"email-address"
   | Phone => #"phone-pad"
@@ -644,7 +661,7 @@ let format = (value: string, validationRule: validationRule) => {
       let cleanValue = value->formatCardNumber(cardType(cardBrand))
       cleanValue
     }
-  | CardExpiry =>
+  | CardExpiry(value) =>
     if value->String.includes("/") || value->String.length <= 5 {
       value->formatCardExpiryNumber
     } else {
