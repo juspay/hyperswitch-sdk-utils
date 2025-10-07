@@ -21,7 +21,6 @@ type rec fieldConfig = {
   priority: int,
   required: bool,
   options: array<string>,
-  mergedFields: array<fieldConfig>,
   outputPath: string,
 }
 
@@ -55,7 +54,7 @@ let stringToFieldType = str => {
   | "currency_select" => CurrencySelect
   | "state_select" => StateSelect
   | "card_number_text_input" => CardNumberTextInput
-  | "cvc_pasword_input" => CvcPasswordInput
+  | "cvc_password_input" => CvcPasswordInput
   | "dropdown_select" => DropdownSelect
   | _ => TextInput
   }

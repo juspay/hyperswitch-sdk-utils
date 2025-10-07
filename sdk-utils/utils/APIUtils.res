@@ -57,7 +57,7 @@ let handleApiCall = async (
     ~apiLogType: LoggerTypes.apiLogType,
     ~data: Core__JSON.t,
     ~paymentMethod: string=?,
-    ~paymentExperience: array<PaymentMethodListType.payment_experience>=?,
+    ~paymentExperience: array<AccountPaymentMethodType.payment_experience>=?,
     unit,
   ) => unit,
   ~processSuccess: Core__JSON.t => 'a,
@@ -144,19 +144,5 @@ let fetchApiWrapper = (~uri, ~body=?, ~headers, ~eventName, ~method, ~apiLogWrap
     ~processSuccess=json => json,
     ~processError=error => error,
     ~processCatch=_ => JSON.Encode.null,
-  )
-}
-
-let fetchApiOptionalWrapper = (~uri, ~body=?, ~headers, ~eventName, ~method, ~apiLogWrapper) => {
-  handleApiCall(
-    ~uri,
-    ~body?,
-    ~headers,
-    ~eventName,
-    ~method,
-    ~apiLogWrapper,
-    ~processSuccess=json => Some(json),
-    ~processError=error => Some(error),
-    ~processCatch=_ => Some(JSON.Encode.null),
   )
 }

@@ -1,50 +1,6 @@
 open CommonUtils
 open SuperpositionTypes
 
-let convertConfigurationToFieldDefinitions = resolvedConfig => {
-  let fieldGroups = Dict.make()
-
-  resolvedConfig
-  ->Dict.toArray
-  ->Array.forEach(((key, value)) => {
-    let parts = key->String.split("._")
-    switch (parts->Array.get(0), parts->Array.get(1)) {
-    | (Some(baseName), Some(metadataKey)) if baseName !== "" && metadataKey !== "" => {
-        let fieldGroup = switch fieldGroups->Dict.get(baseName) {
-        | Some(group) => group
-        | None => {
-            let newGroup = Dict.make()
-            fieldGroups->Dict.set(baseName, newGroup)
-            newGroup
-          }
-        }
-        fieldGroup->Dict.set(metadataKey, value)
-      }
-    | _ => ()
-    }
-  })
-
-  fieldGroups
-  ->Dict.toArray
-  ->Array.map(((baseName, metadata)) => {
-    {
-      name: baseName,
-      displayName: metadata->getString("display_name", baseName),
-      fieldType: metadata->getString("field_type", "")->stringToFieldType,
-      priority: metadata->getInt("priority", 1000),
-      required: metadata->getBool("required", false),
-      options: metadata
-      ->getOptionalArrayFromDict("options")
-      ->Option.map(arr => arr->Array.filterMap(JSON.Decode.string))
-      ->Option.getOr([]),
-      outputPath: metadata->getString("output_path", baseName),
-      mergedFields: [],
-    }
-  })
-}
-
-let extractRequiredFieldsOnly = fields => fields->Array.filter(field => field.required)
-
 let sortFieldsByPriorityOrder = fields => {
   fields->Array.sort((a, b) => Int.compare(a.priority, b.priority))
   fields
@@ -253,7 +209,6 @@ let convertConfigurationToRequiredFields = resolvedConfig => {
         required,
         options,
         outputPath,
-        mergedFields: [],
       })
     } else {
       None
