@@ -233,7 +233,7 @@ let convertConfigurationToRequiredFields = resolvedConfig => {
   fieldGroups
   ->Dict.toArray
   ->Array.filterMap(((baseName, metadata)) => {
-    let required = metadata->getBool("required", false)
+    let required = true
     if required {
       let displayName = metadata->getString("display_name", baseName)
       let fieldTypeStr = metadata->getString("field_type", "")
@@ -258,5 +258,50 @@ let convertConfigurationToRequiredFields = resolvedConfig => {
     } else {
       None
     }
+  })
+}
+
+let categorizedFields = fields => {
+  fields->Array.reduce(([], [], [], [], [], [], []), (
+    (
+      cardFields,
+      emailFields,
+      billingNameFields,
+      billingPhoneFields,
+      billingOtherFields,
+      cryptoFields,
+      otherFields,
+    ),
+    fieldConfig: SuperpositionTypes.fieldConfig,
+  ) => {
+    let fieldName = fieldConfig.name
+
+    if fieldName->String.startsWith("card.") {
+      cardFields->Array.push(fieldConfig)
+    } else if fieldConfig.fieldType === EmailInput {
+      emailFields->Array.push(fieldConfig)
+    } else if (
+      fieldName->String.includes("billing.address.first_name") ||
+        fieldName->String.includes("billing.address.last_name")
+    ) {
+      billingNameFields->Array.push(fieldConfig)
+    } else if fieldConfig.fieldType === CountryCodeSelect || fieldConfig.fieldType === PhoneInput {
+      billingPhoneFields->Array.push(fieldConfig)
+    } else if fieldName->String.includes("billing.address.") {
+      billingOtherFields->Array.push(fieldConfig)
+    } else if fieldName->String.includes("crypto.") {
+      cryptoFields->Array.push(fieldConfig)
+    } else {
+      otherFields->Array.push(fieldConfig)
+    }
+    (
+      cardFields,
+      emailFields,
+      billingNameFields,
+      billingPhoneFields,
+      billingOtherFields,
+      cryptoFields,
+      otherFields,
+    )
   })
 }

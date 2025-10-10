@@ -60,3 +60,11 @@ let stringToFieldType = str => {
   | _ => TextInput
   }
 }
+
+type elementType =
+  | CARD(array<fieldConfig>)
+  | CRYPTO(array<fieldConfig>)
+  | FULLNAME(array<fieldConfig>)
+  | PHONE(array<fieldConfig>)
+  | EMAIL(array<fieldConfig>)
+  | GENERIC(array<fieldConfig>)

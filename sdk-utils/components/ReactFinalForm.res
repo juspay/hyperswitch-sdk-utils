@@ -1,22 +1,22 @@
+type formMethods = {
+  reset: unit => unit,
+  submit: unit => unit,
+}
+
+type formProps = {
+  handleSubmit: ReactEvent.Form.t => unit,
+  form: formMethods,
+  values: Dict.t<JSON.t>,
+  errors: Dict.t<string>,
+  touched: Dict.t<bool>,
+  dirty: bool,
+  pristine: bool,
+  valid: bool,
+  invalid: bool,
+  submitting: bool,
+}
+
 module Form = {
-  type formMethods = {
-    reset: unit => unit,
-    submit: unit => unit,
-  }
-
-  type formProps = {
-    handleSubmit: ReactEvent.Form.t => unit,
-    form: formMethods,
-    values: Dict.t<JSON.t>,
-    errors: Dict.t<string>,
-    touched: Dict.t<bool>,
-    dirty: bool,
-    pristine: bool,
-    valid: bool,
-    invalid: bool,
-    submitting: bool,
-  }
-
   @module("react-final-form") @react.component
   external make: (
     ~onSubmit: Dict.t<string> => unit=?,
@@ -26,36 +26,47 @@ module Form = {
   ) => React.element = "Form"
 }
 
+type fieldState = {
+  value: option<string>,
+  error: option<string>,
+  touched: bool,
+  active: bool,
+  dirty: bool,
+  invalid: bool,
+  pristine: bool,
+  valid: bool,
+}
+
+type inputProps<'t> = {
+  name: string,
+  value: option<string>,
+  onChange: string => unit,
+  onBlur: 't => unit,
+  onFocus: 't => unit,
+}
+
+type fieldProps<'t> = {
+  input: inputProps<'t>,
+  meta: fieldState,
+}
+
+type fieldRenderPropsCustomInput<'t> = {
+  name: string,
+  onBlur: ReactEvent.Focus.t => unit,
+  onChange: 't => unit,
+  onFocus: ReactEvent.Focus.t => unit,
+  value: option<string>,
+  checked: bool,
+}
+
+external toTypedField: inputProps<'t> => fieldRenderPropsCustomInput<'v> = "%identity"
+
 module Field = {
-  type fieldState = {
-    value: option<string>,
-    error: option<string>,
-    touched: bool,
-    active: bool,
-    dirty: bool,
-    invalid: bool,
-    pristine: bool,
-    valid: bool,
-  }
-
-  type inputProps = {
-    name: string,
-    value: option<string>,
-    onChange: string => unit,
-    onBlur: unit => unit,
-    onFocus: unit => unit,
-  }
-
-  type fieldProps = {
-    input: inputProps,
-    meta: fieldState,
-  }
-
   @module("react-final-form") @react.component
   external make: (
     ~name: string,
     ~validate: option<option<string> => option<string>>=?,
-    ~children: fieldProps => React.element,
+    ~children: fieldProps<'t> => React.element,
   ) => React.element = "Field"
 }
 
@@ -71,7 +82,7 @@ let createSubmitHandler = (onSubmit: option<Dict.t<string> => unit>) => {
 let useFormStateHandler = (
   ~onFormChange: Dict.t<JSON.t> => unit,
   ~onValidationChange: bool => unit,
-  ~formProps: Form.formProps,
+  ~formProps: formProps,
 ) => {
   React.useEffect2(() => {
     onFormChange(formProps.values)
@@ -100,4 +111,71 @@ type useFieldConfig<'a> = {
 }
 
 @module("react-final-form")
-external useField: (string, ~config: useFieldConfig<'a>=?, unit) => Field.fieldProps = "useField"
+external useField: (string, ~config: useFieldConfig<'a>=?) => fieldProps<'t> = "useField"
+
+type formSubscription = JSON.t
+module FormSpy = {
+  @module("react-final-form") @react.component
+  external make: (
+    ~children: formProps => React.element,
+    ~component: bool=?,
+    ~onChange: bool=?,
+    ~render: formProps => React.element=?,
+    ~subscription: formSubscription,
+  ) => React.element = "FormSpy"
+}
+
+module JsonBox = {
+  @react.component
+  let make = (~json) => {
+    <div
+      className="flex-1 border border-purple-500 m-2  overflow-scroll whitespace-pre font-fira-code">
+      {json->JSON.stringifyWithIndent(2)->React.string}
+    </div>
+  }
+}
+
+let useFormSubscription = (keys): formSubscription => {
+  React.useMemo(() => {
+    let dict = Dict.make()
+    keys->Array.forEach(key => {
+      Dict.set(dict, key, JSON.Encode.bool(true))
+    })
+    dict->JSON.Encode.object
+  }, [])
+}
+
+module FormValuesSpy = {
+  @react.component
+  let make = (~wrapperClass="", ~jsonModifier=?, ~restrictToLocal=true, ~displayProps=true) => {
+    let subs = useFormSubscription(["values"])
+
+    let canRender = if restrictToLocal {
+      Window.Location.hostname === "localhost"
+    } else {
+      true
+    }
+
+    if canRender {
+      <div className={`${wrapperClass} flex flex-col overflow-hidden`}>
+        <FormSpy subscription=subs>
+          {props => {
+            <>
+              {if displayProps {
+                <JsonBox json={props.values->JSON.Encode.object} />
+              } else {
+                React.null
+              }}
+              {switch jsonModifier {
+              | Some(modifierFn) => <JsonBox json={modifierFn(props.values)} />
+              | None => React.null
+              }}
+            </>
+          }}
+        </FormSpy>
+      </div>
+    } else {
+      React.null
+    }
+  }
+}
