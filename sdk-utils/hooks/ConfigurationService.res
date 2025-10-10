@@ -4,7 +4,12 @@ type configurationService = {
   evaluateConfig: SuperpositionTypes.superpositionContext => Dict.t<JSON.t>,
 }
 
-external importJSON: string => promise<JSON.t> = "import"
+type jsonModule = {
+  @as("default")
+  default: JSON.t,
+}
+
+external importJSON: string => promise<jsonModule> = "import"
 @module("./../superposition/superposition.js") @new
 external cacReader: JSON.t => Nullable.t<configurationService> = "CacReader"
 
@@ -17,10 +22,16 @@ let useConfigurationService = () => {
         try {
           let s3Path = "assets/v2/configs/superposition.config.json"
           let configData = try {
-            let response = await Fetch.fetch(`https://checkout.hyperswitch.io/${s3Path}`)
+            let response = await Utils.fetchApi(
+              "https://beta.hyperswitch.io/assets/v1/configs/superposition.config.json",
+              ~bodyStr="",
+              ~method=#GET,
+            )
             await response->Fetch.Response.json
           } catch {
-          | _ => await importJSON(`./../../${s3Path}`)
+          | _ =>
+            let configModule = await importJSON("./../superposition/config.json")
+            configModule.default
           }
 
           let configService = cacReader(configData)->Nullable.toOption
