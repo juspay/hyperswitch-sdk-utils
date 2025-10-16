@@ -12,3 +12,6 @@ It contains common code, shared assets, and utility functions that help standard
 - **Assets**: Shared assets like images, icons, and styles.
 - **Constants**: Common enums and configuration constants.
 - **Validation**: Standard input validation logic used in multiple packages.
+
+
+FOR ASSETS STRUCTURE [`read here`](assets/README.md)
