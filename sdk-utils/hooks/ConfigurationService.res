@@ -55,12 +55,12 @@ let useConfigurationService = () => {
           | Some(connector) =>
             let transformedContext: SuperpositionTypes.superpositionContext = {
               connector: connector->CommonUtils.snakeToPascalCase,
-              paymentMethod: configParams.paymentMethod->CommonUtils.snakeToPascalCase,
-              paymentMethodType: configParams.paymentMethodType->CommonUtils.snakeToPascalCase,
+              payment_method: configParams.payment_method->CommonUtils.snakeToPascalCase,
+              payment_method_type: configParams.payment_method_type->CommonUtils.snakeToPascalCase,
               country: configParams.country,
-              mandateType: configParams.mandateType,
-              collectBillingDetailsFromWalletConnector: configParams.collectBillingDetailsFromWalletConnector,
-              collectShippingDetailsFromWalletConnector: configParams.collectShippingDetailsFromWalletConnector,
+              mandate_type: configParams.mandate_type,
+              collect_billing_details_from_wallet_connector: configParams.collect_billing_details_from_wallet_connector,
+              collect_shipping_details_from_wallet_connector: configParams.collect_shipping_details_from_wallet_connector,
             }
             let resolvedConfig =
               svc.evaluateConfig(transformedContext)->convertConfigurationToRequiredFields

@@ -27,12 +27,12 @@ type rec fieldConfig = {
 type requiredFields = array<fieldConfig>
 
 type superpositionBaseContext = {
-  paymentMethod: string,
-  paymentMethodType: string,
+  payment_method: string,
+  payment_method_type: string,
   country: string,
-  mandateType: string,
-  collectShippingDetailsFromWalletConnector: string,
-  collectBillingDetailsFromWalletConnector: string,
+  mandate_type: string,
+  collect_shipping_details_from_wallet_connector: string,
+  collect_billing_details_from_wallet_connector: string,
 }
 
 type superpositionContext = {
