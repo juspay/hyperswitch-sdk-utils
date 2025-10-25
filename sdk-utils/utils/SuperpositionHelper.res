@@ -152,6 +152,25 @@ let setValueAtNestedPath = (dict: Dict.t<JSON.t>, keys: array<string>, value: st
   }
 }
 
+let rec removeEmptyObjects = (dict: Dict.t<JSON.t>): Dict.t<JSON.t> => {
+  let cleanedDict = Dict.make()
+
+  dict
+  ->Dict.toArray
+  ->Array.forEach(((key, value)) => {
+    switch value->JSON.Classify.classify {
+    | Object(nestedDict) =>
+      let cleaned = removeEmptyObjects(nestedDict)
+      if cleaned->Dict.toArray->Array.length > 0 {
+        cleanedDict->Dict.set(key, cleaned->JSON.Encode.object)
+      }
+    | _ => cleanedDict->Dict.set(key, value)
+    }
+  })
+
+  cleanedDict
+}
+
 let convertFlatDictToNestedObject = (flatDict: Dict.t<string>): Dict.t<JSON.t> => {
   let resultDict = Dict.make()
   flatDict
@@ -161,7 +180,7 @@ let convertFlatDictToNestedObject = (flatDict: Dict.t<string>): Dict.t<JSON.t> =
       setValueAtNestedPath(resultDict, key->String.split("."), value)->ignore
     }
   })
-  resultDict
+  resultDict->removeEmptyObjects
 }
 
 let convertConfigurationToRequiredFields = resolvedConfig => {

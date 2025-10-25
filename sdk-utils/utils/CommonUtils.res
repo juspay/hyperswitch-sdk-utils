@@ -158,6 +158,8 @@ let getDisplayName = text => {
   | "crypto_currency" => "Crypto"
   | "afterpay_clearpay" => "Afterpay"
   | "bnb_smart_chain" => "BNB Smart Chain"
+  | "classic" => "Cash / Voucher"
+  | "evoucher" => "E-Voucher"
   | "ach" | "sepa" | "bacs" | "becs" => text ++ " Debit"
   | other => other
   }

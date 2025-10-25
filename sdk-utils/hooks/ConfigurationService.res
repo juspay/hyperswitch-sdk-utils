@@ -15,15 +15,12 @@ let useConfigurationService = () => {
     let initializeService = async () => {
       if service.contents->Option.isNone {
         try {
+          let s3Path = "assets/v2/configs/superposition.config.json"
           let configData = try {
-            let response = await Fetch.fetch(
-              "https://checkout.hyperswitch.io/assets/v1/configs/superposition.config.json",
-            )
+            let response = await Fetch.fetch(`https://checkout.hyperswitch.io/${s3Path}`)
             await response->Fetch.Response.json
           } catch {
-          | err =>
-            Console.log(err)
-            await importJSON("./../superposition/config.json")
+          | _ => await importJSON(`./../../${s3Path}`)
           }
 
           let configService = cacReader(configData)->Nullable.toOption
