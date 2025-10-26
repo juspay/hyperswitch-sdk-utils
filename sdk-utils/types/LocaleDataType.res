@@ -1,3 +1,131 @@
+type localeTypes =
+  | En
+  | He
+  | Fr
+  | En_GB
+  | Ar
+  | Ja
+  | De
+  | Fr_BE
+  | Es
+  | Ca
+  | Pt
+  | It
+  | Pl
+  | Nl
+  | NI_BE
+  | Sv
+  | Ru
+  | Lt
+  | Cs
+  | Sk
+  | Ls
+  | Cy
+  | El
+  | Et
+  | Fi
+  | Nb
+  | Bs
+  | Da
+  | Ms
+  | Tr_CY
+
+let localeTypeToString = locale => {
+  switch locale {
+  | Some(En) => "en"
+  | Some(He) => "he"
+  | Some(Fr) => "fr"
+  | Some(En_GB) => "en-GB"
+  | Some(Ar) => "ar"
+  | Some(Ja) => "ja"
+  | Some(De) => "de"
+  | Some(Fr_BE) => "fr-BE"
+  | Some(Es) => "es"
+  | Some(Ca) => "ca"
+  | Some(Pt) => "pt"
+  | Some(It) => "it"
+  | Some(Pl) => "pl"
+  | Some(Nl) => "nl"
+  | Some(NI_BE) => "nI-BE"
+  | Some(Sv) => "sv"
+  | Some(Ru) => "ru"
+  | Some(Lt) => "lt"
+  | Some(Cs) => "cs"
+  | Some(Sk) => "sk"
+  | Some(Ls) => "ls"
+  | Some(Cy) => "cy"
+  | Some(El) => "el"
+  | Some(Et) => "et"
+  | Some(Fi) => "fi"
+  | Some(Nb) => "nb"
+  | Some(Bs) => "bs"
+  | Some(Da) => "da"
+  | Some(Ms) => "ms"
+  | Some(Tr_CY) => "tr-CY"
+  | None => "en"
+  }
+}
+let localeStringToType = locale => {
+  switch locale {
+  | "he" => Some(He)
+  | "fr" => Some(Fr)
+  | "en-GB" => Some(En_GB)
+  | "ar" => Some(Ar)
+  | "ja" => Some(Ja)
+  | "de" => Some(De)
+  | "fr-BE" => Some(Fr_BE)
+  | "es" => Some(Es)
+  | "ca" => Some(Ca)
+  | "pt" => Some(Pt)
+  | "it" => Some(It)
+  | "pl" => Some(Pl)
+  | "nl" => Some(Nl)
+  | "nI-BE" => Some(NI_BE)
+  | "sv" => Some(Sv)
+  | "ru" => Some(Ru)
+  | "lt" => Some(Lt)
+  | "cs" => Some(Cs)
+  | "sk" => Some(Sk)
+  | "ls" => Some(Ls)
+  | "cy" => Some(Cy)
+  | "el" => Some(El)
+  | "et" => Some(Et)
+  | "fi" => Some(Fi)
+  | "nb" => Some(Nb)
+  | "bs" => Some(Bs)
+  | "da" => Some(Da)
+  | "ms" => Some(Ms)
+  | "tr-CY" => Some(Tr_CY)
+  | _ => Some(En)
+  }
+}
+
+let localeStringToLocaleName = locale => {
+  switch locale {
+  | "BR" | "PT_BR" => "Portuguese (Brazil)"
+  | "CN" | "ZH_CN" => "Chinese (Simplified)"
+  | "DE" => "German"
+  | "DK" | "DA" | "DA_DK" => "Danish"
+  | "EN" => "English"
+  | "ES" => "Spanish"
+  | "FI" => "Finnish"
+  | "FR" => "French"
+  | "GR" | "EL" | "EL_GR" => "Greek"
+  | "HR" => "Croatian"
+  | "IT" => "Italian"
+  | "JP" | "JA" | "JA_JP" => "Japanese"
+  | "LA" | "ES_LA" => "Spanish (Latin America)"
+  | "NL" => "Dutch"
+  | "NO" => "Norwegian"
+  | "PL" => "Polish"
+  | "PT" => "Portuguese"
+  | "RU" => "Russian"
+  | "SV" | "SE" | "SV_SE" => "Swedish"
+  | "ZH" | "TW" | "ZH_TW" => "Chinese (Traditional)"
+  | x => x
+  }
+}
+
 type localeStrings = {
   locale: string,
   localeDirection: string,
