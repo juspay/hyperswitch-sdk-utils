@@ -24,9 +24,9 @@ let useConfigurationService = () => {
           }
 
           let configService = cacReader(configData)->Nullable.toOption
-          service.contents = configService
+          service := configService
         } catch {
-        | _ex => service.contents = None
+        | _ex => service := None
         }
       }
     }
