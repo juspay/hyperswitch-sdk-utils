@@ -126,16 +126,6 @@ module FormSpy = {
   ) => React.element = "FormSpy"
 }
 
-module JsonBox = {
-  @react.component
-  let make = (~json) => {
-    <div
-      className="flex-1 border border-purple-500 m-2  overflow-scroll whitespace-pre font-fira-code">
-      {json->JSON.stringifyWithIndent(2)->React.string}
-    </div>
-  }
-}
-
 let useFormSubscription = (keys): formSubscription => {
   React.useMemo(() => {
     let dict = Dict.make()
@@ -144,39 +134,4 @@ let useFormSubscription = (keys): formSubscription => {
     })
     dict->JSON.Encode.object
   }, [])
-}
-
-module FormValuesSpy = {
-  @react.component
-  let make = (~wrapperClass="", ~jsonModifier=?, ~restrictToLocal=true, ~displayProps=true) => {
-    let subs = useFormSubscription(["values"])
-
-    let canRender = if restrictToLocal {
-      Window.Location.hostname === "localhost"
-    } else {
-      true
-    }
-
-    if canRender {
-      <div className={`${wrapperClass} flex flex-col overflow-hidden`}>
-        <FormSpy subscription=subs>
-          {props => {
-            <>
-              {if displayProps {
-                <JsonBox json={props.values->JSON.Encode.object} />
-              } else {
-                React.null
-              }}
-              {switch jsonModifier {
-              | Some(modifierFn) => <JsonBox json={modifierFn(props.values)} />
-              | None => React.null
-              }}
-            </>
-          }}
-        </FormSpy>
-      </div>
-    } else {
-      React.null
-    }
-  }
 }
