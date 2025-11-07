@@ -1,6 +1,9 @@
+type getState = {values: Dict.t<JSON.t>, valid: bool}
+
 type formMethods = {
   reset: unit => unit,
   submit: unit => unit,
+  getState: unit => getState,
 }
 
 type formProps = {
@@ -19,7 +22,7 @@ type formProps = {
 module Form = {
   @module("react-final-form") @react.component
   external make: (
-    ~onSubmit: Dict.t<string> => unit=?,
+    ~onSubmit: (Dict.t<string>, formMethods) => unit=?,
     ~validate: option<Dict.t<string> => Dict.t<string>>=?,
     ~initialValues: option<Dict.t<JSON.t>>=?,
     ~render: formProps => React.element,
@@ -58,8 +61,6 @@ type fieldRenderPropsCustomInput<'t> = {
   value: option<string>,
   checked: bool,
 }
-
-external toTypedField: inputProps<'t> => fieldRenderPropsCustomInput<'v> = "%identity"
 
 module Field = {
   @module("react-final-form") @react.component

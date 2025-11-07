@@ -196,6 +196,55 @@ let setValueAtNestedPath = (dict: Dict.t<JSON.t>, keys: array<string>, value: st
   }
 }
 
+let setValueAtNestedPathWithJson = (
+  dict: Dict.t<JSON.t>,
+  keys: array<string>,
+  value: JSON.t,
+): Dict.t<JSON.t> => {
+  let keysLength = keys->Array.length
+
+  if keysLength === 0 {
+    dict
+  } else if keysLength === 1 {
+    let key = CommonUtils.getArrayElement(keys, 0, "")
+    if key !== "" {
+      dict->Dict.set(key, value)
+    }
+    dict
+  } else {
+    let currentDict = ref(dict)
+    let pathLength = keysLength - 1
+
+    for i in 0 to pathLength - 1 {
+      let key = CommonUtils.getArrayElement(keys, i, "")
+      if key !== "" {
+        let nestedDict = getOrCreateNestedDictionary(currentDict.contents, key)
+        currentDict.contents->Dict.set(key, nestedDict->JSON.Encode.object)
+        currentDict := nestedDict
+      }
+    }
+
+    let finalKey = CommonUtils.getArrayElement(keys, pathLength, "")
+    if finalKey !== "" {
+      currentDict.contents->Dict.set(finalKey, value)
+    }
+
+    dict
+  }
+}
+
+let convertFlatDictToNestedObjectWithJson = (flatDict: Dict.t<JSON.t>): Dict.t<JSON.t> => {
+  let resultDict = Dict.make()
+  flatDict
+  ->Dict.toArray
+  ->Array.forEach(((key, value)) => {
+    if key->String.length > 0 {
+      setValueAtNestedPathWithJson(resultDict, key->String.split("."), value)->ignore
+    }
+  })
+  resultDict
+}
+
 let convertFlatDictToNestedObject = (flatDict: Dict.t<string>): Dict.t<JSON.t> => {
   let resultDict = Dict.make()
   flatDict
@@ -233,7 +282,7 @@ let convertConfigurationToRequiredFields = resolvedConfig => {
   fieldGroups
   ->Dict.toArray
   ->Array.filterMap(((baseName, metadata)) => {
-    let required = true
+    let required = metadata->getBool("required", false)
     if required {
       let displayName = metadata->getString("display_name", baseName)
       let fieldTypeStr = metadata->getString("field_type", "")
@@ -304,4 +353,21 @@ let categorizedFields = fields => {
       otherFields,
     )
   })
+}
+
+let createCustomField = (
+  outputPath,
+  ~fieldType=TextInput,
+  ~options=[],
+  ~displayName="",
+  ~name="",
+) => {
+  name,
+  displayName,
+  fieldType,
+  priority: 99999,
+  required: true,
+  options,
+  outputPath,
+  mergedFields: [],
 }
