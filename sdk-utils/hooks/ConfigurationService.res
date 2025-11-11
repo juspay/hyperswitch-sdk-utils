@@ -16,8 +16,9 @@ external cacReader: JSON.t => Nullable.t<configurationService> = "CacReader"
 let service = ref(None)
 
 let useConfigurationService = () => {
+  let superpositionConfigLoadedPromise = React.useRef(Promise.make((_, _) => {()}))
   React.useEffect0(() => {
-    let initializeService = async () => {
+    let initializeService = async resolve => {
       if service.contents->Option.isNone {
         try {
           let configData = try {
@@ -39,16 +40,20 @@ let useConfigurationService = () => {
         | _ex => service.contents = None
         }
       }
+      resolve()
     }
-    initializeService()->ignore
+    superpositionConfigLoadedPromise.current = Promise.make((resolve, _) =>
+      initializeService(resolve)->ignore
+    )
     None
   })
 
-  (
+  async (
     eligibleConnectors: array<RescriptCore.JSON.t>,
     configParams: SuperpositionTypes.superpositionBaseContext,
     requiredFieldsFromPML,
   ) => {
+    await superpositionConfigLoadedPromise.current
     let requiredFieldsFromSuperPosition = switch (
       service.contents,
       Array.length(eligibleConnectors) === 0,
