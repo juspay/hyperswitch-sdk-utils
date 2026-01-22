@@ -1,0 +1,102 @@
+open SuperpositionHelper
+
+type configurationService = {
+  evaluateConfig: SuperpositionTypes.superpositionContext => Dict.t<JSON.t>,
+}
+
+type jsonModule = {
+  @as("default")
+  default: JSON.t,
+}
+
+external importJSON: string => promise<jsonModule> = "import"
+@module("./../superposition/superposition.js") @new
+external cacReader: JSON.t => Nullable.t<configurationService> = "CacReader"
+
+let service = ref(None)
+
+let useConfigurationService = () => {
+  let superpositionConfigLoadedPromise = React.useRef(Promise.make((_, _) => {()}))
+  React.useEffect0(() => {
+    let initializeService = async resolve => {
+      if service.contents->Option.isNone {
+        try {
+          let configData = try {
+            let response = await Utils.fetchApi(
+              "https://beta.hyperswitch.io/assets/v1/configs/superposition.config.json",
+              ~bodyStr="",
+              ~method=#GET,
+            )
+            await response->Fetch.Response.json
+          } catch {
+          | _ =>
+            let configModule = await importJSON("./../superposition/config.json")
+            configModule.default
+          }
+
+          let configService = cacReader(configData)->Nullable.toOption
+          service.contents = configService
+        } catch {
+        | _ex => service.contents = None
+        }
+      }
+      resolve()
+    }
+    superpositionConfigLoadedPromise.current = Promise.make((resolve, _) =>
+      initializeService(resolve)->ignore
+    )
+    None
+  })
+
+  async (
+    eligibleConnectors: array<RescriptCore.JSON.t>,
+    configParams: SuperpositionTypes.superpositionBaseContext,
+    requiredFieldsFromPML,
+  ) => {
+    await superpositionConfigLoadedPromise.current
+    let requiredFieldsFromSuperPosition = switch (
+      service.contents,
+      Array.length(eligibleConnectors) === 0,
+    ) {
+    | (_, true)
+    | (None, false) => []
+    | (Some(svc), false) =>
+      eligibleConnectors
+      ->removeDuplicateConnectors
+      ->Array.reduce([], (acc, connector) => {
+        try {
+          switch connector->JSON.Decode.string {
+          | Some("") | None => ()
+          | Some(connector) =>
+            let transformedContext: SuperpositionTypes.superpositionContext = {
+              connector: connector->CommonUtils.snakeToPascalCase,
+              payment_method: configParams.payment_method->CommonUtils.snakeToPascalCase,
+              payment_method_type: configParams.payment_method_type->CommonUtils.snakeToPascalCase,
+              country: configParams.country,
+              mandate_type: configParams.mandate_type,
+              collect_billing_details_from_wallet_connector: configParams.collect_billing_details_from_wallet_connector,
+              collect_shipping_details_from_wallet_connector: configParams.collect_shipping_details_from_wallet_connector,
+            }
+            let resolvedConfig =
+              svc.evaluateConfig(transformedContext)->convertConfigurationToRequiredFields
+            acc->Array.pushMany(resolvedConfig)
+          }
+        } catch {
+        | _ex => ()
+        }
+        acc
+      })
+      ->removeShippingAndDuplicateFields
+      ->sortFieldsByPriorityOrder
+    }
+
+    let missingRequiredFields = filterFieldsBasedOnMissingData(
+      requiredFieldsFromSuperPosition,
+      requiredFieldsFromPML,
+    )
+
+    let initialValues = convertFlatDictToNestedObject(requiredFieldsFromPML)
+
+    (requiredFieldsFromSuperPosition, missingRequiredFields, initialValues)
+  }
+}
