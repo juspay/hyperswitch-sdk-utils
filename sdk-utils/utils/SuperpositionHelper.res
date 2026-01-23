@@ -201,6 +201,25 @@ let convertFlatDictToNestedObjectWithJson = (flatDict: Dict.t<JSON.t>): Dict.t<J
   resultDict
 }
 
+let rec removeEmptyObjects = (dict: Dict.t<JSON.t>): Dict.t<JSON.t> => {
+  let cleanedDict = Dict.make()
+
+  dict
+  ->Dict.toArray
+  ->Array.forEach(((key, value)) => {
+    switch value->JSON.Classify.classify {
+    | Object(nestedDict) =>
+      let cleaned = removeEmptyObjects(nestedDict)
+      if cleaned->Dict.toArray->Array.length > 0 {
+        cleanedDict->Dict.set(key, cleaned->JSON.Encode.object)
+      }
+    | _ => cleanedDict->Dict.set(key, value)
+    }
+  })
+
+  cleanedDict
+}
+
 let convertFlatDictToNestedObject = (flatDict: Dict.t<string>): Dict.t<JSON.t> => {
   let resultDict = Dict.make()
   flatDict
@@ -266,7 +285,7 @@ let convertConfigurationToRequiredFields = resolvedConfig => {
 }
 
 let categorizedFields = fields => {
-  fields->Array.reduce(([], [], [], [], [], [], []), (
+  fields->Array.reduce(([], [], [], [], [], [], [], []), (
     (
       cardFields,
       emailFields,
@@ -274,6 +293,7 @@ let categorizedFields = fields => {
       billingPhoneFields,
       billingOtherFields,
       cryptoFields,
+      datePickerFields,
       otherFields,
     ),
     fieldConfig: SuperpositionTypes.fieldConfig,
@@ -295,6 +315,8 @@ let categorizedFields = fields => {
       billingOtherFields->Array.push(fieldConfig)
     } else if fieldName->String.includes("crypto.") {
       cryptoFields->Array.push(fieldConfig)
+    } else if fieldConfig.fieldType === DatePicker {
+      datePickerFields->Array.push(fieldConfig)
     } else {
       otherFields->Array.push(fieldConfig)
     }
@@ -305,24 +327,24 @@ let categorizedFields = fields => {
       billingPhoneFields,
       billingOtherFields,
       cryptoFields,
+      datePickerFields,
       otherFields,
     )
   })
 }
 
-let createCustomField = (
-  outputPath,
-  ~fieldType=TextInput,
-  ~options=[],
-  ~displayName="",
-  ~name="",
-) => {
-  name,
-  displayName,
-  fieldType,
-  priority: 99999,
-  required: true,
-  options,
-  outputPath,
-  mergedFields: [],
-}
+// let createCustomField = (
+//   outputPath,
+//   ~fieldType=TextInput,
+//   ~options=[],
+//   ~displayName="",
+//   ~name="",
+// ) => {
+//   name,
+//   displayName,
+//   fieldType,
+//   priority: 99999,
+//   required: true,
+//   options,
+//   outputPath,
+// }
