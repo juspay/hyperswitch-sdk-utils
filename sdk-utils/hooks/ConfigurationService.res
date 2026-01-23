@@ -4,35 +4,27 @@ type configurationService = {
   evaluateConfig: SuperpositionTypes.superpositionContext => Dict.t<JSON.t>,
 }
 
-type jsonModule = {
-  @as("default")
-  default: JSON.t,
-}
-
-external importJSON: string => promise<jsonModule> = "import"
+external importJSON: string => promise<JSON.t> = "import"
 @module("./../superposition/superposition.js") @new
 external cacReader: JSON.t => Nullable.t<configurationService> = "CacReader"
 
 let service = ref(None)
 
 let useConfigurationService = () => {
-  let superpositionConfigLoadedPromise = React.useRef(Promise.make((_, _) => {()}))
   React.useEffect0(() => {
-    let initializeService = async resolve => {
+    let initializeService = async () => {
       if service.contents->Option.isNone {
         try {
           let s3Path = "assets/v2/configs/superposition.config.json"
           let configData = try {
-            let response = await Utils.fetchApi(
-              "https://beta.hyperswitch.io/assets/v1/configs/superposition.config.json",
+            let response = await APIUtils.fetchApi(
+              ~uri=`https://checkout.hyperswitch.io/${s3Path}`,
               ~bodyStr="",
-              ~method=#GET,
+              ~method_=#GET,
             )
             await response->Fetch.Response.json
           } catch {
-          | _ =>
-            let configModule = await importJSON("./../superposition/config.json")
-            configModule.default
+          | _ => await importJSON(`./../../${s3Path}`)
           }
 
           let configService = cacReader(configData)->Nullable.toOption
@@ -41,20 +33,16 @@ let useConfigurationService = () => {
         | _ex => service := None
         }
       }
-      resolve()
     }
-    superpositionConfigLoadedPromise.current = Promise.make((resolve, _) =>
-      initializeService(resolve)->ignore
-    )
+    initializeService()->ignore
     None
   })
 
-  async (
+  (
     eligibleConnectors: array<RescriptCore.JSON.t>,
     configParams: SuperpositionTypes.superpositionBaseContext,
     requiredFieldsFromPML,
   ) => {
-    await superpositionConfigLoadedPromise.current
     let requiredFieldsFromSuperPosition = switch (
       service.contents,
       Array.length(eligibleConnectors) === 0,

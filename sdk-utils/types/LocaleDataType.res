@@ -65,6 +65,7 @@ let localeTypeToString = locale => {
   | None => "en"
   }
 }
+
 let localeStringToType = locale => {
   switch locale {
   | "he" => Some(He)

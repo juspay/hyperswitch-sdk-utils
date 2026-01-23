@@ -72,7 +72,7 @@ module Field = {
 }
 
 let createSubmitHandler = (onSubmit: option<Dict.t<string> => unit>) => {
-  React.useCallback((values: Dict.t<string>) => {
+  React.useCallback((values: Dict.t<string>, _formMethods: formMethods) => {
     switch onSubmit {
     | Some(submitFn) => submitFn(values)
     | None => ()
