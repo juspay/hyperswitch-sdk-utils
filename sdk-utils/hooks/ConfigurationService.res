@@ -17,7 +17,12 @@ let useConfigurationService = () => {
         try {
           let s3Path = "assets/v2/configs/superposition.config.json"
           let configData = try {
-            let response = await Fetch.fetch(`https://checkout.hyperswitch.io/${s3Path}`)
+            let response = await Fetch.fetch(
+              `https://checkout.hyperswitch.io/${s3Path}`,
+              {
+                method: #GET,
+              }
+            )
             await response->Fetch.Response.json
           } catch {
           | _ => await importJSON(`./../../${s3Path}`)
