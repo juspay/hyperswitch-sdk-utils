@@ -100,4 +100,4 @@ type useFieldConfig<'a> = {
 }
 
 @module("react-final-form")
-external useField: (string, ~config: useFieldConfig<'a>=?, unit) => Field.fieldProps = "useField"
+external useField: (string, ~config: useFieldConfig<'a>=?) => Field.fieldProps = "useField"
