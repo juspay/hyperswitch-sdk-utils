@@ -105,7 +105,7 @@ let decodeReferrerPolicy = x =>
   | "origin-when-cross-origin" => OriginWhenCrossOrigin
   | "strict-origin-when-cross-origin" => StrictOriginWhenCrossOrigin
   | "unsafe-url" => UnsafeUrl
-  | e => raise(Failure("Unknown referrerPolicy: " ++ e))
+  | e => throw(Failure("Unknown referrerPolicy: " ++ e))
   }
 
 type requestType =
@@ -129,7 +129,7 @@ let decodeRequestType = x =>
   | "style" => Style
   | "track" => Track
   | "video" => Video
-  | e => raise(Failure("Unknown requestType: " ++ e))
+  | e => throw(Failure("Unknown requestType: " ++ e))
   }
 
 type requestDestination =
@@ -167,7 +167,7 @@ let decodeRequestDestination = x =>
   | "style" => Style
   | "worker" => Worker
   | "xslt" => Xslt
-  | e => raise(Failure("Unknown requestDestination: " ++ e))
+  | e => throw(Failure("Unknown requestDestination: " ++ e))
   }
 
 type requestMode =
@@ -192,7 +192,7 @@ let decodeRequestMode = x =>
   | "same-origin" => SameOrigin
   | "no-cors" => NoCORS
   | "cors" => CORS
-  | e => raise(Failure("Unknown requestMode: " ++ e))
+  | e => throw(Failure("Unknown requestMode: " ++ e))
   }
 
 type requestCredentials =
@@ -214,7 +214,7 @@ let decodeRequestCredentials = x =>
   | "omit" => Omit
   | "same-origin" => SameOrigin
   | "include" => Include
-  | e => raise(Failure("Unknown requestCredentials: " ++ e))
+  | e => throw(Failure("Unknown requestCredentials: " ++ e))
   }
 
 type requestCache =
@@ -245,7 +245,7 @@ let decodeRequestCache = x =>
   | "no-cache" => NoCache
   | "force-cache" => ForceCache
   | "only-if-cached" => OnlyIfCached
-  | e => raise(Failure("Unknown requestCache: " ++ e))
+  | e => throw(Failure("Unknown requestCache: " ++ e))
   }
 
 type requestRedirect =
@@ -267,14 +267,14 @@ let decodeRequestRedirect = x =>
   | "follow" => Follow
   | "error" => Error
   | "manual" => Manual
-  | e => raise(Failure("Unknown requestRedirect: " ++ e))
+  | e => throw(Failure("Unknown requestRedirect: " ++ e))
   }
 
 module HeadersInit = {
   type t = headersInit
 
   let make: {..} => t = Utils.getJsonObjectFromRecord
-  let makeWithDict: Js.Dict.t<string> => t = Utils.getJsonObjectFromRecord
+  let makeWithDict: dict<string> => t = Utils.getJsonObjectFromRecord
   let makeWithArray: array<(string, string)> => t = Utils.getJsonObjectFromRecord
 }
 
@@ -314,18 +314,16 @@ module Body = {
     @get external bodyUsed: T.t => bool = "bodyUsed"
 
     @send
-    external arrayBuffer: T.t => Js.Promise.t<arrayBuffer> = "arrayBuffer"
-    @send external blob: T.t => Js.Promise.t<blob> = "blob"
+    external arrayBuffer: T.t => promise<arrayBuffer> = "arrayBuffer"
+    @send external blob: T.t => promise<blob> = "blob"
     @send
-    external formData: T.t => Js.Promise.t<formData> = "formData"
-    @send external json: T.t => Js.Promise.t<Js.Json.t> = "json"
-    @send external text: T.t => Js.Promise.t<string> = "text"
+    external formData: T.t => promise<formData> = "formData"
+    @send external json: T.t => promise<JSON.t> = "json"
+    @send external text: T.t => promise<string> = "text"
   }
 
   type t = body
-  include Impl({
-    type t = t
-  })
+  include Impl({type t = t})
 }
 
 module RequestInit = {
@@ -387,9 +385,7 @@ module RequestInit = {
 module Request = {
   type t = request
 
-  include Body.Impl({
-    type t = t
-  })
+  include Body.Impl({type t = t})
 
   @new external make: string => t = "Request"
   @new external makeWithInit: (string, requestInit) => t = "Request"
@@ -423,9 +419,7 @@ module Request = {
 module Response = {
   type t = response
 
-  include Body.Impl({
-    type t = t
-  })
+  include Body.Impl({type t = t})
 
   @val external error: unit => t = "error"
   @val external redirect: string => t = "redirect"
@@ -447,7 +441,7 @@ module FormData = {
     type t
 
     let classify: t => [> #String(string) | #File(file)] = t =>
-      if Js.typeof(t) == "string" {
+      if typeof(t) == #string {
         #String(Obj.magic(t))
       } else {
         #File(Obj.magic(t))
@@ -490,10 +484,10 @@ module FormData = {
   external entries: t => Iterator.t<(string, EntryValue.t)> = "entries"
 }
 
-@val external fetch: string => Js.Promise.t<response> = "fetch"
+@val external fetch: string => promise<response> = "fetch"
 @val
-external fetchWithInit: (string, requestInit) => Js.Promise.t<response> = "fetch"
+external fetchWithInit: (string, requestInit) => promise<response> = "fetch"
 @val
-external fetchWithRequest: request => Js.Promise.t<response> = "fetch"
+external fetchWithRequest: request => promise<response> = "fetch"
 @val
-external fetchWithRequestInit: (request, requestInit) => Js.Promise.t<response> = "fetch"
+external fetchWithRequestInit: (request, requestInit) => promise<response> = "fetch"

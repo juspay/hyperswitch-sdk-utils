@@ -11,7 +11,7 @@ let getobjFromCardPattern = cardBrand => {
 }
 
 let clearSpaces = value => {
-  value->String.replaceRegExp(%re("/\D+/g"), "")
+  value->String.replaceRegExp(/\D+/g, "")
 }
 
 let slice = (val, start: int, end: int) => {

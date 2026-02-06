@@ -5,7 +5,7 @@ let formatPhoneNumber = (phoneNumberText, countries) => {
     ("", phoneNumberText)
   } else {
     let startsAt =
-      phoneNumberText->String.search(%re("/[+\uFF0B0-9\uFF10-\uFF19\u0660-\u0669\u06F0-\u06F9]/"))
+      phoneNumberText->String.search(/[+\uFF0B0-9\uFF10-\uFF19\u0660-\u0669\u06F0-\u06F9]/)
 
     if startsAt < 0 {
       ("", phoneNumberText)
@@ -13,16 +13,13 @@ let formatPhoneNumber = (phoneNumberText, countries) => {
       let cleanNumber =
         phoneNumberText
         ->String.sliceToEnd(~start=startsAt)
-        ->String.replaceRegExp(%re("/[^0-9\uFF10-\uFF19\u0660-\u0669\u06F0-\u06F9#]+$/"), "")
+        ->String.replaceRegExp(/[^0-9\uFF10-\uFF19\u0660-\u0669\u06F0-\u06F9#]+$/, "")
 
-      if (
-        cleanNumber->String.length < 2 ||
-          !(cleanNumber->String.match(%re("/[0-9]/"))->Option.isSome)
-      ) {
+      if cleanNumber->String.length < 2 || !(cleanNumber->String.match(/[0-9]/)->Option.isSome) {
         ("", phoneNumberText)
       } else {
         let hasPlus = cleanNumber->String.indexOf("+") !== -1
-        let digits = cleanNumber->String.replaceRegExp(%re("/[^0-9]/g"), "")
+        let digits = cleanNumber->String.replaceRegExp(/[^0-9]/g, "")
 
         let (countryCode, nationalNumber) = if hasPlus {
           let rec findCode = (i, digits, countries) => {

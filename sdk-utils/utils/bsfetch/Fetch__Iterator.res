@@ -12,10 +12,10 @@ type t<'a>
 let rec forEach = (t, ~f) => {
   let item = next(t)
   switch (Next.done_(item), Next.value(item)) {
-  | (Some(true), Some(value)) => f(. value)
+  | (Some(true), Some(value)) => f(value)
   | (Some(true), None) => ()
   | (Some(false) | None, Some(value)) =>
-    f(. value)
+    f(value)
     forEach(t, ~f)
   | (Some(false) | None, None) => forEach(t, ~f)
   }
