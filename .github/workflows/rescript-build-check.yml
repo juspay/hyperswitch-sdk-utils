@@ -31,6 +31,8 @@ jobs:
             },
             "dependencies": {
               "@rescript/core": "^1.6.1",
+              "@rescript/react": "^0.13.1",
+              "@glennsl/rescript-fetch": "0.2.3",
               "rescript": "^11.1.4"
             }
           }
@@ -55,7 +57,9 @@ jobs:
             ],
             "suffix": ".bs.js",
             "bs-dependencies": [
-              "@rescript/core"
+              "@rescript/react",
+              "@rescript/core",
+              "@glennsl/rescript-fetch"
             ],
             "bsc-flags": [
               "-open RescriptCore"
