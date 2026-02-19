@@ -153,6 +153,7 @@ let rec mergeDict = (dict1: Dict.t<JSON.t>, dict2: Dict.t<JSON.t>): Dict.t<JSON.
 }
 
 let getDisplayName = text => {
+  Console.log2("getDisplayName input:", text)
   let transformText = switch text {
   | "credit" => "Card"
   | "crypto_currency" => "Crypto"
@@ -161,6 +162,10 @@ let getDisplayName = text => {
   | "classic" => "Cash / Voucher"
   | "evoucher" => "E-Voucher"
   | "ach" | "sepa" | "bacs" | "becs" => text ++ " Debit"
+  | "upi_collect" => "Pay by UPI ID/VPA"
+  | "upi_intent" => "Pay by using any UPI App"
+  | "upi_qr" => "Pay by scanning QR Code"
+
   | other => other
   }
 

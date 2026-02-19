@@ -313,6 +313,8 @@ type localeStrings = {
   swiftCode: string,
   doneText: string,
   copyToClipboard: string,
+  payByUpiApp: string,
+  andMore: string,
 }
 
 let defaultLocale = {
@@ -502,4 +504,6 @@ let defaultLocale = {
   swiftCode: "Swift code",
   doneText: "Done",
   copyToClipboard: "Copy to clipboard",
+  payByUpiApp: "Use any UPI app on your mobile phone like CRED, PhonePe, GPay, BHIM etc",
+  andMore: "& more",
 }
