@@ -220,7 +220,7 @@ let getLocaleStrings: Js.Json.t => localeStrings = data => {
       ),
       on: Utils.getString(res, "on", defaultLocale.on),
       and_: Utils.getString(res, "and", defaultLocale.and_),
-      pleaseProvideText: Utils.getString(res, "pleaseProvideText", defaultLocale.pleaseProvideText),
+      nameEmptyText: Utils.getString(res, "nameEmptyText", defaultLocale.nameEmptyText),
       completeNameEmptyText: Utils.getString(
         res,
         "completeNameEmptyText",
