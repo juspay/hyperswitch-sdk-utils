@@ -25,7 +25,7 @@ let useConfigurationService = () => {
     }
 
     let initializeService = async () => {
-      switch nativeProp.superpositionConfig.configJson {
+      switch nativeProp.hyperParams.superpositionConfigRaw {
       | Some(nativeConfig) =>
         let nativeService = try {
           cacReader(nativeConfig)->Nullable.toOption
@@ -57,7 +57,7 @@ let useConfigurationService = () => {
     }
     initializeService()->ignore
     None
-  }, [nativeProp.superpositionConfig.configJson])
+  }, [nativeProp.hyperParams.superpositionConfigRaw])
 
   (
     eligibleConnectors: array<RescriptCore.JSON.t>,
