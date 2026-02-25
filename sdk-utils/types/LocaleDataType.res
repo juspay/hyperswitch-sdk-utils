@@ -245,7 +245,7 @@ type localeStrings = {
   billingNamePlaceholder: string,
   cardHolderName: string,
   on: string,
-  @as("and") and_: string,
+  \"and": string,
   // TODO: we can rename this variable to "pleaseProvideText"
   nameEmptyText: string,
   // TODO: we can rename this variable to "pleaseProvideCompleteText"
@@ -552,7 +552,7 @@ let defaultLocale: localeStrings = {
   billingNamePlaceholder: "First and last name",
   cardHolderName: "Card Holder Name",
   on: "on",
-  and_: "and",
+  \"and": "and",
   nameEmptyText: "Please provide your ",
   completeNameEmptyText: "Please provide your complete ",
   // TODO: remove duplicate key "billingDetails" (for billingDetailsText) from all locales files.
