@@ -13,13 +13,13 @@ type localeTypes =
   | It
   | Pl
   | Nl
-  | NI_BE
+  | Nl_BE
   | Sv
   | Ru
   | Lt
   | Cs
   | Sk
-  | Ls
+  | Is
   | Cy
   | El
   | Et
@@ -29,6 +29,8 @@ type localeTypes =
   | Da
   | Ms
   | Tr_CY
+  | Zh
+  | Zh_HANT
 
 let localeTypeToString = locale => {
   switch locale {
@@ -46,13 +48,13 @@ let localeTypeToString = locale => {
   | Some(It) => "it"
   | Some(Pl) => "pl"
   | Some(Nl) => "nl"
-  | Some(NI_BE) => "nI-BE"
+  | Some(Nl_BE) => "nl-BE"
   | Some(Sv) => "sv"
   | Some(Ru) => "ru"
   | Some(Lt) => "lt"
   | Some(Cs) => "cs"
   | Some(Sk) => "sk"
-  | Some(Ls) => "ls"
+  | Some(Is) => "is"
   | Some(Cy) => "cy"
   | Some(El) => "el"
   | Some(Et) => "et"
@@ -62,6 +64,8 @@ let localeTypeToString = locale => {
   | Some(Da) => "da"
   | Some(Ms) => "ms"
   | Some(Tr_CY) => "tr-CY"
+  | Some(Zh) => "zh"
+  | Some(Zh_HANT) => "zh-Hant"
   | None => "en"
   }
 }
@@ -81,13 +85,13 @@ let localeStringToType = locale => {
   | "it" => Some(It)
   | "pl" => Some(Pl)
   | "nl" => Some(Nl)
-  | "ni-be" => Some(NI_BE)
+  | "nl-be" => Some(Nl_BE)
   | "sv" => Some(Sv)
   | "ru" => Some(Ru)
   | "lt" => Some(Lt)
   | "cs" => Some(Cs)
   | "sk" => Some(Sk)
-  | "ls" => Some(Ls)
+  | "is" => Some(Is)
   | "cy" => Some(Cy)
   | "el" => Some(El)
   | "et" => Some(Et)
@@ -97,6 +101,8 @@ let localeStringToType = locale => {
   | "da" => Some(Da)
   | "ms" => Some(Ms)
   | "tr-cy" => Some(Tr_CY)
+  | "zh" => Some(Zh)
+  | "zh-hant" => Some(Zh_HANT)
   | "en" => Some(En)
   | _ => None
   }
@@ -125,7 +131,7 @@ let localeStringToType = locale => {
       | "lt" => Some(Lt)
       | "cs" => Some(Cs)
       | "sk" => Some(Sk)
-      | "ls" => Some(Ls)
+      | "is" => Some(Is)
       | "cy" => Some(Cy)
       | "el" => Some(El)
       | "et" => Some(Et)
@@ -135,6 +141,7 @@ let localeStringToType = locale => {
       | "da" => Some(Da)
       | "ms" => Some(Ms)
       | "tr" => Some(Tr_CY)
+      | "zh" => Some(Zh)
       | "en" => Some(En)
       | _ => Some(En) // Default fallback to English
       }
