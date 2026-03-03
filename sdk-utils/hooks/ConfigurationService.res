@@ -8,6 +8,17 @@ external importJSON: string => promise<JSON.t> = "import"
 @module("./../superposition/superposition.js") @new
 external cacReader: JSON.t => Nullable.t<configurationService> = "CacReader"
 
+let extractRawConfigs = (config: JSON.t): JSON.t => {
+  switch config->JSON.Decode.object {
+  | Some(dict) =>
+    switch dict->Dict.get("raw_configs")->Option.flatMap(JSON.Decode.object) {
+    | Some(rawConfigs) => rawConfigs->JSON.Encode.object
+    | None => config
+    }
+  | None => config
+  }
+}
+
 let service = ref(None)
 
 let useConfigurationService = () => {
@@ -18,7 +29,7 @@ let useConfigurationService = () => {
       try {
         let s3Path = "assets/v2/configs/superposition.config.json"
         let configData = await importJSON(`./../../${s3Path}`)
-        cacReader(configData)->Nullable.toOption
+        cacReader(extractRawConfigs(configData))->Nullable.toOption
       } catch {
       | _ex => None
       }
@@ -28,7 +39,7 @@ let useConfigurationService = () => {
       switch nativeProp.hyperParams.superpositionConfigRaw {
       | Some(nativeConfig) =>
         let nativeService = try {
-          cacReader(nativeConfig)->Nullable.toOption
+          cacReader(extractRawConfigs(nativeConfig))->Nullable.toOption
         } catch {
         | _ex => None
         }
