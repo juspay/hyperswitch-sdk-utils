@@ -62,8 +62,8 @@ let validateCNPJ = cnpj => {
     [6, 5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2],
   )
 
-  let checkDigit1 = chars->Array.get(12)->Option.getOr("")->charToValue
-  let checkDigit2 = chars->Array.get(13)->Option.getOr("")->charToValue
+  let checkDigit1 = chars->Array.get(12)->Option.map(charToValue)->Option.getOr(-1)
+  let checkDigit2 = chars->Array.get(13)->Option.map(charToValue)->Option.getOr(-1)
 
   firstDigit === checkDigit1 && secondDigit === checkDigit2
 }
