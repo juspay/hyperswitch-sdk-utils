@@ -14,14 +14,14 @@ let invalidCNPJs = [
 ]
 
 let isNumeric = str => %re("/^\d*$/")->RegExp.test(str)
-let isAlphanumeric = str => %re("/^[A-Z0-9]*$/")->RegExp.test(str)
+let isUppercaseAlphanumeric = str => %re("/^[A-Z0-9]*$/")->RegExp.test(str)
 
 // A valid CNPJ must have alphanumeric (A-Z / 0-9) characters in the first 12
 // positions and strictly numeric digits in the last 2 (check digit) positions.
 let isCNPJValidFormat = cnpj => {
   let base = cnpj->String.slice(~start=0, ~end=12)
   let checkDigits = cnpj->String.slice(~start=12, ~end=14)
-  isAlphanumeric(base) && isNumeric(checkDigits)
+  isUppercaseAlphanumeric(base) && isNumeric(checkDigits)
 }
 
 // Convert a single character to its CNPJ numeric value.
