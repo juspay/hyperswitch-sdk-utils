@@ -1,8 +1,9 @@
-let shouldEmitEvent = (~eventType: string, ~subscribedEvents: array<string>): bool => {
+let shouldEmitEvent = (~eventType: PaymentEventTypes.t, ~subscribedEvents: array<string>): bool => {
   if subscribedEvents->Array.length === 0 {
     false
   } else {
-    subscribedEvents->Array.some(subscribed => subscribed === eventType)
+    let eventString = PaymentEventTypes.toString(eventType)
+    subscribedEvents->Array.some(subscribed => subscribed === eventString)
   }
 }
 
@@ -17,7 +18,6 @@ type cardInfo = {
   isExpiryComplete: bool,
   isCardNumberValid: bool,
   isExpiryValid: bool,
-  isCvcValid: bool,
 }
 
 let buildCardInfo = (
@@ -58,7 +58,6 @@ let buildCardInfo = (
 
   let isCardNumberValid = Validation.cardValid(cardNumber, brand)
   let isExpiryValid = Validation.checkCardExpiry(expiry)
-  let isCvcValid = Validation.checkCardCVC(cvc, brand)
 
   let isCardNumberComplete = isCardNumberComplete && isCardNumberValid
   let isExpiryComplete = isExpiryValid
@@ -79,7 +78,6 @@ let buildCardInfo = (
     isExpiryComplete,
     isCardNumberValid,
     isExpiryValid,
-    isCvcValid,
   }
 }
 
@@ -95,7 +93,6 @@ let cardInfoToJson = (info: cardInfo): JSON.t => {
     ("isExpiryComplete", info.isExpiryComplete->JSON.Encode.bool),
     ("isCardNumberValid", info.isCardNumberValid->JSON.Encode.bool),
     ("isExpiryValid", info.isExpiryValid->JSON.Encode.bool),
-    ("isCvcValid", info.isCvcValid->JSON.Encode.bool),
   ]
   ->Dict.fromArray
   ->JSON.Encode.object
@@ -134,23 +131,14 @@ let paymentMethodStatusEventToJson = (event: paymentMethodStatusEvent): JSON.t =
   ->JSON.Encode.object
 }
 
-type formStatusEvent = {
-  status: string,
-  paymentMethod: option<string>,
-}
+type formStatusEvent = {status: string}
 
-let buildFormStatusEvent = (
-  ~status: PaymentEventTypes.formStatusValue,
-  ~paymentMethod: option<string>=?,
-): formStatusEvent => {
-  {status: PaymentEventTypes.formStatusValueToString(status), paymentMethod}
+let buildFormStatusEvent = (~status: PaymentEventTypes.formStatusValue): formStatusEvent => {
+  {status: PaymentEventTypes.formStatusValueToString(status)}
 }
 
 let formStatusEventToJson = (event: formStatusEvent): JSON.t => {
-  [
-    ("status", event.status->JSON.Encode.string),
-    ("paymentMethod", event.paymentMethod->Option.map(JSON.Encode.string)->Option.getOr(JSON.Null)),
-  ]
+  [("status", event.status->JSON.Encode.string)]
   ->Dict.fromArray
   ->JSON.Encode.object
 }
