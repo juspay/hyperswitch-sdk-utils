@@ -36,7 +36,6 @@ let buildCardInfo = (
   }
 
   let isCardNumberComplete = Validation.isCardNumberEqualsMax(cleanNumber, brand)
-  let isCvcComplete = Validation.cardValid(cvc, brand)
 
   let last4 = if isCardNumberComplete {
     Some(cleanNumber->String.substring(~start=len - 4, ~end=len))
@@ -61,7 +60,7 @@ let buildCardInfo = (
 
   let isCardNumberComplete = isCardNumberComplete && isCardNumberValid
   let isExpiryComplete = isExpiryValid
-  let isCvcComplete = isCvcComplete
+  let isCvcComplete = Validation.checkCardCVC(cvc, brand)
 
   {
     bin,
