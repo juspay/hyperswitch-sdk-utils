@@ -80,6 +80,28 @@ let buildCardInfo = (
   }
 }
 
+let buildCardInfoFromSavedCard = (
+  ~bin: string,
+  ~last4: string,
+  ~brand: string,
+  ~expiryMonth: string,
+  ~expiryYear: string,
+  ~isCvcComplete: bool,
+): cardInfo => {
+  {
+    bin: Some(bin),
+    last4: Some(last4),
+    brand: Some(brand),
+    expiryMonth: Some(expiryMonth),
+    expiryYear: Some(expiryYear),
+    isCardNumberComplete: true,
+    isCardNumberValid: true,
+    isExpiryComplete: true,
+    isExpiryValid: true,
+    isCvcComplete,
+  }
+}
+
 let cardInfoToJson = (info: cardInfo): JSON.t => {
   [
     ("bin", info.bin->Option.map(JSON.Encode.string)->Option.getOr(JSON.Null)),
@@ -99,16 +121,16 @@ let cardInfoToJson = (info: cardInfo): JSON.t => {
 
 type paymentMethodStatusEvent = {
   paymentMethod: string,
-  paymentMethodType: option<string>,
+  paymentMethodType: string,
   isSavedPaymentMethod: bool,
-  isOneClickWallet: option<bool>,
+  isOneClickWallet: bool,
 }
 
 let buildPaymentMethodStatusEvent = (
   ~paymentMethod: string,
-  ~paymentMethodType: option<string>=?,
+  ~paymentMethodType: string,
   ~isSavedPaymentMethod: bool=false,
-  ~isOneClickWallet: option<bool>=?,
+  ~isOneClickWallet: bool=false,
 ): paymentMethodStatusEvent => {
   {paymentMethod, paymentMethodType, isSavedPaymentMethod, isOneClickWallet}
 }
@@ -117,14 +139,8 @@ let paymentMethodStatusEventToJson = (event: paymentMethodStatusEvent): JSON.t =
   [
     ("paymentMethod", event.paymentMethod->JSON.Encode.string),
     ("isSavedPaymentMethod", event.isSavedPaymentMethod->JSON.Encode.bool),
-    (
-      "paymentMethodType",
-      event.paymentMethodType->Option.map(JSON.Encode.string)->Option.getOr(JSON.Null),
-    ),
-    (
-      "isOneClickWallet",
-      event.isOneClickWallet->Option.map(JSON.Encode.bool)->Option.getOr(JSON.Null),
-    ),
+    ("paymentMethodType", event.paymentMethodType->JSON.Encode.string),
+    ("isOneClickWallet", event.isOneClickWallet->JSON.Encode.bool),
   ]
   ->Dict.fromArray
   ->JSON.Encode.object
