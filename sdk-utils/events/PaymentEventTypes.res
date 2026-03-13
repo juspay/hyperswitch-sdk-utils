@@ -11,17 +11,19 @@ let formStatusValueToString = (status: formStatusValue): string => {
   }
 }
 
-type t =
+type events =
   | PaymentMethodInfoCard
   | PaymentMethodStatus
   | FormStatus
-  | PaymentMethodInfoAddress
+  | PaymentMethodInfoBillingAddress
+  | UnknownEvent
 
-let toString = (eventType: t): string => {
+let eventToString = (eventType: events): string => {
   switch eventType {
   | PaymentMethodInfoCard => "PAYMENT_METHOD_INFO_CARD"
   | PaymentMethodStatus => "PAYMENT_METHOD_STATUS"
   | FormStatus => "FORM_STATUS"
-  | PaymentMethodInfoAddress => "PAYMENT_METHOD_INFO_ADDRESS"
+  | PaymentMethodInfoBillingAddress => "PAYMENT_METHOD_INFO_BILLING_ADDRESS"
+  | UnknownEvent => "UNKNOWN_EVENT"
   }
 }

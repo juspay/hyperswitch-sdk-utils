@@ -1,9 +1,11 @@
-let shouldEmitEvent = (~eventType: PaymentEventTypes.t, ~subscribedEvents: array<string>): bool => {
+let shouldEmitEvent = (
+  ~eventType: PaymentEventTypes.events,
+  ~subscribedEvents: array<PaymentEventTypes.events>,
+): bool => {
   if subscribedEvents->Array.length === 0 {
     false
   } else {
-    let eventString = PaymentEventTypes.toString(eventType)
-    subscribedEvents->Array.some(subscribed => subscribed === eventString)
+    subscribedEvents->Array.some(subscribed => subscribed === eventType)
   }
 }
 
@@ -159,41 +161,35 @@ let formStatusEventToJson = (event: formStatusEvent): JSON.t => {
 }
 
 type paymentMethodInfoAddress = {
-  country: option<string>,
-  state: option<string>,
-  postalCode: option<string>,
+  country: string,
+  state: string,
+  postalCode: string,
 }
 
 let buildPaymentMethodInfoAddress = (
-  ~country: option<string>=?,
-  ~state: option<string>=?,
-  ~postalCode: option<string>=?,
+  ~country: string,
+  ~state: string,
+  ~postalCode: string,
 ): paymentMethodInfoAddress => {
   {country, state, postalCode}
 }
 
 let paymentMethodInfoAddressToJson = (info: paymentMethodInfoAddress): JSON.t => {
   [
-    ("country", info.country->Option.map(JSON.Encode.string)->Option.getOr(JSON.Null)),
-    ("state", info.state->Option.map(JSON.Encode.string)->Option.getOr(JSON.Null)),
-    ("postalCode", info.postalCode->Option.map(JSON.Encode.string)->Option.getOr(JSON.Null)),
+    ("country", info.country->JSON.Encode.string),
+    ("state", info.state->JSON.Encode.string),
+    ("postalCode", info.postalCode->JSON.Encode.string),
   ]
   ->Dict.fromArray
   ->JSON.Encode.object
 }
 
-let computeFormStatus = (
-  ~hasRequiredFields: bool,
-  ~isFormValid: bool,
-  ~isPristine: bool,
-): PaymentEventTypes.formStatusValue => {
-  if !hasRequiredFields {
-    PaymentEventTypes.Complete
-  } else if isFormValid {
-    PaymentEventTypes.Complete
-  } else if isPristine {
-    PaymentEventTypes.Empty
+let computeFormStatus = (~isComplete: bool, ~isEmpty: bool): PaymentEventTypes.formStatusValue => {
+  if isComplete {
+    Complete
+  } else if isEmpty {
+    Empty
   } else {
-    PaymentEventTypes.Filling
+    Filling
   }
 }
