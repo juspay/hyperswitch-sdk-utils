@@ -74,5 +74,17 @@
     "enterValidDigitsText": "Lütfen geçerli bir ad girin",
     "digitsText": "rakamlar",
     "enterValidIban": "Lütfen geçerli bir Iban giriniz",
-    "mandatoryFieldText": "Bu alan zorunludur"
+    "mandatoryFieldText": "Bu alan zorunludur",
+    "accessibilityHintCardNumber": "16 haneli kart numaranızı girin",
+    "accessibilityHintCardExpiry": "Format: AA/YY, örn. 01/26",
+    "accessibilityHintCvc": "Kartınızdaki 3 veya 4 haneli güvenlik kodu",
+    "accessibilityHintBillingZip": "Faturalama posta kodunuzu girin",
+    "accessibilityHintFullName": "Adınızı ve soyadınızı girin",
+    "accessibilityHintPhoneCode": "Ülke telefon kodu seçim listesini açar",
+    "accessibilityHintPhoneNumber": "Alan kodu dahil telefon numaranızı girin",
+    "accessibilityHintPickerDay": "Gün seçim listesini açar",
+    "accessibilityHintPickerMonth": "Ay seçim listesini açar",
+    "accessibilityHintPickerYear": "Yıl seçim listesini açar",
+    "accessibilityHintEmail": "Geçerli bir e-posta adresi girin",
+    "accessibilityHintSavedCardCvc": "Kayıtlı kart için güvenlik kodunu girin"
 }

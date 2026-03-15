@@ -74,5 +74,17 @@
     "enterValidDigitsText": "Vennligst skriv inn gyldig",
     "digitsText": "sifre",
     "enterValidIban": "Vennligst skriv inn en gyldig Iban",
-    "mandatoryFieldText": "Dette feltet er obligatorisk"
+    "mandatoryFieldText": "Dette feltet er obligatorisk",
+    "accessibilityHintCardNumber": "Skriv inn ditt 16-sifrede kortnummer",
+    "accessibilityHintCardExpiry": "Format: MM/ÅÅ, f.eks. 01/26",
+    "accessibilityHintCvc": "3 eller 4-sifret sikkerhetskode på kortet ditt",
+    "accessibilityHintBillingZip": "Skriv inn ditt fakturerings-postnummer",
+    "accessibilityHintFullName": "Skriv inn ditt fornavn og etternavn",
+    "accessibilityHintPhoneCode": "Åpner liste for valg av landstelefonnummer",
+    "accessibilityHintPhoneNumber": "Skriv inn ditt telefonnummer inkludert retningsnummer",
+    "accessibilityHintPickerDay": "Åpner liste for valg av dag",
+    "accessibilityHintPickerMonth": "Åpner liste for valg av måned",
+    "accessibilityHintPickerYear": "Åpner liste for valg av år",
+    "accessibilityHintEmail": "Skriv inn en gyldig e-postadresse",
+    "accessibilityHintSavedCardCvc": "Skriv inn sikkerhetskode for lagret kort"
 }

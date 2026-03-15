@@ -175,5 +175,17 @@
   "enterValidDigitsText": "Vänligen ange en giltig",
   "digitsText": "siffror",
   "enterValidIban": "Lütfen geçerli bir Iban giriniz",
-  "mandatoryFieldText": "Detta fält är obligatoriskt"
+  "mandatoryFieldText": "Detta fält är obligatoriskt",
+  "accessibilityHintCardNumber": "Ange ditt 16-siffriga kortnummer",
+  "accessibilityHintCardExpiry": "Format: MM/ÅÅ, t.ex. 01/26",
+  "accessibilityHintCvc": "3 eller 4-siffrigt säkerhetskod på ditt kort",
+  "accessibilityHintBillingZip": "Ange ditt faktureringspostnummer",
+  "accessibilityHintFullName": "Ange ditt för- och efternamn",
+  "accessibilityHintPhoneCode": "Öppnar listan för val av landets telefonkod",
+  "accessibilityHintPhoneNumber": "Ange ditt telefonnummer inklusive riktnummer",
+  "accessibilityHintPickerDay": "Öppnar listan för val av dag",
+  "accessibilityHintPickerMonth": "Öppnar listan för val av månad",
+  "accessibilityHintPickerYear": "Öppnar listan för val av år",
+  "accessibilityHintEmail": "Ange en giltig e-postadress",
+  "accessibilityHintSavedCardCvc": "Ange säkerhetskod för sparad kort"
 }

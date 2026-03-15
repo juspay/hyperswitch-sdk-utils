@@ -175,5 +175,17 @@
   "enterValidDigitsText": "Por favor, introduza um válido",
   "digitsText": "цифры",
   "enterValidIban": "Пожалуйста, введите действительный Iban",
-  "mandatoryFieldText": "Это поле обязательно для заполнения."
+  "mandatoryFieldText": "Это поле обязательно для заполнения.",
+  "accessibilityHintCardNumber": "Введите 16-значный номер карты",
+  "accessibilityHintCardExpiry": "Формат: ММ/ГГ, напр. 01/26",
+  "accessibilityHintCvc": "3 или 4-значный код безопасности на вашей карте",
+  "accessibilityHintBillingZip": "Введите почтовый индекс для выставления счёта",
+  "accessibilityHintFullName": "Введите имя и фамилию",
+  "accessibilityHintPhoneCode": "Открывает список выбора кода страны",
+  "accessibilityHintPhoneNumber": "Введите номер телефона с кодом города",
+  "accessibilityHintPickerDay": "Открывает список выбора дня",
+  "accessibilityHintPickerMonth": "Открывает список выбора месяца",
+  "accessibilityHintPickerYear": "Открывает список выбора года",
+  "accessibilityHintEmail": "Введите действительный адрес электронной почты",
+  "accessibilityHintSavedCardCvc": "Введите код безопасности для сохранённой карты"
 }

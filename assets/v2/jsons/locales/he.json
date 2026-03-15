@@ -175,5 +175,17 @@
   "enterValidDigitsText": "נא להזין חוקי",
   "digitsText": "ספרות",
   "enterValidIban": "נא להזין Iban חוקי",
-  "mandatoryFieldText": "שדה זה הוא חובה"
+  "mandatoryFieldText": "שדה זה הוא חובה",
+  "accessibilityHintCardNumber": "הזינו את מספר הכרטיס בן 16 הספרות",
+  "accessibilityHintCardExpiry": "פורמט: MM/YY, לדוגמה 01/26",
+  "accessibilityHintCvc": "קוד אבטחה בן 3 או 4 ספרות על הכרטיס שלכם",
+  "accessibilityHintBillingZip": "הזינו את מיקוד החיוב שלכם",
+  "accessibilityHintFullName": "הזינו את שמכם הפרטי ושם המשפחה",
+  "accessibilityHintPhoneCode": "פותח רשימת בחירת קידומת טלפון של המדינה",
+  "accessibilityHintPhoneNumber": "הזינו את מספר הטלפון שלכם כולל קידומת אזורית",
+  "accessibilityHintPickerDay": "פותח רשימת בחירת יום",
+  "accessibilityHintPickerMonth": "פותח רשימת בחירת חודש",
+  "accessibilityHintPickerYear": "פותח רשימת בחירת שנה",
+  "accessibilityHintEmail": "הזינו כתובת דוא\"ל תקינה",
+  "accessibilityHintSavedCardCvc": "הזינו קוד אבטחה לכרטיס השמור"
 }

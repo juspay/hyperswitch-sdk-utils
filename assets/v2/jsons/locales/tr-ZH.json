@@ -112,5 +112,17 @@
   "enterValidDigitsText": "請輸入有效的",
   "digitsText": "數位",
   "enterValidIban": "請輸入有效的伊班語。",
-  "mandatoryFieldText": "此欄位為必填項"
+  "mandatoryFieldText": "此欄位為必填項",
+  "accessibilityHintCardNumber": "請輸入您的16位卡號",
+  "accessibilityHintCardExpiry": "格式：MM/YY，例如 01/26",
+  "accessibilityHintCvc": "您卡片上的3或4位安全碼",
+  "accessibilityHintBillingZip": "請輸入帳單郵遞區號",
+  "accessibilityHintFullName": "請輸入您的姓名",
+  "accessibilityHintPhoneCode": "開啟國家電話代碼選擇清單",
+  "accessibilityHintPhoneNumber": "請輸入您的電話號碼（含區碼）",
+  "accessibilityHintPickerDay": "開啟日期選擇清單",
+  "accessibilityHintPickerMonth": "開啟月份選擇清單",
+  "accessibilityHintPickerYear": "開啟年份選擇清單",
+  "accessibilityHintEmail": "請輸入有效的電子郵件地址",
+  "accessibilityHintSavedCardCvc": "請輸入已儲存卡片的安全碼"
 }

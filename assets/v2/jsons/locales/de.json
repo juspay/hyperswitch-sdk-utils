@@ -175,5 +175,17 @@
   "enterValidDigitsText": "Bitte gültig eingeben.",
   "digitsText": "Ziffern",
   "enterValidIban": "Bitte geben Sie eine gültige IBAN ein",
-  "mandatoryFieldText": "Dieses Feld ist obligatorisch"
+  "mandatoryFieldText": "Dieses Feld ist obligatorisch",
+  "accessibilityHintCardNumber": "Geben Sie Ihre 16-stellige Kartennummer ein",
+  "accessibilityHintCardExpiry": "Format: MM/JJ, z.B. 01/26",
+  "accessibilityHintCvc": "3 oder 4-stelliger Sicherheitscode auf Ihrer Karte",
+  "accessibilityHintBillingZip": "Geben Sie Ihre Rechnungs-Postleitzahl ein",
+  "accessibilityHintFullName": "Geben Sie Ihren Vor- und Nachnamen ein",
+  "accessibilityHintPhoneCode": "Öffnet die Auswahlliste für Ländervorwahlen",
+  "accessibilityHintPhoneNumber": "Geben Sie Ihre Telefonnummer einschließlich Vorwahl ein",
+  "accessibilityHintPickerDay": "Öffnet die Auswahlliste für den Tag",
+  "accessibilityHintPickerMonth": "Öffnet die Auswahlliste für den Monat",
+  "accessibilityHintPickerYear": "Öffnet die Auswahlliste für das Jahr",
+  "accessibilityHintEmail": "Geben Sie eine gültige E-Mail-Adresse ein",
+  "accessibilityHintSavedCardCvc": "Geben Sie den Sicherheitscode für die gespeicherte Karte ein"
 }

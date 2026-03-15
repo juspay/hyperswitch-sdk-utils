@@ -175,5 +175,17 @@
   "enterValidDigitsText": "Proszę wpisać prawidłowy",
   "digitsText": "cyfry",
   "enterValidIban": "Proszę wpisać prawidłowy numer IBAN",
-  "mandatoryFieldText": "To pole jest obowiązkowe"
+  "mandatoryFieldText": "To pole jest obowiązkowe",
+  "accessibilityHintCardNumber": "Wprowadź 16-cyfrowy numer karty",
+  "accessibilityHintCardExpiry": "Format: MM/RR, np. 01/26",
+  "accessibilityHintCvc": "3 lub 4-cyfrowy kod zabezpieczający na Twojej karcie",
+  "accessibilityHintBillingZip": "Wprowadź kod pocztowy rozliczeń",
+  "accessibilityHintFullName": "Wprowadź imię i nazwisko",
+  "accessibilityHintPhoneCode": "Otwiera listę wyboru kodu telefonu kraju",
+  "accessibilityHintPhoneNumber": "Wprowadź numer telefonu z numerem kierunkowym",
+  "accessibilityHintPickerDay": "Otwiera listę wyboru dnia",
+  "accessibilityHintPickerMonth": "Otwiera listę wyboru miesiąca",
+  "accessibilityHintPickerYear": "Otwiera listę wyboru roku",
+  "accessibilityHintEmail": "Wprowadź prawidłowy adres e-mail",
+  "accessibilityHintSavedCardCvc": "Wprowadź kod zabezpieczający dla zapisanej karty"
 }

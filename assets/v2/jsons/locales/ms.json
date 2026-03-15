@@ -74,5 +74,17 @@
     "enterValidDigitsText": "Sila masukkan yang sah",
     "digitsText": "digit",
     "enterValidIban": "Sila masukkan Iban yang sah",
-    "mandatoryFieldText": "Bidang ini adalah wajib"
+    "mandatoryFieldText": "Bidang ini adalah wajib",
+    "accessibilityHintCardNumber": "Masukkan nombor kad anda yang terdiri daripada 16 digit",
+    "accessibilityHintCardExpiry": "Format: BB/TT, cth. 01/26",
+    "accessibilityHintCvc": "Kod keselamatan 3 atau 4 digit pada kad anda",
+    "accessibilityHintBillingZip": "Masukkan poskod pengebilan anda",
+    "accessibilityHintFullName": "Masukkan nama pertama dan nama akhir anda",
+    "accessibilityHintPhoneCode": "Membuka senarai pilihan kod telefon negara",
+    "accessibilityHintPhoneNumber": "Masukkan nombor telefon anda termasuk kod kawasan",
+    "accessibilityHintPickerDay": "Membuka senarai pilihan hari",
+    "accessibilityHintPickerMonth": "Membuka senarai pilihan bulan",
+    "accessibilityHintPickerYear": "Membuka senarai pilihan tahun",
+    "accessibilityHintEmail": "Masukkan alamat e-mel yang sah",
+    "accessibilityHintSavedCardCvc": "Masukkan kod keselamatan untuk kad yang disimpan"
 }

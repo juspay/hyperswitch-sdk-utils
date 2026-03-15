@@ -175,5 +175,17 @@
   "enterValidDigitsText": "Įveskite galiojantį",
   "digitsText": "skaitmenys",
   "enterValidIban": "Įveskite tinkamą Iban kodą",
-  "mandatoryFieldText": "Šis laukas yra privalomas"
+  "mandatoryFieldText": "Šis laukas yra privalomas",
+  "accessibilityHintCardNumber": "Įveskite savo 16 skaitmenų kortelės numerį",
+  "accessibilityHintCardExpiry": "Formatas: MM/MM, pvz. 01/26",
+  "accessibilityHintCvc": "3 arba 4 skaitmenų saugumo kodas jūsų kortelėje",
+  "accessibilityHintBillingZip": "Įveskite savo atsiskaitymo pašto kodą",
+  "accessibilityHintFullName": "Įveskite savo vardą ir pavardę",
+  "accessibilityHintPhoneCode": "Atidaro šalies telefono kodo pasirinkimo sąrašą",
+  "accessibilityHintPhoneNumber": "Įveskite savo telefono numerį su srities kodu",
+  "accessibilityHintPickerDay": "Atidaro dienos pasirinkimo sąrašą",
+  "accessibilityHintPickerMonth": "Atidaro mėnesio pasirinkimo sąrašą",
+  "accessibilityHintPickerYear": "Atidaro metų pasirinkimo sąrašą",
+  "accessibilityHintEmail": "Įveskite galiojantį el. pašto adresą",
+  "accessibilityHintSavedCardCvc": "Įveskite saugos kodą išsaugotai kortelei"
 }
