@@ -11,6 +11,15 @@ let formStatusValueToString = (status: formStatusValue): string => {
   }
 }
 
+let formStatusValueFromString = (str: string): formStatusValue => {
+  switch str {
+  | "EMPTY" => Empty
+  | "FILLING" => Filling
+  | "COMPLETE" => Complete
+  | _ => Empty
+  }
+}
+
 type events =
   | PaymentMethodInfoCard
   | PaymentMethodStatus
