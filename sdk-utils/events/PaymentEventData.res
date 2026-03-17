@@ -15,6 +15,7 @@ type cardInfo = {
   brand: option<string>,
   expiryMonth: option<string>,
   expiryYear: option<string>,
+  formattedExpiry: option<string>,
   isCardNumberComplete: bool,
   isCvcComplete: bool,
   isExpiryComplete: bool,
@@ -45,14 +46,20 @@ let buildCardInfo = (
     None
   }
 
-  let (month, year) = expiry->Validation.splitExpiryDates
+  let (month, year) = expiry->Validation.getExpiryDates
   let expiryMonth = if month !== "" {
     Some(month)
   } else {
     None
   }
-  let expiryYear = if year !== "" {
+  let expiryYear = if year->String.length == 4 {
     Some(year)
+  } else {
+    None
+  }
+
+  let formattedExpiry = if month !== "" && year->String.length == 4 {
+    Some(expiry)
   } else {
     None
   }
@@ -74,6 +81,7 @@ let buildCardInfo = (
     },
     expiryMonth,
     expiryYear,
+    formattedExpiry,
     isCardNumberComplete,
     isCvcComplete,
     isExpiryComplete,
@@ -90,12 +98,15 @@ let buildCardInfoFromSavedCard = (
   ~expiryYear: string,
   ~isCvcComplete: bool,
 ): cardInfo => {
+  let formattedExpiry = `${expiryMonth}/${expiryYear->String.substring(~start=2, ~end=4)}`
+
   {
     bin: Some(bin),
     last4: Some(last4),
     brand: Some(brand),
     expiryMonth: Some(expiryMonth),
     expiryYear: Some(expiryYear),
+    formattedExpiry: Some(formattedExpiry),
     isCardNumberComplete: true,
     isCardNumberValid: true,
     isExpiryComplete: true,
@@ -111,6 +122,10 @@ let cardInfoToJson = (info: cardInfo): JSON.t => {
     ("brand", info.brand->Option.map(JSON.Encode.string)->Option.getOr(JSON.Null)),
     ("expiryMonth", info.expiryMonth->Option.map(JSON.Encode.string)->Option.getOr(JSON.Null)),
     ("expiryYear", info.expiryYear->Option.map(JSON.Encode.string)->Option.getOr(JSON.Null)),
+    (
+      "formattedExpiry",
+      info.formattedExpiry->Option.map(JSON.Encode.string)->Option.getOr(JSON.Null),
+    ),
     ("isCardNumberComplete", info.isCardNumberComplete->JSON.Encode.bool),
     ("isCvcComplete", info.isCvcComplete->JSON.Encode.bool),
     ("isExpiryComplete", info.isExpiryComplete->JSON.Encode.bool),
@@ -137,12 +152,17 @@ let buildPaymentMethodStatusEvent = (
   {paymentMethod, paymentMethodType, isSavedPaymentMethod, isOneClickWallet}
 }
 
-let paymentMethodStatusEventToJson = (event: paymentMethodStatusEvent): JSON.t => {
+let paymentMethodStatusEventToJson = (
+  ~paymentMethod: string,
+  ~paymentMethodType: string,
+  ~isSavedPaymentMethod: bool=false,
+  ~isOneClickWallet: bool=false,
+): JSON.t => {
   [
-    ("paymentMethod", event.paymentMethod->JSON.Encode.string),
-    ("isSavedPaymentMethod", event.isSavedPaymentMethod->JSON.Encode.bool),
-    ("paymentMethodType", event.paymentMethodType->JSON.Encode.string),
-    ("isOneClickWallet", event.isOneClickWallet->JSON.Encode.bool),
+    ("paymentMethod", paymentMethod->JSON.Encode.string),
+    ("isSavedPaymentMethod", isSavedPaymentMethod->JSON.Encode.bool),
+    ("paymentMethodType", paymentMethodType->JSON.Encode.string),
+    ("isOneClickWallet", isOneClickWallet->JSON.Encode.bool),
   ]
   ->Dict.fromArray
   ->JSON.Encode.object
@@ -154,8 +174,8 @@ let buildFormStatusEvent = (~status: PaymentEventTypes.formStatusValue): formSta
   {status: PaymentEventTypes.formStatusValueToString(status)}
 }
 
-let formStatusEventToJson = (event: formStatusEvent): JSON.t => {
-  [("status", event.status->JSON.Encode.string)]
+let formStatusEventToJson = (~status: PaymentEventTypes.formStatusValue): JSON.t => {
+  [("status", status->PaymentEventTypes.formStatusValueToString->JSON.Encode.string)]
   ->Dict.fromArray
   ->JSON.Encode.object
 }
@@ -174,11 +194,15 @@ let buildPaymentMethodInfoAddress = (
   {country, state, postalCode}
 }
 
-let paymentMethodInfoAddressToJson = (info: paymentMethodInfoAddress): JSON.t => {
+let paymentMethodInfoAddressToJson = (
+  ~country: string,
+  ~state: string,
+  ~postalCode: string,
+): JSON.t => {
   [
-    ("country", info.country->JSON.Encode.string),
-    ("state", info.state->JSON.Encode.string),
-    ("postalCode", info.postalCode->JSON.Encode.string),
+    ("country", country->JSON.Encode.string),
+    ("state", state->JSON.Encode.string),
+    ("postalCode", postalCode->JSON.Encode.string),
   ]
   ->Dict.fromArray
   ->JSON.Encode.object
