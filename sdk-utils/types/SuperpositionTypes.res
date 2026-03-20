@@ -1,4 +1,19 @@
-type fieldType =
+type rec fieldConfig = {
+  name: string,
+  displayName: string,
+  fieldType: fieldType,
+  priority: int,
+  required: bool,
+  options: array<string>,
+  outputPath: string,
+}
+
+and fullNameConfig = {
+  firstName: option<fieldConfig>,
+  lastName: option<fieldConfig>,
+}
+
+and fieldType =
   | CardNumberTextInput
   | CvcPasswordInput
   | TextInput
@@ -33,8 +48,8 @@ type fieldType =
   | AddressCityInput
   | AddressPostalCodeInput
   | AddressStateInput
-  // | BillingNameInput
-  | FullNameInput
+  | AddressCountryInput
+  | FullNameInput(fullNameConfig)
   // | ShippingNameInput
   // | ShippingAddressLine1Input
   // | ShippingAddressLine2Input
@@ -45,18 +60,6 @@ type fieldType =
   | BankSelect
   | BankListSelect
   | BlikCodeInput
-  // Additional types for complete PML compatibility
-  | AddressCountryInput // For AddressCountry with options
-
-type rec fieldConfig = {
-  name: string,
-  displayName: string,
-  fieldType: fieldType,
-  priority: int,
-  required: bool,
-  options: array<string>,
-  outputPath: string,
-}
 
 type requiredFields = array<fieldConfig>
 
