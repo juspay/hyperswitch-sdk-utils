@@ -36,3 +36,13 @@ let eventToString = (eventType: events): string => {
   | UnknownEvent => "UNKNOWN_EVENT"
   }
 }
+
+let eventFromString = (str: string): events => {
+  switch str {
+  | "PAYMENT_METHOD_INFO_CARD" => PaymentMethodInfoCard
+  | "PAYMENT_METHOD_STATUS" => PaymentMethodStatus
+  | "FORM_STATUS" => FormStatus
+  | "PAYMENT_METHOD_INFO_BILLING_ADDRESS" => PaymentMethodInfoBillingAddress
+  | _ => UnknownEvent
+  }
+}
