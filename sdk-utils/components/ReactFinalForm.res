@@ -71,13 +71,18 @@ let createSubmitHandler = (onSubmit: option<Dict.t<string> => unit>) => {
 let useFormStateHandler = (
   ~onFormChange: Dict.t<JSON.t> => unit,
   ~onValidationChange: bool => unit,
+  ~onPristineChange: option<bool => unit>=?,
   ~formProps: Form.formProps,
 ) => {
-  React.useEffect2(() => {
+  React.useEffect(() => {
     onFormChange(formProps.values)
     onValidationChange(formProps.valid)
+    switch onPristineChange {
+    | Some(callback) => callback(formProps.pristine)
+    | None => ()
+    }
     None
-  }, (formProps.values, formProps.valid))
+  }, (formProps.values, formProps.valid, formProps.pristine))
 }
 
 type useFieldConfig<'a> = {
