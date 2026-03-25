@@ -217,3 +217,27 @@ let computeFormStatus = (~isComplete: bool, ~isEmpty: bool): PaymentEventTypes.f
     Filling
   }
 }
+
+type cvcStatusEvent = {
+  requiresCvv: bool,
+  isCvcComplete: bool,
+  isFocused: bool,
+}
+
+let buildCvcStatusEvent = (
+  ~requiresCvv: bool,
+  ~isCvcComplete: bool=false,
+  ~isFocused: bool=false,
+): cvcStatusEvent => {
+  {requiresCvv, isCvcComplete, isFocused}
+}
+
+let cvcStatusEventToJson = (event: cvcStatusEvent): JSON.t => {
+  [
+    ("requiresCvv", event.requiresCvv->JSON.Encode.bool),
+    ("isCvcComplete", event.isCvcComplete->JSON.Encode.bool),
+    ("isFocused", event.isFocused->JSON.Encode.bool),
+  ]
+  ->Dict.fromArray
+  ->JSON.Encode.object
+}
