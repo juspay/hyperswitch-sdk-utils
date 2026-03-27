@@ -513,7 +513,7 @@ let defaultLocale = {
   installmentChoosePlan: "Choose an installment plan",
   installmentInterestFree: "Interest free",
   installmentInterestRate: "{rate}% interest",
-  installmentTotalPayable: "Total payable: {amount}",
+  installmentTotalPayable: "Total",
   installmentSelectPlanError: "Please select an installment plan",
   installmentPaymentLabel: "{count}x {amount}",
 }
