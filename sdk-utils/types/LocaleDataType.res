@@ -313,6 +313,13 @@ type localeStrings = {
   swiftCode: string,
   doneText: string,
   copyToClipboard: string,
+  installmentPayInInstallments: string,
+  installmentChoosePlan: string,
+  installmentInterestFree: string,
+  installmentInterestRate: string,
+  installmentTotalPayable: string,
+  installmentSelectPlanError: string,
+  installmentPaymentLabel: string,
 }
 
 let defaultLocale = {
@@ -502,4 +509,11 @@ let defaultLocale = {
   swiftCode: "Swift code",
   doneText: "Done",
   copyToClipboard: "Copy to clipboard",
+  installmentPayInInstallments: "Pay in installments",
+  installmentChoosePlan: "Choose an installment plan",
+  installmentInterestFree: "Interest free",
+  installmentInterestRate: "{rate}% interest",
+  installmentTotalPayable: "Total",
+  installmentSelectPlanError: "Please select an installment plan",
+  installmentPaymentLabel: "{count}x {amount}",
 }
