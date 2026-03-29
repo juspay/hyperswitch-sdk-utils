@@ -38,6 +38,9 @@ type superpositionBaseContext = {
 type superpositionContext = {
   ...superpositionBaseContext,
   connector: string,
+  profile_id: string,
+  merchant_id: string,
+  organization_id: string,
 }
 
 let stringToFieldType = str => {
