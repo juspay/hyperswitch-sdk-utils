@@ -175,5 +175,17 @@
   "enterValidDigitsText": "Please enter valid",
   "digitsText": "digits",
   "enterValidIban": "Please enter a valid Iban",
-  "mandatoryFieldText": "This field is required"
+  "mandatoryFieldText": "This field is required",
+  "accessibilityHintCardNumber": "Enter your 16-digit card number",
+  "accessibilityHintCardExpiry": "Format: MM/YY, e.g. 01/26",
+  "accessibilityHintCvc": "3 or 4 digit security code on your card",
+  "accessibilityHintBillingZip": "Enter your billing postcode",
+  "accessibilityHintFullName": "Enter your first and last name",
+  "accessibilityHintPhoneCode": "Opens country phone code selection list",
+  "accessibilityHintPhoneNumber": "Enter your phone number including area code",
+  "accessibilityHintPickerDay": "Opens day selection list",
+  "accessibilityHintPickerMonth": "Opens month selection list",
+  "accessibilityHintPickerYear": "Opens year selection list",
+  "accessibilityHintEmail": "Enter a valid email address",
+  "accessibilityHintSavedCardCvc": "Enter security code for saved card"
 }

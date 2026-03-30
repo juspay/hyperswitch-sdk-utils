@@ -74,5 +74,17 @@
     "enterValidDigitsText": "Gelieve geldig in te voeren",
     "digitsText": "Cijfers",
     "enterValidIban": "Gelieve een geldig IBAN in te voeren.",
-    "mandatoryFieldText": "Dit veld is verplicht"
+    "mandatoryFieldText": "Dit veld is verplicht",
+    "accessibilityHintCardNumber": "Voer uw 16-cijferig kaartnummer in",
+    "accessibilityHintCardExpiry": "Formaat: MM/JJ, bijv. 01/26",
+    "accessibilityHintCvc": "3 of 4-cijferige beveiligingscode op uw kaart",
+    "accessibilityHintBillingZip": "Voer uw facturerings-postcode in",
+    "accessibilityHintFullName": "Voer uw voor- en achternaam in",
+    "accessibilityHintPhoneCode": "Opent de selectielijst voor landtelefooncode",
+    "accessibilityHintPhoneNumber": "Voer uw telefoonnummer in inclusief netnummer",
+    "accessibilityHintPickerDay": "Opent de selectielijst voor dag",
+    "accessibilityHintPickerMonth": "Opent de selectielijst voor maand",
+    "accessibilityHintPickerYear": "Opent de selectielijst voor jaar",
+    "accessibilityHintEmail": "Voer een geldig e-mailadres in",
+    "accessibilityHintSavedCardCvc": "Voer de beveiligingscode in voor de opgeslagen kaart"
 }

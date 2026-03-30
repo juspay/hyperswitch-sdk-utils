@@ -175,5 +175,17 @@
   "enterValidDigitsText": "Introduïu vàlid",
   "digitsText": "dígits",
   "enterValidIban": "Introduïu un Iban vàlid",
-  "mandatoryFieldText": "Aquest camp és obligatori"
+  "mandatoryFieldText": "Aquest camp és obligatori",
+  "accessibilityHintCardNumber": "Introduïu el vostre número de targeta de 16 dígits",
+  "accessibilityHintCardExpiry": "Format: MM/AA, p. ex. 01/26",
+  "accessibilityHintCvc": "Codi de seguretat de 3 o 4 dígits de la vostra targeta",
+  "accessibilityHintBillingZip": "Introduïu el vostre codi postal de facturació",
+  "accessibilityHintFullName": "Introduïu el vostre nom i cognoms",
+  "accessibilityHintPhoneCode": "Obre la llista de selecció de codi telefònic del país",
+  "accessibilityHintPhoneNumber": "Introduïu el vostre número de telèfon inclòs el prefix",
+  "accessibilityHintPickerDay": "Obre la llista de selecció de dia",
+  "accessibilityHintPickerMonth": "Obre la llista de selecció de mes",
+  "accessibilityHintPickerYear": "Obre la llista de selecció d'any",
+  "accessibilityHintEmail": "Introduïu una adreça de correu electrònic vàlida",
+  "accessibilityHintSavedCardCvc": "Introduïu el codi de seguretat de la targeta desada"
 }

@@ -175,5 +175,17 @@
   "enterValidDigitsText": "Por favor ingrese un válido",
   "digitsText": "dígitos",
   "enterValidIban": "Por favor, introduzca un Iban válido",
-  "mandatoryFieldText": "Este campo es obligatorio"
+  "mandatoryFieldText": "Este campo es obligatorio",
+  "accessibilityHintCardNumber": "Ingrese su número de tarjeta de 16 dígitos",
+  "accessibilityHintCardExpiry": "Formato: MM/AA, p. ej. 01/26",
+  "accessibilityHintCvc": "Código de seguridad de 3 o 4 dígitos en su tarjeta",
+  "accessibilityHintBillingZip": "Ingrese su código postal de facturación",
+  "accessibilityHintFullName": "Ingrese su nombre y apellido",
+  "accessibilityHintPhoneCode": "Abre la lista de selección de código telefónico del país",
+  "accessibilityHintPhoneNumber": "Ingrese su número de teléfono incluido el código de área",
+  "accessibilityHintPickerDay": "Abre la lista de selección de día",
+  "accessibilityHintPickerMonth": "Abre la lista de selección de mes",
+  "accessibilityHintPickerYear": "Abre la lista de selección de año",
+  "accessibilityHintEmail": "Ingrese una dirección de correo electrónico válida",
+  "accessibilityHintSavedCardCvc": "Ingrese el código de seguridad para la tarjeta guardada"
 }

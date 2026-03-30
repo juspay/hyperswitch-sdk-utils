@@ -175,5 +175,17 @@
   "enterValidDigitsText": "Por favor, introduza um valor válido",
   "digitsText": "dígitos",
   "enterValidIban": "Por favor, introduza um Iban válido",
-  "mandatoryFieldText": "Este campo é obrigatório"
+  "mandatoryFieldText": "Este campo é obrigatório",
+  "accessibilityHintCardNumber": "Insira o número do seu cartão de 16 dígitos",
+  "accessibilityHintCardExpiry": "Formato: MM/AA, ex. 01/26",
+  "accessibilityHintCvc": "Código de segurança de 3 ou 4 dígitos no seu cartão",
+  "accessibilityHintBillingZip": "Insira o seu código postal de faturação",
+  "accessibilityHintFullName": "Insira o seu nome e sobrenome",
+  "accessibilityHintPhoneCode": "Abre a lista de seleção do código telefónico do país",
+  "accessibilityHintPhoneNumber": "Insira o seu número de telefone incluindo o indicativo",
+  "accessibilityHintPickerDay": "Abre a lista de seleção de dia",
+  "accessibilityHintPickerMonth": "Abre a lista de seleção de mês",
+  "accessibilityHintPickerYear": "Abre a lista de seleção de ano",
+  "accessibilityHintEmail": "Insira um endereço de e-mail válido",
+  "accessibilityHintSavedCardCvc": "Insira o código de segurança para o cartão guardado"
 }

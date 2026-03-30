@@ -74,5 +74,17 @@
     "enterValidDigitsText": "Εισαγάγετε έγκυρο",
     "digitsText": "ψηφία",
     "enterValidIban": "Εισαγάγετε ένα έγκυρο Iban",
-    "mandatoryFieldText": "Αυτό το πεδίο είναι υποχρεωτικό"
+    "mandatoryFieldText": "Αυτό το πεδίο είναι υποχρεωτικό",
+    "accessibilityHintCardNumber": "Εισαγάγετε τον 16ψήφιο αριθμό κάρτας σας",
+    "accessibilityHintCardExpiry": "Μορφή: ΜΜ/ΕΕ, π.χ. 01/26",
+    "accessibilityHintCvc": "Κωδικός ασφαλείας 3 ή 4 ψηφίων στην κάρτα σας",
+    "accessibilityHintBillingZip": "Εισαγάγετε τον ταχυδρομικό κωδικό χρέωσης",
+    "accessibilityHintFullName": "Εισαγάγετε το όνομα και επώνυμό σας",
+    "accessibilityHintPhoneCode": "Ανοίγει λίστα επιλογής κωδικού χώρας",
+    "accessibilityHintPhoneNumber": "Εισαγάγετε τον αριθμό τηλεφώνου σας με τον κωδικό περιοχής",
+    "accessibilityHintPickerDay": "Ανοίγει λίστα επιλογής ημέρας",
+    "accessibilityHintPickerMonth": "Ανοίγει λίστα επιλογής μήνα",
+    "accessibilityHintPickerYear": "Ανοίγει λίστα επιλογής έτους",
+    "accessibilityHintEmail": "Εισαγάγετε μια έγκυρη διεύθυνση email",
+    "accessibilityHintSavedCardCvc": "Εισαγάγετε κωδικό ασφαλείας για αποθηκευμένη κάρτα"
 }
