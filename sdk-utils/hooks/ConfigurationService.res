@@ -21,7 +21,7 @@ let useConfigurationService = () => {
               `https://checkout.hyperswitch.io/${s3Path}`,
               {
                 method: #GET,
-              }
+              },
             )
             await response->Fetch.Response.json
           } catch {
