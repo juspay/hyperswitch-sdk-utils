@@ -15,6 +15,7 @@ module Form = {
     valid: bool,
     invalid: bool,
     submitting: bool,
+    submitFailed: bool,
   }
 
   @module("react-final-form") @react.component
@@ -106,3 +107,18 @@ type useFieldConfig<'a> = {
 
 @module("react-final-form")
 external useField: (string, ~config: useFieldConfig<'a>=?) => Field.fieldProps = "useField"
+
+type formState = {
+  values: Dict.t<JSON.t>,
+  errors: Dict.t<string>,
+  touched: Dict.t<bool>,
+  dirty: bool,
+  pristine: bool,
+  valid: bool,
+  invalid: bool,
+  submitting: bool,
+  submitFailed: bool,
+}
+
+@module("react-final-form")
+external useFormState: unit => formState = "useFormState"

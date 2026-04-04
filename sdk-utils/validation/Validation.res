@@ -37,6 +37,15 @@ type validationRule =
   | Phone
   | PostalCode(string)
   | IBAN
+  | BankAccountNumber
+  | VpaId
+  | BlikCode
+  | GiftCardNumber
+  | GiftCardPin
+  | Nickname
+  | PixKey
+  | PixCPF
+  | PixCNPJ
 
 let defaultCardPattern = {
   issuer: "",
@@ -446,11 +455,11 @@ let isEmailValid = email => {
 }
 
 let isValidZip = (~zipCode, ~country) => {
-  let _ = country
-  let countryObj = CountryStateDataHookTypes.defaultTimeZone
+  // let _ = country
+  // let countryObj = CountryStateDataHookTypes.defaultTimeZone
   let postalCode =
     PostalCodes.postalCode
-    ->Array.find(item => item.iso == countryObj.country_code)
+    ->Array.find(item => item.iso == country)
     ->Option.getOr(PostalCodes.defaultPostalCode)
 
   let isZipCodeValid = RegExp.test(postalCode.regex->Js.Re.fromString, zipCode)
@@ -620,7 +629,76 @@ let validateField = (
         }
       | PostalCode(country) =>
         isValidZip(~zipCode=value, ~country) ? None : Some("Enter a valid postal code")
+      | BankAccountNumber => {
+          let cleanValue = value->clearSpaces
+          if cleanValue->String.length === 0 {
+            Some(localeObject.mandatoryFieldText)
+          } else if !containsOnlyDigits(cleanValue) {
+            Some("Enter a valid account number")
+          } else if cleanValue->String.length > 17 {
+            Some("Account number cannot exceed 17 digits")
+          } else {
+            None
+          }
+        }
       | IBAN => isValidIban(value) ? None : Some("Enter a valid IBAN")
+      | VpaId =>
+        if value->String.length === 0 {
+          Some(localeObject.vpaIdEmptyText)
+        } else {
+          switch value->String.match(
+            %re("/^[a-zA-Z0-9]([a-zA-Z0-9.\-]{1,50})[a-zA-Z0-9]@[a-zA-Z0-9]{2,}$/"),
+          ) {
+          | Some(_) => None
+          | None => Some(localeObject.vpaIdInvalidText)
+          }
+        }
+      | BlikCode => {
+          let digits = value->String.replaceRegExp(%re("/[^0-9]/g"), "")
+          if value->String.length === 0 {
+            Some(localeObject.mandatoryFieldText)
+          } else if digits->String.length !== 6 {
+            Some("Enter a valid 6-digit Blik code")
+          } else {
+            None
+          }
+        }
+      | GiftCardNumber =>
+        value->String.length === 0 ? Some(localeObject.giftCardNumberEmptyText) : None
+      | GiftCardPin => value->String.length === 0 ? Some(localeObject.giftCardPinEmptyText) : None
+      | Nickname => {
+          let digitMatches = value->String.match(%re("/\d/g"))
+          let digitCount = switch digitMatches {
+          | Some(arr) => arr->Array.length
+          | None => 0
+          }
+          if digitCount > 2 {
+            Some(localeObject.invalidNickNameError)
+          } else {
+            None
+          }
+        }
+      | PixKey => value->String.length === 0 ? Some(localeObject.pixKeyEmptyText) : None
+      | PixCPF => {
+          let isValid = %re("/^\\d*$/")->RegExp.test(value) && value->String.length === 11
+          if value->String.length === 0 {
+            Some(localeObject.pixCPFEmptyText)
+          } else if isValid {
+            None
+          } else {
+            Some(localeObject.pixCPFInvalidText)
+          }
+        }
+      | PixCNPJ => {
+          let isValid = %re("/^\d*$/")->RegExp.test(value) && value->String.length === 14
+          if value->String.length === 0 {
+            Some(localeObject.pixCNPJEmptyText)
+          } else if isValid {
+            None
+          } else {
+            Some(localeObject.pixCNPJInvalidText)
+          }
+        }
       }
     }
   })
@@ -682,5 +760,60 @@ let formatValue: validationRule => (option<string>, string) => option<string> = 
 ) => {
   (value: option<string>, _name: string) => {
     value->Option.map(value => format(value, validationRule))
+  }
+}
+
+// Map SuperpositionTypes.fieldType to Validation.validationRule
+let fieldTypeToValidationRule = (
+  fieldType: SuperpositionTypes.fieldType,
+  ~country: string="",
+  ~cardBrand: string="",
+): validationRule => {
+  switch fieldType {
+  | CardNumberTextInput => CardNumber
+  | CvcPasswordInput => CardCVC(cardBrand)
+  | MonthSelect => CardExpiry("")
+  | YearSelect => CardExpiry("")
+  | EmailInput => Email
+  | PhoneInput => Phone
+  | CountryCodeSelect => Required
+  | AddressPostalCodeInput => PostalCode(country)
+  | AddressLine1Input => Required
+  | AddressLine2Input => Required
+  | AddressCityInput => Required
+  | AddressStateInput => Required
+  | AddressCountryInput => Required
+  | FullNameInput(_) => FirstName
+  // | BillingNameInput => FirstName
+  // | ShippingNameInput => FirstName
+  | BankAccountNumberInput => BankAccountNumber
+  | IbanInput => IBAN
+  | VpaTextInput => VpaId
+  | BlikCodeInput => BlikCode
+  | PixKeyInput => PixKey
+  | PixCpfInput => PixCPF
+  | PixCnpjInput => PixCNPJ
+  | GiftCardNumberInput => GiftCardNumber
+  | GiftCardPinInput => GiftCardPin
+  | DocumentNumberInput => Required
+  | CryptoNetworkSelect => Required
+  | DatePicker => Required
+  | CurrencySelect => Required
+  | DropdownSelect => Required
+  | BankSelect => Required
+  | BankListSelect => Required
+  | StateSelect => Required
+  | CountrySelect => Required
+  | TextInput => Required
+  | PasswordInput => Required
+  | InfoElementType => Required
+  // | ShippingAddressLine1Input => Required
+  // | ShippingAddressLine2Input => Required
+  // | ShippingAddressCityInput => Required
+  // | ShippingAddressStateInput => Required
+  // | ShippingAddressPostalCodeInput => Required
+  // | ShippingAddressCountryInput => Required
+  | SourceBankAccountIdInput => Required
+  | DocumentTypeSelect => Required
   }
 }
