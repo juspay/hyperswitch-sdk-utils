@@ -74,5 +74,17 @@
     "enterValidDigitsText": "Anna kelvollinen",
     "digitsText": "numeroita",
     "enterValidIban": "Anna kelvollinen Iban",
-    "mandatoryFieldText": "Tämä kenttä on pakollinen"
+    "mandatoryFieldText": "Tämä kenttä on pakollinen",
+    "accessibilityHintCardNumber": "Syötä 16-numeroinen korttinumerosi",
+    "accessibilityHintCardExpiry": "Muoto: KK/VV, esim. 01/26",
+    "accessibilityHintCvc": "3 tai 4-numeroinen turvakoodi kortillasi",
+    "accessibilityHintBillingZip": "Syötä laskutuksen postinumerosi",
+    "accessibilityHintFullName": "Syötä etu- ja sukunimesi",
+    "accessibilityHintPhoneCode": "Avaa maan puhelinkoodin valintaluettelon",
+    "accessibilityHintPhoneNumber": "Syötä puhelinnumerosi suuntanumeroineen",
+    "accessibilityHintPickerDay": "Avaa päivän valintaluettelon",
+    "accessibilityHintPickerMonth": "Avaa kuukauden valintaluettelon",
+    "accessibilityHintPickerYear": "Avaa vuoden valintaluettelon",
+    "accessibilityHintEmail": "Syötä kelvollinen sähköpostiosoite",
+    "accessibilityHintSavedCardCvc": "Syötä tallennetun kortin turvakoodi"
 }

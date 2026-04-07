@@ -74,5 +74,17 @@
     "enterValidDigitsText": "Unesite važeći",
     "digitsText": "cifre",
     "enterValidIban": "Unesite važeći Iban",
-    "mandatoryFieldText": "Ovo polje je obavezno"
+    "mandatoryFieldText": "Ovo polje je obavezno",
+    "accessibilityHintCardNumber": "Unesite broj vaše kartice od 16 cifara",
+    "accessibilityHintCardExpiry": "Format: MM/GG, npr. 01/26",
+    "accessibilityHintCvc": "Sigurnosni kod od 3 ili 4 cifre na vašoj kartici",
+    "accessibilityHintBillingZip": "Unesite poštanski broj za naplatu",
+    "accessibilityHintFullName": "Unesite vaše ime i prezime",
+    "accessibilityHintPhoneCode": "Otvara listu pozivnih brojeva zemalja",
+    "accessibilityHintPhoneNumber": "Unesite vaš broj telefona uključujući pozivni broj",
+    "accessibilityHintPickerDay": "Otvara listu izbora dana",
+    "accessibilityHintPickerMonth": "Otvara listu izbora mjeseca",
+    "accessibilityHintPickerYear": "Otvara listu izbora godine",
+    "accessibilityHintEmail": "Unesite valjanu e-mail adresu",
+    "accessibilityHintSavedCardCvc": "Unesite sigurnosni kod za sačuvanu karticu"
 }

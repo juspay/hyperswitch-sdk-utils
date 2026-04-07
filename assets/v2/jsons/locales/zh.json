@@ -112,5 +112,17 @@
   "enterValidDigitsText": "請輸入有效的",
   "digitsText": "数字",
   "enterValidIban": "請輸入有效的伊班語",
-  "mandatoryFieldText": "此字段为必填项"
+  "mandatoryFieldText": "此字段为必填项",
+  "accessibilityHintCardNumber": "请输入您的16位卡号",
+  "accessibilityHintCardExpiry": "格式：MM/YY，例如 01/26",
+  "accessibilityHintCvc": "您卡片上的3或4位安全码",
+  "accessibilityHintBillingZip": "请输入账单邮政编码",
+  "accessibilityHintFullName": "请输入您的姓名",
+  "accessibilityHintPhoneCode": "打开国家电话代码选择列表",
+  "accessibilityHintPhoneNumber": "请输入您的电话号码（含区号）",
+  "accessibilityHintPickerDay": "打开日期选择列表",
+  "accessibilityHintPickerMonth": "打开月份选择列表",
+  "accessibilityHintPickerYear": "打开年份选择列表",
+  "accessibilityHintEmail": "请输入有效的电子邮件地址",
+  "accessibilityHintSavedCardCvc": "请输入已保存卡片的安全码"
 }

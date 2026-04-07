@@ -175,5 +175,17 @@
   "enterValidDigitsText": "الرجاء إدخال كلمة صالحة",
   "digitsText": "ارقام",
   "enterValidIban": "الرجاء إدخال رقم Iban صالح",
-  "mandatoryFieldText": "هذا الحقل إلزامي."
+  "mandatoryFieldText": "هذا الحقل إلزامي.",
+  "accessibilityHintCardNumber": "أدخل رقم بطاقتك المكون من 16 رقمًا",
+  "accessibilityHintCardExpiry": "الصيغة: MM/YY، مثال: 01/26",
+  "accessibilityHintCvc": "رمز الأمان المكون من 3 أو 4 أرقام على بطاقتك",
+  "accessibilityHintBillingZip": "أدخل الرمز البريدي لعنوان الفوترة",
+  "accessibilityHintFullName": "أدخل اسمك الأول والأخير",
+  "accessibilityHintPhoneCode": "يفتح قائمة اختيار رمز الهاتف الدولي",
+  "accessibilityHintPhoneNumber": "أدخل رقم هاتفك بما في ذلك رمز المنطقة",
+  "accessibilityHintPickerDay": "يفتح قائمة اختيار اليوم",
+  "accessibilityHintPickerMonth": "يفتح قائمة اختيار الشهر",
+  "accessibilityHintPickerYear": "يفتح قائمة اختيار السنة",
+  "accessibilityHintEmail": "أدخل عنوان بريد إلكتروني صالح",
+  "accessibilityHintSavedCardCvc": "أدخل رمز الأمان للبطاقة المحفوظة"
 }

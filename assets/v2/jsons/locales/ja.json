@@ -175,5 +175,17 @@
   "enterValidDigitsText": "有効なものを入力してください",
   "digitsText": "数字",
   "enterValidIban": "有効なイバンを入力してください",
-  "mandatoryFieldText": "このフィールドは必須です"
+  "mandatoryFieldText": "このフィールドは必須です",
+  "accessibilityHintCardNumber": "16桁のカード番号を入力してください",
+  "accessibilityHintCardExpiry": "形式: MM/YY、例: 01/26",
+  "accessibilityHintCvc": "カード裏面の3または4桁のセキュリティコード",
+  "accessibilityHintBillingZip": "請求先の郵便番号を入力してください",
+  "accessibilityHintFullName": "氏名を入力してください",
+  "accessibilityHintPhoneCode": "国の電話番号コード選択リストを開きます",
+  "accessibilityHintPhoneNumber": "市外局番を含む電話番号を入力してください",
+  "accessibilityHintPickerDay": "日付選択リストを開きます",
+  "accessibilityHintPickerMonth": "月選択リストを開きます",
+  "accessibilityHintPickerYear": "年選択リストを開きます",
+  "accessibilityHintEmail": "有効なメールアドレスを入力してください",
+  "accessibilityHintSavedCardCvc": "保存済みカードのセキュリティコードを入力してください"
 }

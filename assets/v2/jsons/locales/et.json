@@ -74,5 +74,17 @@
     "enterValidDigitsText": "Sisestage kehtiv",
     "digitsText": "numbrid",
     "enterValidIban": "Sisestage kehtiv Iban",
-    "mandatoryFieldText": "See väli on kohustuslik"
+    "mandatoryFieldText": "See väli on kohustuslik",
+    "accessibilityHintCardNumber": "Sisestage oma 16-kohaline kaardinumber",
+    "accessibilityHintCardExpiry": "Formaat: KK/AA, nt 01/26",
+    "accessibilityHintCvc": "3 või 4-kohaline turbekood teie kaardil",
+    "accessibilityHintBillingZip": "Sisestage oma arvelduse postiindeks",
+    "accessibilityHintFullName": "Sisestage oma ees- ja perekonnanimi",
+    "accessibilityHintPhoneCode": "Avab riigi telefonikoodide valiku loendi",
+    "accessibilityHintPhoneNumber": "Sisestage oma telefoninumber koos suunakoodiga",
+    "accessibilityHintPickerDay": "Avab päeva valiku loendi",
+    "accessibilityHintPickerMonth": "Avab kuu valiku loendi",
+    "accessibilityHintPickerYear": "Avab aasta valiku loendi",
+    "accessibilityHintEmail": "Sisestage kehtiv e-posti aadress",
+    "accessibilityHintSavedCardCvc": "Sisestage salvestatud kaardi turbekood"
 }

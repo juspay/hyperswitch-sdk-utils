@@ -74,5 +74,17 @@
     "enterValidDigitsText": "Vinsamlegast sláðu inn gilt",
     "digitsText": "tölustafir",
     "enterValidIban": "Vinsamlegast sláðu inn gilt Iban",
-    "mandatoryFieldText": "Þessi reitur er skyldubundinn"
+    "mandatoryFieldText": "Þessi reitur er skyldubundinn",
+    "accessibilityHintCardNumber": "Sláðu inn 16 stafa kortanúmerið þitt",
+    "accessibilityHintCardExpiry": "Snið: MM/ÁÁ, t.d. 01/26",
+    "accessibilityHintCvc": "3 eða 4 stafa öryggiskóði á kortinu þínu",
+    "accessibilityHintBillingZip": "Sláðu inn póstnúmerið þitt fyrir reikninga",
+    "accessibilityHintFullName": "Sláðu inn fornafn og eftirnafn þitt",
+    "accessibilityHintPhoneCode": "Opnar lista yfir símakóða landa til vals",
+    "accessibilityHintPhoneNumber": "Sláðu inn símanúmerið þitt með svæðiskóða",
+    "accessibilityHintPickerDay": "Opnar lista yfir daga til vals",
+    "accessibilityHintPickerMonth": "Opnar lista yfir mánuði til vals",
+    "accessibilityHintPickerYear": "Opnar lista yfir ár til vals",
+    "accessibilityHintEmail": "Sláðu inn gilt netfang",
+    "accessibilityHintSavedCardCvc": "Sláðu inn öryggiskóða fyrir vistaða kort"
 }

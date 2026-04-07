@@ -74,5 +74,17 @@
     "enterValidDigitsText": "Rhowch ddilys",
     "digitsText": "digidau",
     "enterValidIban": "Rhowch Iban dilys",
-    "mandatoryFieldText": "Mae'r maes hwn yn orfodol"
+    "mandatoryFieldText": "Mae'r maes hwn yn orfodol",
+    "accessibilityHintCardNumber": "Rhowch rif eich cerdyn 16 digid",
+    "accessibilityHintCardExpiry": "Fformat: MM/BB, e.e. 01/26",
+    "accessibilityHintCvc": "Cod diogelwch 3 neu 4 digid ar eich cerdyn",
+    "accessibilityHintBillingZip": "Rhowch eich cod post bilio",
+    "accessibilityHintFullName": "Rhowch eich enw cyntaf a chyfenw",
+    "accessibilityHintPhoneCode": "Yn agor rhestr ddewis cod ffôn y wlad",
+    "accessibilityHintPhoneNumber": "Rhowch eich rhif ffôn gan gynnwys cod yr ardal",
+    "accessibilityHintPickerDay": "Yn agor rhestr ddewis diwrnod",
+    "accessibilityHintPickerMonth": "Yn agor rhestr ddewis mis",
+    "accessibilityHintPickerYear": "Yn agor rhestr ddewis blwyddyn",
+    "accessibilityHintEmail": "Rhowch gyfeiriad e-bost dilys",
+    "accessibilityHintSavedCardCvc": "Rhowch y cod diogelwch ar gyfer y cerdyn a gadwyd"
 }

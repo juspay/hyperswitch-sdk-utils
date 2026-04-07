@@ -74,5 +74,17 @@
     "enterValidDigitsText": "Zadejte prosím platné",
     "digitsText": "číslic",
     "enterValidIban": "Zadejte prosím platný Iban",
-    "mandatoryFieldText": "Toto pole je povinné"
+    "mandatoryFieldText": "Toto pole je povinné",
+    "accessibilityHintCardNumber": "Zadejte číslo své karty o 16 číslicích",
+    "accessibilityHintCardExpiry": "Formát: MM/RR, např. 01/26",
+    "accessibilityHintCvc": "3 nebo 4místný bezpečnostní kód na vaší kartě",
+    "accessibilityHintBillingZip": "Zadejte fakturační poštovní směrovací číslo",
+    "accessibilityHintFullName": "Zadejte své jméno a příjmení",
+    "accessibilityHintPhoneCode": "Otevře seznam výběru kódů zemí",
+    "accessibilityHintPhoneNumber": "Zadejte své telefonní číslo včetně předvolby",
+    "accessibilityHintPickerDay": "Otevře seznam výběru dne",
+    "accessibilityHintPickerMonth": "Otevře seznam výběru měsíce",
+    "accessibilityHintPickerYear": "Otevře seznam výběru roku",
+    "accessibilityHintEmail": "Zadejte platnou e-mailovou adresu",
+    "accessibilityHintSavedCardCvc": "Zadejte bezpečnostní kód pro uloženou kartu"
 }
