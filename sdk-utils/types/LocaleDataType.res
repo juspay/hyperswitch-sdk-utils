@@ -313,6 +313,7 @@ type localeStrings = {
   swiftCode: string,
   doneText: string,
   copyToClipboard: string,
+  cardNotEligibleText: string,
 }
 
 let defaultLocale = {
@@ -502,4 +503,5 @@ let defaultLocale = {
   swiftCode: "Swift code",
   doneText: "Done",
   copyToClipboard: "Copy to clipboard",
+  cardNotEligibleText: "This card is not eligible for this payment",
 }
