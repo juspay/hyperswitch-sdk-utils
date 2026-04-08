@@ -175,5 +175,6 @@
   "enterValidDigitsText": "Voer een geldige",
   "digitsText": "cijfers",
   "enterValidIban": "Voer een geldig IBAN in",
-  "mandatoryFieldText": "This field is mandatory"
+  "mandatoryFieldText": "This field is mandatory",
+  "cardNotEligibleText": "Deze kaart wordt niet geaccepteerd voor deze betaling."
 }

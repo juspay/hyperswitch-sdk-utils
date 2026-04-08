@@ -503,5 +503,5 @@ let defaultLocale = {
   swiftCode: "Swift code",
   doneText: "Done",
   copyToClipboard: "Copy to clipboard",
-  cardNotEligibleText: "This card is not eligible for this payment",
+  cardNotEligibleText: "This card is not accepted for this payment.",
 }

@@ -112,5 +112,6 @@
   "enterValidDigitsText": "請輸入有效的",
   "digitsText": "數位",
   "enterValidIban": "請輸入有效的伊班語。",
-  "mandatoryFieldText": "此欄位為必填項"
+  "mandatoryFieldText": "此欄位為必填項",
+  "cardNotEligibleText": "此卡不適用於此次付款。"
 }

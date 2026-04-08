@@ -175,5 +175,6 @@
   "enterValidDigitsText": "Introduïu vàlid",
   "digitsText": "dígits",
   "enterValidIban": "Introduïu un Iban vàlid",
-  "mandatoryFieldText": "Aquest camp és obligatori"
+  "mandatoryFieldText": "Aquest camp és obligatori",
+  "cardNotEligibleText": "Aquesta targeta no s'accepta per a aquest pagament."
 }

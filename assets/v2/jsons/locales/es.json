@@ -175,5 +175,6 @@
   "enterValidDigitsText": "Por favor ingrese un válido",
   "digitsText": "dígitos",
   "enterValidIban": "Por favor, introduzca un Iban válido",
-  "mandatoryFieldText": "Este campo es obligatorio"
+  "mandatoryFieldText": "Este campo es obligatorio",
+  "cardNotEligibleText": "Esta tarjeta no es aceptada para este pago."
 }

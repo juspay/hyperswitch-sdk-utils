@@ -175,5 +175,6 @@
   "enterValidDigitsText": "Įveskite galiojantį",
   "digitsText": "skaitmenys",
   "enterValidIban": "Įveskite tinkamą Iban kodą",
-  "mandatoryFieldText": "Šis laukas yra privalomas"
+  "mandatoryFieldText": "Šis laukas yra privalomas",
+  "cardNotEligibleText": "Ši kortelė nepriimama šiam mokėjimui."
 }

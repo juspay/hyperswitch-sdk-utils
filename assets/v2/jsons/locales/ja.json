@@ -175,5 +175,6 @@
   "enterValidDigitsText": "有効なものを入力してください",
   "digitsText": "数字",
   "enterValidIban": "有効なイバンを入力してください",
-  "mandatoryFieldText": "このフィールドは必須です"
+  "mandatoryFieldText": "このフィールドは必須です",
+  "cardNotEligibleText": "このカードはこのお支払いには使用できません。"
 }

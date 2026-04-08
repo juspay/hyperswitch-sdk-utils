@@ -74,5 +74,6 @@
     "enterValidDigitsText": "Vinsamlegast sláðu inn gilt",
     "digitsText": "tölustafir",
     "enterValidIban": "Vinsamlegast sláðu inn gilt Iban",
-    "mandatoryFieldText": "Þessi reitur er skyldubundinn"
+    "mandatoryFieldText": "Þessi reitur er skyldubundinn",
+    "cardNotEligibleText": "Þetta kort er ekki samþykkt fyrir þessa greiðslu."
 }

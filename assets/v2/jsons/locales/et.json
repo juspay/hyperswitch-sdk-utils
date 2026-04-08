@@ -74,5 +74,6 @@
     "enterValidDigitsText": "Sisestage kehtiv",
     "digitsText": "numbrid",
     "enterValidIban": "Sisestage kehtiv Iban",
-    "mandatoryFieldText": "See väli on kohustuslik"
+    "mandatoryFieldText": "See väli on kohustuslik",
+    "cardNotEligibleText": "Seda kaarti ei aktsepteerita selle makse jaoks."
 }

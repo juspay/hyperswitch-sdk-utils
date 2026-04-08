@@ -74,5 +74,6 @@
     "enterValidDigitsText": "Unesite važeći",
     "digitsText": "cifre",
     "enterValidIban": "Unesite važeći Iban",
-    "mandatoryFieldText": "Ovo polje je obavezno"
+    "mandatoryFieldText": "Ovo polje je obavezno",
+    "cardNotEligibleText": "Ova kartica nije prihvaćena za ovu uplatu."
 }

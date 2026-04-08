@@ -175,5 +175,6 @@
   "enterValidDigitsText": "Por favor, introduza um válido",
   "digitsText": "цифры",
   "enterValidIban": "Пожалуйста, введите действительный Iban",
-  "mandatoryFieldText": "Это поле обязательно для заполнения."
+  "mandatoryFieldText": "Это поле обязательно для заполнения.",
+  "cardNotEligibleText": "Эта карта не принимается для данного платежа."
 }
