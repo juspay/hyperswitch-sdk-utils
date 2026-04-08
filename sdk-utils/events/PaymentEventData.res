@@ -98,7 +98,12 @@ let buildCardInfoFromSavedCard = (
   ~expiryYear: string,
   ~isCvcComplete: bool,
 ): cardInfo => {
-  let formattedExpiry = `${expiryMonth}/${expiryYear->String.substring(~start=2, ~end=4)}`
+  let shortYear = if expiryYear->String.length >= 4 {
+    expiryYear->String.substring(~start=2, ~end=4)
+  } else {
+    expiryYear
+  }
+  let formattedExpiry = `${expiryMonth}/${shortYear}`
 
   {
     bin: Some(bin),
