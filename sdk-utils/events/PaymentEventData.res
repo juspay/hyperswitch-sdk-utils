@@ -98,7 +98,12 @@ let buildCardInfoFromSavedCard = (
   ~expiryYear: string,
   ~isCvcComplete: bool,
 ): cardInfo => {
-  let formattedExpiry = `${expiryMonth}/${expiryYear->String.substring(~start=2, ~end=4)}`
+  let shortYear = if expiryYear->String.length >= 4 {
+    expiryYear->String.substring(~start=2, ~end=4)
+  } else {
+    expiryYear
+  }
+  let formattedExpiry = `${expiryMonth}/${shortYear}`
 
   {
     bin: Some(bin),
@@ -216,4 +221,36 @@ let computeFormStatus = (~isComplete: bool, ~isEmpty: bool): PaymentEventTypes.f
   } else {
     Filling
   }
+}
+
+type cvcStatusEvent = {
+  isCvcFocused: bool,
+  isCvcBlur: bool,
+  isCvcEmpty: bool,
+  // isCvcComplete: bool, // commented out for now
+}
+
+let buildCvcStatusEvent = (
+  ~isCvcFocused: bool=false,
+  ~isCvcBlur: bool=false,
+  ~isCvcEmpty: bool=true,
+): cvcStatusEvent => {
+  {isCvcFocused, isCvcBlur, isCvcEmpty}
+}
+
+let cvcStatusEventToJson = (event: cvcStatusEvent): JSON.t => {
+  [
+    (
+      "cvcStatus",
+      [
+        ("isCvcFocused", event.isCvcFocused->JSON.Encode.bool),
+        ("isCvcBlur", event.isCvcBlur->JSON.Encode.bool),
+        ("isCvcEmpty", event.isCvcEmpty->JSON.Encode.bool),
+      ]
+      ->Dict.fromArray
+      ->JSON.Encode.object,
+    ),
+  ]
+  ->Dict.fromArray
+  ->JSON.Encode.object
 }
