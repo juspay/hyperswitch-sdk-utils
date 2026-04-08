@@ -74,5 +74,6 @@
     "enterValidDigitsText": "Rhowch ddilys",
     "digitsText": "digidau",
     "enterValidIban": "Rhowch Iban dilys",
-    "mandatoryFieldText": "Mae'r maes hwn yn orfodol"
+    "mandatoryFieldText": "Mae'r maes hwn yn orfodol",
+    "cardNotEligibleText": "Nid yw'r cerdyn hwn yn cael ei dderbyn ar gyfer y taliad hwn."
 }

@@ -175,5 +175,6 @@
   "enterValidDigitsText": "الرجاء إدخال كلمة صالحة",
   "digitsText": "ارقام",
   "enterValidIban": "الرجاء إدخال رقم Iban صالح",
-  "mandatoryFieldText": "هذا الحقل إلزامي."
+  "mandatoryFieldText": "هذا الحقل إلزامي.",
+  "cardNotEligibleText": "هذه البطاقة غير مقبولة لهذه الدفعة."
 }

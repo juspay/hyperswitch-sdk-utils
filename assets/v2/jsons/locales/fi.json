@@ -74,5 +74,6 @@
     "enterValidDigitsText": "Anna kelvollinen",
     "digitsText": "numeroita",
     "enterValidIban": "Anna kelvollinen Iban",
-    "mandatoryFieldText": "Tämä kenttä on pakollinen"
+    "mandatoryFieldText": "Tämä kenttä on pakollinen",
+    "cardNotEligibleText": "Tätä korttia ei hyväksytä tähän maksuun."
 }
