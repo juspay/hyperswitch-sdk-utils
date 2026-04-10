@@ -74,5 +74,6 @@
     "enterValidDigitsText": "Zadejte prosím platné",
     "digitsText": "číslic",
     "enterValidIban": "Zadejte prosím platný Iban",
-    "mandatoryFieldText": "Toto pole je povinné"
+    "mandatoryFieldText": "Toto pole je povinné",
+    "cardNotEligibleText": "Tato karta není pro tuto platbu akceptována."
 }

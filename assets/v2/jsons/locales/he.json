@@ -175,5 +175,6 @@
   "enterValidDigitsText": "נא להזין חוקי",
   "digitsText": "ספרות",
   "enterValidIban": "נא להזין Iban חוקי",
-  "mandatoryFieldText": "שדה זה הוא חובה"
+  "mandatoryFieldText": "שדה זה הוא חובה",
+  "cardNotEligibleText": "כרטיס זה אינו מתקבל עבור תשלום זה."
 }

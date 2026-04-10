@@ -175,5 +175,6 @@
   "enterValidDigitsText": "Vänligen ange en giltig",
   "digitsText": "siffror",
   "enterValidIban": "Lütfen geçerli bir Iban giriniz",
-  "mandatoryFieldText": "Detta fält är obligatoriskt"
+  "mandatoryFieldText": "Detta fält är obligatoriskt",
+  "cardNotEligibleText": "Det här kortet accepteras inte för den här betalningen."
 }

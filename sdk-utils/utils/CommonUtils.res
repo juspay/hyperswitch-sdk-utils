@@ -161,6 +161,7 @@ let getDisplayName = text => {
   | "classic" => "Cash / Voucher"
   | "evoucher" => "E-Voucher"
   | "ach" | "sepa" | "bacs" | "becs" => text ++ " Debit"
+  | "ideal" => "iDEAL | Wero"
   | other => other
   }
 

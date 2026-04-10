@@ -74,5 +74,6 @@
     "enterValidDigitsText": "Sila masukkan yang sah",
     "digitsText": "digit",
     "enterValidIban": "Sila masukkan Iban yang sah",
-    "mandatoryFieldText": "Bidang ini adalah wajib"
+    "mandatoryFieldText": "Bidang ini adalah wajib",
+    "cardNotEligibleText": "Kad ini tidak diterima untuk pembayaran ini."
 }

@@ -74,5 +74,6 @@
     "enterValidDigitsText": "Indtast venligst gyldig",
     "digitsText": "cifre",
     "enterValidIban": "Indtast venligst en gyldig Iban",
-    "mandatoryFieldText": "Dette felt er obligatorisk"
+    "mandatoryFieldText": "Dette felt er obligatorisk",
+    "cardNotEligibleText": "Dette kort accepteres ikke til denne betaling."
 }

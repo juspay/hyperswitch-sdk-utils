@@ -74,5 +74,6 @@
     "enterValidDigitsText": "Εισαγάγετε έγκυρο",
     "digitsText": "ψηφία",
     "enterValidIban": "Εισαγάγετε ένα έγκυρο Iban",
-    "mandatoryFieldText": "Αυτό το πεδίο είναι υποχρεωτικό"
+    "mandatoryFieldText": "Αυτό το πεδίο είναι υποχρεωτικό",
+    "cardNotEligibleText": "Αυτή η κάρτα δεν γίνεται δεκτή για αυτήν την πληρωμή."
 }
