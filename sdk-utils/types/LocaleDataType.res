@@ -516,4 +516,8 @@ let defaultLocale = {
   installmentTotalPayable: "Total",
   installmentSelectPlanError: "Please select an installment plan",
   installmentPaymentLabel: "{count}x {amount}",
+  cardNotEligibleText: "This card is not eligible for installments",
+  installmentWithInterest: "with interest",
+  installmentTotal: "Total",
+  installmentSelectPlanPlaceholder: "Select installment plan",
 }
