@@ -188,7 +188,13 @@ let convertConfigurationToRequiredFields = resolvedConfig => {
   resolvedConfig
   ->Dict.toArray
   ->Array.forEach(((key, value)) => {
-    let parts = key->String.split("._")
+    let dynamicFieldsprefix = "dynamic_fields."
+    let normalizedKey = if key->String.startsWith(dynamicFieldsprefix) {
+      key->String.sliceToEnd(~start=dynamicFieldsprefix->String.length)
+    } else {
+      key
+    }
+    let parts = normalizedKey->String.split("._")
     switch (parts->Array.get(0), parts->Array.get(1)) {
     | (Some(baseName), Some(metadataKey)) if baseName !== "" && metadataKey !== "" => {
         let fieldGroup = switch fieldGroups->Dict.get(baseName) {
