@@ -22,7 +22,7 @@ and fieldType =
   | YearSelect
   | StateSelect
   | CountrySelect
-  | EmailInput
+  | EmailInput(array<fieldConfig>)
   | PhoneInput
   | CountryCodeSelect
   | DatePicker
@@ -84,7 +84,7 @@ let stringToFieldType = str => {
   | "month_select" => MonthSelect
   | "year_select" => YearSelect
   | "country_select" => CountrySelect
-  | "email_input" => EmailInput
+  | "email_input" => EmailInput([])
   | "phone_input" => PhoneInput
   | "country_code_select" => CountryCodeSelect
   | "date_picker" => DatePicker
