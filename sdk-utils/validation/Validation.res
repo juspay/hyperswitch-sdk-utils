@@ -678,23 +678,28 @@ let validateField = (
             None
           }
         }
-      | PixKey => value->String.length === 0 ? Some(localeObject.pixKeyEmptyText) : None
+      | PixKey =>
+        if value->String.length > 0 {
+          None
+        } else {
+          Some(localeObject.pixKeyEmptyText)
+        }
       | PixCPF => {
-          let isValid = %re("/^\\d*$/")->RegExp.test(value) && value->String.length === 11
-          if value->String.length === 0 {
-            Some(localeObject.pixCPFEmptyText)
-          } else if isValid {
+          let isCPFValid = CpfValidation.isValidCPF(value)
+          if isCPFValid {
             None
+          } else if value->String.length === 0 {
+            Some(localeObject.pixCPFEmptyText)
           } else {
             Some(localeObject.pixCPFInvalidText)
           }
         }
       | PixCNPJ => {
-          let isValid = %re("/^\d*$/")->RegExp.test(value) && value->String.length === 14
-          if value->String.length === 0 {
-            Some(localeObject.pixCNPJEmptyText)
-          } else if isValid {
+          let isCNPJValid = CnpjValidation.isValidCNPJ(value)
+          if isCNPJValid {
             None
+          } else if value->String.length === 0 {
+            Some(localeObject.pixCNPJEmptyText)
           } else {
             Some(localeObject.pixCNPJInvalidText)
           }
@@ -774,7 +779,7 @@ let fieldTypeToValidationRule = (
   | CvcPasswordInput => CardCVC(cardBrand)
   | MonthSelect => CardExpiry("")
   | YearSelect => CardExpiry("")
-  | EmailInput => Email
+  | EmailInput(_) => Email
   | PhoneInput => Phone
   | CountryCodeSelect => Required
   | AddressPostalCodeInput => PostalCode(country)
