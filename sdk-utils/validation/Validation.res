@@ -1,3 +1,29 @@
+type validationLocaleStrings = {
+  mandatoryFieldText: string,
+  cardNumberEmptyText: string,
+  inValidCardErrorText: string,
+  cardExpiryDateEmptyText: string,
+  inValidExpiryErrorText: string,
+  cvcNumberEmptyText: string,
+  inValidCVCErrorText: string,
+  unsupportedCardErrorText: string,
+  emailEmptyText: string,
+  emailInvalidText: string,
+  cardHolderNameRequiredText: string,
+  invalidDigitsCardHolderNameError: string,
+  lastNameRequiredText: string,
+  vpaIdEmptyText: string,
+  vpaIdInvalidText: string,
+  giftCardNumberEmptyText: string,
+  giftCardPinEmptyText: string,
+  invalidNickNameError: string,
+  pixKeyEmptyText: string,
+  pixCPFEmptyText: string,
+  pixCPFInvalidText: string,
+  pixCNPJEmptyText: string,
+  pixCNPJInvalidText: string,
+}
+
 type cardIssuer =
   | VISA
   | MASTERCARD
@@ -533,7 +559,7 @@ let validateField = (
   value: string,
   rules: array<validationRule>,
   ~enabledCardSchemes: array<string>,
-  ~localeObject: LocaleDataType.localeStrings,
+  ~localeObject: validationLocaleStrings,
 ) => {
   rules->Array.reduce(None, (acc, rule) => {
     switch acc {
@@ -712,7 +738,7 @@ let validateField = (
 let createFieldValidator = (
   validationRule: validationRule,
   ~enabledCardSchemes: array<string>,
-  ~localeObject,
+  ~localeObject: validationLocaleStrings,
 ) => {
   (value: option<string>) => {
     validateField(
