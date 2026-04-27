@@ -72,6 +72,7 @@ type validationRule =
   | PixKey
   | PixCPF
   | PixCNPJ
+  | RoutingNumber
 
 let defaultCardPattern = {
   issuer: "",
@@ -730,6 +731,29 @@ let validateField = (
             Some(localeObject.pixCNPJInvalidText)
           }
         }
+      | RoutingNumber => {
+          let cleanValue = value->clearSpaces
+          if cleanValue->String.length === 0 {
+            Some(localeObject.mandatoryFieldText)
+          } else if cleanValue->String.length !== 9 {
+            Some("Enter a valid 9-digit routing number")
+          } else if !containsOnlyDigits(cleanValue) {
+            Some("Routing number must contain only digits")
+          } else {
+            let firstWeight = 3
+            let weights = [firstWeight, 7, 1, 3, 7, 1, 3, 7, 1]
+            let sum =
+              cleanValue
+              ->String.split("")
+              ->Array.mapWithIndex((item, i) => item->toInt * weights[i]->Option.getOr(firstWeight))
+              ->Array.reduce(0, (acc, val) => acc + val)
+            if mod(sum, 10) == 0 {
+              None
+            } else {
+              Some("Enter a valid routing number")
+            }
+          }
+        }
       }
     }
   })
@@ -846,5 +870,6 @@ let fieldTypeToValidationRule = (
   // | ShippingAddressCountryInput => Required
   | SourceBankAccountIdInput => Required
   | DocumentTypeSelect => Required
+  | RoutingNumberInput => RoutingNumber
   }
 }

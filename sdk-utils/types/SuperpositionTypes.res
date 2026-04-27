@@ -60,6 +60,7 @@ and fieldType =
   | BankSelect
   | BankListSelect
   | BlikCodeInput
+  | RoutingNumberInput
 
 type requiredFields = array<fieldConfig>
 
@@ -110,6 +111,7 @@ let stringToFieldType = str => {
   | "bank_select" => BankSelect
   | "bank_list_select" => BankListSelect
   | "blik_code_input" => BlikCodeInput
+  | "routing_number_input" => RoutingNumberInput
   // Address types
   // | "address_line1_input" => AddressLine1Input
   // | "address_line2_input" => AddressLine2Input
