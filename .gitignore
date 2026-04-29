@@ -1,1 +1,71 @@
+# ReScript / BuckleScript generated files
 *.bs.js
+*.bs.mjs
+*.bs.cjs
+
+# ReScript build artifacts
+lib/
+.merlin
+.bsb.lock
+rescript.json
+
+# Node.js dependencies (created by CI/build scripts)
+node_modules/
+package.json
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# Logs
+*.log
+logs/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Environment variables (security precaution)
+.env
+.env.local
+.env.development
+.env.test
+.env.production
+
+# Sensitive credentials and configuration files
+**/.keystore
+**/.p12
+**/.pem
+**/google-services.json
+**/GoogleService-Info.plist
+**/*.key
+**/*.crt
+**/*.der
+**/service-account.json
+**/credentials.json
+**/secrets.json
+
+# IDE / Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Temporary files
+*.tmp
+*.temp
+.cache/
+
+# Testing coverage
+coverage/
+.nyc_output/
+
+# Build outputs (if any)
+dist/
+build/
+out/
