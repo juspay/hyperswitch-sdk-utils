@@ -162,6 +162,7 @@ let getDisplayName = text => {
   | "evoucher" => "E-Voucher"
   | "ach" | "sepa" | "bacs" | "becs" => text ++ " Debit"
   | "ideal" => "iDEAL | Wero"
+  | "open_banking" => "Pay By Bank"
   | other => other
   }
 
