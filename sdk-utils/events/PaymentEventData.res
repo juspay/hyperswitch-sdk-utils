@@ -227,15 +227,16 @@ type cvcStatusEvent = {
   isCvcFocused: bool,
   isCvcBlur: bool,
   isCvcEmpty: bool,
-  // isCvcComplete: bool, // commented out for now
+  isCvcComplete: bool,
 }
 
 let buildCvcStatusEvent = (
   ~isCvcFocused: bool=false,
   ~isCvcBlur: bool=false,
   ~isCvcEmpty: bool=true,
+  ~isCvcComplete: bool=false,
 ): cvcStatusEvent => {
-  {isCvcFocused, isCvcBlur, isCvcEmpty}
+  {isCvcFocused, isCvcBlur, isCvcEmpty, isCvcComplete}
 }
 
 let cvcStatusEventToJson = (event: cvcStatusEvent): JSON.t => {
