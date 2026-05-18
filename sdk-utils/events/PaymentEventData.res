@@ -247,6 +247,7 @@ let cvcStatusEventToJson = (event: cvcStatusEvent): JSON.t => {
         ("isCvcFocused", event.isCvcFocused->JSON.Encode.bool),
         ("isCvcBlur", event.isCvcBlur->JSON.Encode.bool),
         ("isCvcEmpty", event.isCvcEmpty->JSON.Encode.bool),
+        ("isCvcComplete", event.isCvcComplete->JSON.Encode.bool),
       ]
       ->Dict.fromArray
       ->JSON.Encode.object,
