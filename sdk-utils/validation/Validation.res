@@ -37,6 +37,16 @@ type validationRule =
   | Phone
   | PostalCode(string)
   | IBAN
+  | BankAccountNumber
+  | BlikCode
+  | GiftCardNumber
+  | GiftCardPin
+  | Nickname
+  | PixKey
+  | PixCPF
+  | PixCNPJ
+  | RoutingNumber
+  | Generic(string)
 
 let defaultCardPattern = {
   issuer: "",
@@ -620,21 +630,115 @@ let validateField = (
         }
       | PostalCode(country) =>
         isValidZip(~zipCode=value, ~country) ? None : Some("Enter a valid postal code")
+      | BankAccountNumber => {
+          let cleanValue = value->clearSpaces
+          if cleanValue->String.length === 0 {
+            Some(localeObject.mandatoryFieldText)
+          } else if !containsOnlyDigits(cleanValue) {
+            Some("Enter a valid account number")
+          } else if cleanValue->String.length > 17 {
+            Some("Account number cannot exceed 17 digits")
+          } else {
+            None
+          }
+        }
       | IBAN => isValidIban(value) ? None : Some("Enter a valid IBAN")
+      | BlikCode => {
+          let digits = value->String.replaceRegExp(%re("/[^0-9]/g"), "")
+          if value->String.length === 0 {
+            Some(localeObject.mandatoryFieldText)
+          } else if digits->String.length !== 6 {
+            Some("Enter a valid 6-digit Blik code")
+          } else {
+            None
+          }
+        }
+      | GiftCardNumber =>
+        // localeObject.giftCardNumberEmptyText, localeObject.giftCardPinEmptyText
+        value->String.length === 0 ? Some(localeObject.mandatoryFieldText) : None
+      | GiftCardPin => value->String.length === 0 ? Some(localeObject.mandatoryFieldText) : None
+      | Nickname => {
+          let digitMatches = value->String.match(%re("/\d/g"))
+          let digitCount = switch digitMatches {
+          | Some(arr) => arr->Array.length
+          | None => 0
+          }
+          if digitCount > 2 {
+            Some(localeObject.invalidNickNameError)
+          } else {
+            None
+          }
+        }
+      | PixKey =>
+        if value->String.length > 0 {
+          None
+        } else {
+          Some(localeObject.pixKeyEmptyText)
+        }
+      | PixCPF => {
+          let isCPFValid = CpfValidation.isValidCPF(value)
+          if isCPFValid {
+            None
+          } else if value->String.length === 0 {
+            Some(localeObject.pixCPFEmptyText)
+          } else {
+            Some(localeObject.pixCPFInvalidText)
+          }
+        }
+      | PixCNPJ => {
+          let isCNPJValid = CnpjValidation.isValidCNPJ(value)
+          if isCNPJValid {
+            None
+          } else if value->String.length === 0 {
+            Some(localeObject.pixCNPJEmptyText)
+          } else {
+            Some(localeObject.pixCNPJInvalidText)
+          }
+        }
+      | RoutingNumber => {
+          let cleanValue = value->clearSpaces
+          if cleanValue->String.length === 0 {
+            Some(localeObject.mandatoryFieldText)
+          } else if cleanValue->String.length !== 9 {
+            Some("Enter a valid 9-digit routing number")
+          } else if !containsOnlyDigits(cleanValue) {
+            Some("Routing number must contain only digits")
+          } else {
+            let firstWeight = 3
+            let weights = [firstWeight, 7, 1, 3, 7, 1, 3, 7, 1]
+            let sum =
+              cleanValue
+              ->String.split("")
+              ->Array.mapWithIndex((item, i) => item->toInt * weights[i]->Option.getOr(firstWeight))
+              ->Array.reduce(0, (acc, val) => acc + val)
+            if mod(sum, 10) == 0 {
+              None
+            } else {
+              Some("Enter a valid routing number")
+            }
+          }
+        }
+      | Generic(pattern) =>
+        if value === "" {
+          None
+        } else {
+          let re = RegExp.fromString(pattern)
+          re->RegExp.test(value) ? None : Some("Invalid value")
+        }
       }
     }
   })
 }
 
 let createFieldValidator = (
-  validationRule: validationRule,
+  validationRules: array<validationRule>,
   ~enabledCardSchemes: array<string>,
   ~localeObject,
 ) => {
   (value: option<string>) => {
     validateField(
-      value->Option.getOr(""),
-      [validationRule, MaxLength(255)],
+      value->Option.getOr(""), 
+      validationRules, 
       ~enabledCardSchemes,
       ~localeObject,
     )
