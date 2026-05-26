@@ -18,6 +18,19 @@ let getInt = (dict, key, default: int) => {
   ->Float.toInt
 }
 
+let getOptionInt = (dict, key) => {
+  dict
+  ->Dict.get(key)
+  ->Option.flatMap(JSON.Decode.float)
+  ->Option.map(Float.toInt)
+}
+
+let getOptionFloat = (dict, key) => {
+  dict
+  ->Dict.get(key)
+  ->Option.flatMap(JSON.Decode.float)
+}
+
 let getFloatFromString = (str, default) => str->Float.fromString->Option.getOr(default)
 
 let getFloatFromJson = (json, default) => {
