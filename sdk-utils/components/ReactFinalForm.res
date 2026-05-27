@@ -2,6 +2,7 @@ module Form = {
   type formMethods = {
     reset: unit => unit,
     submit: unit => unit,
+    change: (string, string) => unit,
   }
 
   type formProps = {
@@ -106,3 +107,6 @@ type useFieldConfig<'a> = {
 
 @module("react-final-form")
 external useField: (string, ~config: useFieldConfig<'a>=?) => Field.fieldProps = "useField"
+
+@module("react-final-form")
+external useForm: unit => Form.formMethods = "useForm"

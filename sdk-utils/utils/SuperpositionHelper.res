@@ -2,7 +2,7 @@ open CommonUtils
 open SuperpositionTypes
 
 let sortFieldsByPriorityOrder = fields => {
-  fields->Array.sort((a, b) => Int.compare(a.priority, b.priority))
+  fields->Array.sort((a, b) => Int.compare(a.fieldDisplayOrder, b.fieldDisplayOrder))
   fields
 }
 
@@ -23,10 +23,13 @@ let removeShippingAndDuplicateFields = fields => {
   let seen = Set.make()
 
   fields->Array.filter(f =>
-    if f.name->String.startsWith("shipping.") || Set.has(seen, f.outputPath) {
+    if (
+      f.intentDataReadPath->Option.mapOr(false, s => s->String.startsWith("shipping.")) ||
+        Set.has(seen, f.confirmRequestWritePath)
+    ) {
       false
     } else {
-      Set.add(seen, f.outputPath)
+      Set.add(seen, f.confirmRequestWritePath)
       true
     }
   )
@@ -79,7 +82,7 @@ let filterFieldsBasedOnMissingData = (
     (acc, nameMissing, phoneMissing, addressMissing),
     field,
   ) => {
-    let path = field.outputPath
+    let path = field.confirmRequestWritePath
     let fieldMissing = isFieldMissing(path)
 
     let isNameField =
@@ -98,7 +101,7 @@ let filterFieldsBasedOnMissingData = (
   })
 
   fieldCategories->Array.filterMap(((field, isNameField, isPhoneField, isAddressField)) => {
-    let path = field.outputPath
+    let path = field.confirmRequestWritePath
 
     let shouldInclude =
       (isNameField && nameFieldsMissing) ||
@@ -207,27 +210,54 @@ let convertConfigurationToRequiredFields = resolvedConfig => {
 
   fieldGroups
   ->Dict.toArray
-  ->Array.filterMap(((baseName, metadata)) => {
-    let required = metadata->getBool("required", false)
-    if required {
-      let displayName = metadata->getString("display_name", baseName)
-      let fieldTypeStr = metadata->getString("field_type", "")
-      let priority = metadata->getInt("priority", 1000)
-      let outputPath = metadata->getString("output_path", baseName)
-      let options =
+  ->Array.filterMap(((_, metadata)) => {
+    let isRequired = metadata->getBool("is_required", false)
+    if isRequired {
+      let confirmRequestWritePath = metadata->getString("confirm_request_write_path", "")
+      let defaultLabelText = metadata->getString("default_label_text", "")
+      let fieldRenderTypeStr = metadata->getString("field_render_type", "")
+      let fieldDisplayOrder = metadata->getInt("field_display_order", 1000)
+      let dropdownOptions =
         metadata
-        ->getOptionalArrayFromDict("options")
+        ->getOptionalArrayFromDict("dropdown_options")
         ->Option.map(arr => arr->Array.filterMap(JSON.Decode.string))
-        ->Option.getOr([])
+      let intentDataReadPath = metadata->getOptionString("intent_data_read_path")
+      let renderWhenPrefilled = metadata->getOptionBool("render_when_prefilled")
+      let validationRuleType = metadata->getOptionString("validation_rule_type")
+      let validationRegexPattern = metadata->getOptionString("validation_regex_pattern")
+      let labelLocalizationKey = metadata->getOptionString("label_localization_key")
+      let placeholderLocalizationKey = metadata->getOptionString("placeholder_localization_key")
+      let inputFormatPattern = metadata->getOptionString("input_format_pattern")
+      let htmlAutocompleteAttribute = metadata->getOptionString("html_autocomplete_attribute")
+      let keyboardType = metadata->getOptionString("keyboard_type")
+      let maxInputLength = metadata->getOptionInt("max_input_length")
+      let layoutRowId = metadata->getOptionString("layout_row_id")
+      let layoutWidthRatio = metadata->getOptionFloat("layout_width_ratio")
+      let merchantProvidedDisplayName = metadata->getOptionString("merchant_provided_display_name")
+      let merchantProvidedPlaceholderText =
+        metadata->getOptionString("merchant_provided_placeholder_text")
 
       Some({
-        name: baseName,
-        displayName,
-        fieldType: fieldTypeStr->stringToFieldType,
-        priority,
-        required,
-        options,
-        outputPath,
+        intentDataReadPath,
+        defaultLabelText,
+        fieldRenderType: fieldRenderTypeStr->stringToFieldType,
+        fieldDisplayOrder,
+        isRequired,
+        dropdownOptions,
+        confirmRequestWritePath,
+        renderWhenPrefilled,
+        validationRuleType,
+        validationRegexPattern,
+        labelLocalizationKey,
+        placeholderLocalizationKey,
+        inputFormatPattern,
+        htmlAutocompleteAttribute,
+        keyboardType,
+        maxInputLength,
+        layoutRowId,
+        layoutWidthRatio,
+        merchantProvidedDisplayName,
+        merchantProvidedPlaceholderText,
       })
     } else {
       None
