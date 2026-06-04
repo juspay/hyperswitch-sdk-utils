@@ -59,17 +59,21 @@ let extractFieldValuesFromPML = (required_fields: Dict.t<JSON.t>) => {
 
 let filterFieldsBasedOnMissingData = (
   requiredFieldsFromSuperPosition: SuperpositionTypes.requiredFields,
-  requiredFieldsFromPML,
+  flatIntentData,
 ) => {
   let firstNamePattern = "billing.address.first_name"
   let lastNamePattern = "billing.address.last_name"
   let phonePattern = "billing.phone"
   let addressPattern = "billing.address."
 
-  let isFieldMissing = path => {
-    switch requiredFieldsFromPML->Dict.get(path) {
-    | Some("") | None => true
-    | _ => false
+  let isFieldMissing = field => {
+    switch field.intentDataReadPath {
+    | None => true
+    | Some(readPath) =>
+      switch flatIntentData->Dict.get(readPath) {
+      | Some(val) when val !== "" => false
+      | _ => true
+      }
     }
   }
 
@@ -83,7 +87,7 @@ let filterFieldsBasedOnMissingData = (
     field,
   ) => {
     let path = field.confirmRequestWritePath
-    let fieldMissing = isFieldMissing(path)
+    let fieldMissing = isFieldMissing(field)
 
     let isNameField =
       path->String.includes(firstNamePattern) || path->String.includes(lastNamePattern)
@@ -101,15 +105,28 @@ let filterFieldsBasedOnMissingData = (
   })
 
   fieldCategories->Array.filterMap(((field, isNameField, isPhoneField, isAddressField)) => {
-    let path = field.confirmRequestWritePath
-
     let shouldInclude =
       (isNameField && nameFieldsMissing) ||
       isPhoneField && phoneFieldsMissing ||
       isAddressField && addressFieldsMissing ||
-      (!isNameField && !isPhoneField && !isAddressField && isFieldMissing(path))
+      (!isNameField && !isPhoneField && !isAddressField && isFieldMissing(field))
 
     shouldInclude ? Some(field) : None
+  })
+}
+
+let buildInitialValuesFromIntentData = (
+  fields: SuperpositionTypes.requiredFields,
+  flatIntentData: Dict.t<string>,
+): Dict.t<string> => {
+  fields->Array.reduce(Dict.make(), (acc, field) => {
+    field.intentDataReadPath->Option.forEach(readPath => {
+      switch flatIntentData->Dict.get(readPath) {
+      | Some(val) when val !== "" => acc->Dict.set(field.confirmRequestWritePath, val)
+      | _ => ()
+      }
+    })
+    acc
   })
 }
 
