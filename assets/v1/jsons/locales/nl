@@ -88,7 +88,7 @@
   "saveWalletDetails": "Portefeuillegegevens worden bij selectie opgeslagen.",
   "morePaymentMethods": "Meer betaalmethoden.",
   "useExistingPaymentMethods": "Gebruik opgeslagen betaalmethoden.",
-  "nicknamePlaceholder": "Bijnaam kaart (optioneel).",
+  "nicknamePlaceholder": "Kaartbijnaam (optioneel)",
   "cardExpiredText": "Deze kaart is verlopen.",
   "cardHeader": "Kaartinformatie.",
   "cardBrandConfiguredErrorText": "Deze kaart wordt op dit moment niet ondersteund.",

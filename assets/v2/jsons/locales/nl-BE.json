@@ -75,5 +75,6 @@
     "digitsText": "Cijfers",
     "enterValidIban": "Gelieve een geldig IBAN in te voeren.",
     "mandatoryFieldText": "Dit veld is verplicht",
-    "cardNotEligibleText": "Deze kaart wordt niet geaccepteerd voor deze betaling."
+    "cardNotEligibleText": "Deze kaart wordt niet geaccepteerd voor deze betaling.",
+    "nicknamePlaceholder": "Kaartbijnaam (optioneel)"
 }
