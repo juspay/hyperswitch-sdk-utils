@@ -13,7 +13,7 @@ type localeTypes =
   | It
   | Pl
   | Nl
-  | NI_BE
+  | NL_BE
   | Sv
   | Ru
   | Lt
@@ -46,7 +46,7 @@ let localeTypeToString = locale => {
   | Some(It) => "it"
   | Some(Pl) => "pl"
   | Some(Nl) => "nl"
-  | Some(NI_BE) => "nI-BE"
+  | Some(NL_BE) => "nl-BE"
   | Some(Sv) => "sv"
   | Some(Ru) => "ru"
   | Some(Lt) => "lt"
@@ -80,7 +80,7 @@ let localeStringToType = locale => {
   | "it" => Some(It)
   | "pl" => Some(Pl)
   | "nl" => Some(Nl)
-  | "nI-BE" => Some(NI_BE)
+  | "nl-BE" => Some(NL_BE)
   | "sv" => Some(Sv)
   | "ru" => Some(Ru)
   | "lt" => Some(Lt)
