@@ -7,6 +7,17 @@ type fieldType =
   | Cvc
   | Email
   | CardHolderName
+  | CardExpiryMonth
+  | CardExpiryYear
+  | CardNetwork
+  | PhoneCountryCode
+  | FirstName
+  | LastName
+  | CryptoCurrency
+  | CryptoNetwork
+  | DateOfBirth
+  | State
+  | Country
 
 type rec fieldConfig = {
   intentDataReadPath: option<string>,
@@ -56,6 +67,17 @@ let stringToFieldType = str => {
   | "Cvc" => Cvc
   | "Email" => Email
   | "CardHolderName" => CardHolderName
+  | "CardExpiryMonth" => CardExpiryMonth
+  | "CardExpiryYear" => CardExpiryYear
+  | "CardNetwork" => CardNetwork
+  | "PhoneCountryCode" => PhoneCountryCode
+  | "FirstName" => FirstName
+  | "LastName" => LastName
+  | "CryptoCurrency" => CryptoCurrency
+  | "CryptoNetwork" => CryptoNetwork
+  | "DateOfBirth" => DateOfBirth
+  | "State" => State
+  | "Country" => Country
   | _ => Generic
   }
 }
