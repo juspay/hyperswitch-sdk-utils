@@ -653,9 +653,7 @@ let validateField = (
             None
           }
         }
-      | GiftCardNumber =>
-        // localeObject.giftCardNumberEmptyText, localeObject.giftCardPinEmptyText
-        value->String.length === 0 ? Some(localeObject.mandatoryFieldText) : None
+      | GiftCardNumber => value->String.length === 0 ? Some(localeObject.mandatoryFieldText) : None
       | GiftCardPin => value->String.length === 0 ? Some(localeObject.mandatoryFieldText) : None
       | Nickname => {
           let digitMatches = value->String.match(%re("/\d/g"))
