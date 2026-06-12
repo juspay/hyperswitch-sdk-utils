@@ -36,7 +36,7 @@ let useConfigurationService = (~rawConfigs: option<JSON.t>) => {
             | Some("") | None => ()
             | Some(connector) =>
               let transformedContext: SuperpositionTypes.superpositionContext = {
-                connector: connector->CommonUtils.snakeToPascalCase,
+                connector,
                 payment_method: configParams.payment_method->CommonUtils.snakeToPascalCase,
                 payment_method_type: configParams.payment_method_type->CommonUtils.snakeToPascalCase,
                 country: configParams.country,

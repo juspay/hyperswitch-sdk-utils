@@ -37,6 +37,7 @@ module Field = {
     invalid: bool,
     pristine: bool,
     valid: bool,
+    submitFailed: bool,
   }
 
   type inputProps = {

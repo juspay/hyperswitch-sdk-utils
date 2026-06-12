@@ -736,12 +736,7 @@ let createFieldValidator = (
   ~localeObject,
 ) => {
   (value: option<string>) => {
-    validateField(
-      value->Option.getOr(""), 
-      validationRules, 
-      ~enabledCardSchemes,
-      ~localeObject,
-    )
+    validateField(value->Option.getOr(""), validationRules, ~enabledCardSchemes, ~localeObject)
   }
 }
 
