@@ -7,6 +7,8 @@ type configurationService = {
 @module("./../superposition/superposition.js") @new
 external cacReader: JSON.t => Nullable.t<configurationService> = "CacReader"
 
+external importJSON: string => promise<JSON.t> = "import"
+
 let useConfigurationService = (~rawConfigs: option<JSON.t>) => {
   let service = React.useMemo(() => {
     switch rawConfigs {
