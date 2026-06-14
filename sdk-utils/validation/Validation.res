@@ -23,19 +23,26 @@ type cardPattern = {
   pincodeRequired: bool,
 }
 
+type country = string
+type cardExpiryDate = string
+type cardBrand = string
+type cardNetworks = array<string>
+type regexExp = string
+type requiredErrorMessage = option<string>
+
 type validationRule =
-  | Required
+  | Required(requiredErrorMessage)
   | MinLength(int)
   | MaxLength(int)
   | CardNumber
-  | CardExpiry(string)
-  | CardCVC(string)
-  | CardNetwork(array<string>)
+  | CardExpiry(cardExpiryDate)
+  | CardCVC(cardBrand)
+  | CardNetwork(cardNetworks)
   | Email
   | FirstName
   | LastName
   | Phone
-  | PostalCode(string)
+  | PostalCode(country)
   | IBAN
   | BankAccountNumber
   | BlikCode
@@ -46,7 +53,8 @@ type validationRule =
   | PixCPF
   | PixCNPJ
   | RoutingNumber
-  | Generic(string)
+  | DateOfBirth
+  | Generic(regexExp)
 
 let defaultCardPattern = {
   issuer: "",
@@ -530,6 +538,22 @@ let formatCardExpiryNumber = val => {
   }
 }
 
+let isAtLeast18YearsOld = value => {
+  switch value->String.split("-") {
+  | [year, month, date] => {
+      let dob = Date.makeWithYMD(~year=year->toInt, ~month=month->toInt - 1, ~date=date->toInt)
+      let now = Date.make()
+      let threshold = Date.makeWithYMD(
+        ~year=now->Date.getFullYear - 18,
+        ~month=now->Date.getMonth,
+        ~date=now->Date.getDate,
+      )
+      dob->Date.getTime <= threshold->Date.getTime
+    }
+  | _ => false
+  }
+}
+
 let validateField = (
   value: string,
   rules: array<validationRule>,
@@ -541,10 +565,10 @@ let validateField = (
     | Some(_) => acc
     | None =>
       switch rule {
-      | Required => {
+      | Required(customMessage) => {
           let trimmedValue = value->String.trim
           if trimmedValue === "" {
-            Some(localeObject.mandatoryFieldText)
+            Some(customMessage->Option.getOr(localeObject.mandatoryFieldText))
           } else {
             None
           }
@@ -623,32 +647,32 @@ let validateField = (
       | Phone => {
           let cleanPhone = value->clearSpaces
           if cleanPhone->String.length < 10 {
-            Some("Enter a valid phone number")
+            Some(localeObject.phoneInvalidText)
           } else {
             None
           }
         }
       | PostalCode(country) =>
-        isValidZip(~zipCode=value, ~country) ? None : Some("Enter a valid postal code")
+        isValidZip(~zipCode=value, ~country) ? None : Some(localeObject.postalCodeInvalidText)
       | BankAccountNumber => {
           let cleanValue = value->clearSpaces
           if cleanValue->String.length === 0 {
             Some(localeObject.mandatoryFieldText)
           } else if !containsOnlyDigits(cleanValue) {
-            Some("Enter a valid account number")
+            Some(localeObject.accountNumberInvalidText)
           } else if cleanValue->String.length > 17 {
-            Some("Account number cannot exceed 17 digits")
+            Some(localeObject.accountNumberInvalidText)
           } else {
             None
           }
         }
-      | IBAN => isValidIban(value) ? None : Some("Enter a valid IBAN")
+      | IBAN => isValidIban(value) ? None : Some(localeObject.ibanEmptyText)
       | BlikCode => {
           let digits = value->String.replaceRegExp(%re("/[^0-9]/g"), "")
           if value->String.length === 0 {
             Some(localeObject.mandatoryFieldText)
           } else if digits->String.length !== 6 {
-            Some("Enter a valid 6-digit Blik code")
+            Some(localeObject.blikCodeInvalidText)
           } else {
             None
           }
@@ -698,9 +722,9 @@ let validateField = (
           if cleanValue->String.length === 0 {
             Some(localeObject.mandatoryFieldText)
           } else if cleanValue->String.length !== 9 {
-            Some("Enter a valid 9-digit routing number")
+            Some(localeObject.formFieldInvalidRoutingNumber)
           } else if !containsOnlyDigits(cleanValue) {
-            Some("Routing number must contain only digits")
+            Some(localeObject.formFieldInvalidRoutingNumber)
           } else {
             let firstWeight = 3
             let weights = [firstWeight, 7, 1, 3, 7, 1, 3, 7, 1]
@@ -712,16 +736,24 @@ let validateField = (
             if mod(sum, 10) == 0 {
               None
             } else {
-              Some("Enter a valid routing number")
+              Some(localeObject.formFieldInvalidRoutingNumber)
             }
           }
+        }
+      | DateOfBirth =>
+        if value->String.trim->String.length === 0 {
+          Some(localeObject.dateofBirthRequiredText)
+        } else if isAtLeast18YearsOld(value) {
+          None
+        } else {
+          Some(localeObject.dateOfBirthInvalidText)
         }
       | Generic(pattern) =>
         if value === "" {
           None
         } else {
           let re = RegExp.fromString(pattern)
-          re->RegExp.test(value) ? None : Some("Invalid value")
+          re->RegExp.test(value) ? None : Some(localeObject.enterValidDetailsText)
         }
       }
     }
