@@ -11,8 +11,6 @@ type fieldType =
   | CardExpiryYear
   | CardNetwork
   | PhoneCountryCode
-  | FirstName
-  | LastName
   | CryptoCurrency
   | CryptoNetwork
   | DateOfBirth
@@ -71,8 +69,6 @@ let stringToFieldType = str => {
   | "CardExpiryYear" => CardExpiryYear
   | "CardNetwork" => CardNetwork
   | "PhoneCountryCode" => PhoneCountryCode
-  | "FirstName" => FirstName
-  | "LastName" => LastName
   | "CryptoCurrency" => CryptoCurrency
   | "CryptoNetwork" => CryptoNetwork
   | "DateOfBirth" => DateOfBirth

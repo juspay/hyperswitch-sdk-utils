@@ -1,5 +1,3 @@
-external importJSON: string => promise<JSON.t> = "import"
-
 let stripRawConfigs = json =>
   json
   ->JSON.Decode.object
@@ -23,52 +21,43 @@ let emptyResult = {rawConfigs: None, paymentMethods: None}
 
 let useSuperpositionRawConfigs = (
   ~fetchConfig: option<unit => promise<JSON.t>>,
-  ~cacheKey: string,
+  ~refetchKey: string,
   ~logOutcome: string => unit=_ => (),
 ) => {
   let (result, setResult) = React.useState(() => emptyResult)
 
   React.useEffect1(() => {
     let cancelled = ref(false)
-    let commitFromFull = fullJson =>
-      if !cancelled.contents {
-        setResult(_ => {
-          rawConfigs: Some(stripRawConfigs(fullJson)),
-          paymentMethods: SuperpositionPaymentMethodsType.parsePaymentMethods(fullJson),
-        })
-      }
 
-    let useBundle = (~reason) =>
-      importJSON("../../assets/v2/configs/superposition.config.json")
-      ->Promise.then(json => {
-        commitFromFull(json)
-        logOutcome("bundle:" ++ reason)
-        Promise.resolve()
-      })
-      ->Promise.catch(_ => {
-        logOutcome("bundle-unavailable:" ++ reason)
-        Promise.resolve()
-      })
-
+    // Config is profile-level — fetched ONLY from the API. No bundled fallback:
+    // a hardcoded one-profile bundle would be wrong for any other merchant.
     switch fetchConfig {
     | Some(fetchConfig) =>
       fetchConfig()
-      ->Promise.then(json =>
+      ->Promise.then(json => {
         if isValidRawConfigs(stripRawConfigs(json)) {
-          commitFromFull(json)
+          if !cancelled.contents {
+            setResult(_ => {
+              rawConfigs: Some(stripRawConfigs(json)),
+              paymentMethods: SuperpositionPaymentMethodsType.parsePaymentMethods(json),
+            })
+          }
           logOutcome("api")
-          Promise.resolve()
         } else {
-          useBundle(~reason="invalid-api")
+          logOutcome("invalid-api")
         }
-      )
-      ->Promise.catch(_ => useBundle(~reason="api-error"))
+        Promise.resolve()
+      })
+      ->Promise.catch(_ => {
+        logOutcome("api-error")
+        Promise.resolve()
+      })
       ->ignore
-    | None => useBundle(~reason="no-profile")->ignore
+    | None => logOutcome("no-profile")
     }
 
     Some(() => cancelled := true)
-  }, [cacheKey])
+  }, [refetchKey])
 
   result
 }
