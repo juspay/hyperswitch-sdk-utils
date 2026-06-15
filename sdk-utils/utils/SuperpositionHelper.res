@@ -210,11 +210,11 @@ let convertConfigurationToRequiredFields = resolvedConfig => {
 
   fieldGroups
   ->Dict.toArray
-  ->Array.filterMap(((_, metadata)) => {
+  ->Array.filterMap(((baseName, metadata)) => {
     let isRequired = metadata->getBool("is_required", false)
     if isRequired {
-      let confirmRequestWritePath = metadata->getString("confirm_request_write_path", "")
-      let defaultLabelText = metadata->getString("default_label_text", "")
+      let confirmRequestWritePath = metadata->getString("confirm_request_write_path", baseName)
+      let defaultLabelText = metadata->getString("default_label_text", baseName)
       let fieldRenderTypeStr = metadata->getString("field_render_type", "")
       let fieldDisplayOrder = metadata->getInt("field_display_order", 1000)
       let dropdownOptions =

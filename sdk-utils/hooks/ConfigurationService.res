@@ -49,7 +49,7 @@ let useConfigurationService = (~rawConfigs: option<JSON.t>) => {
               acc->Array.pushMany(resolvedConfig)
             }
           } catch {
-          | _ex => ()
+          | _ => ()
           }
           acc
         })

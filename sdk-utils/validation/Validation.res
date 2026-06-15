@@ -752,8 +752,17 @@ let validateField = (
         if value === "" {
           None
         } else {
-          let re = RegExp.fromString(pattern)
-          re->RegExp.test(value) ? None : Some(localeObject.enterValidDetailsText)
+          try {
+            let re = RegExp.fromString(pattern)
+            re->RegExp.test(value) ? None : Some(localeObject.enterValidDetailsText)
+          } catch {
+          | _ => {
+              Console.warn(
+                `Invalid regex pattern in Generic validator: "${pattern}", needs to be fixed for proper validation.`,
+              )
+              None
+            }
+          }
         }
       }
     }
