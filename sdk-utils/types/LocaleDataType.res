@@ -14,6 +14,7 @@ type localeTypes =
   | Pl
   | Nl
   | NI_BE
+  | Nl_BE
   | Sv
   | Ru
   | Lt
@@ -47,6 +48,7 @@ let localeTypeToString = locale => {
   | Some(Pl) => "pl"
   | Some(Nl) => "nl"
   | Some(NI_BE) => "nI-BE"
+  | Some(Nl_BE) => "nl-BE"
   | Some(Sv) => "sv"
   | Some(Ru) => "ru"
   | Some(Lt) => "lt"
@@ -81,6 +83,7 @@ let localeStringToType = locale => {
   | "pl" => Some(Pl)
   | "nl" => Some(Nl)
   | "nI-BE" => Some(NI_BE)
+  | "nl-BE" => Some(Nl_BE)
   | "sv" => Some(Sv)
   | "ru" => Some(Ru)
   | "lt" => Some(Lt)
