@@ -23,20 +23,38 @@ type cardPattern = {
   pincodeRequired: bool,
 }
 
+type country = string
+type cardExpiryDate = string
+type cardBrand = string
+type cardNetworks = array<string>
+type regexExp = string
+type requiredErrorMessage = option<string>
+
 type validationRule =
-  | Required
+  | Required(requiredErrorMessage)
   | MinLength(int)
   | MaxLength(int)
   | CardNumber
-  | CardExpiry(string)
-  | CardCVC(string)
-  | CardNetwork(array<string>)
+  | CardExpiry(cardExpiryDate)
+  | CardCVC(cardBrand)
+  | CardNetwork(cardNetworks)
   | Email
   | FirstName
   | LastName
   | Phone
-  | PostalCode(string)
+  | PostalCode(country)
   | IBAN
+  | BankAccountNumber
+  | BlikCode
+  | GiftCardNumber
+  | GiftCardPin
+  | Nickname
+  | PixKey
+  | PixCPF
+  | PixCNPJ
+  | RoutingNumber
+  | DateOfBirth
+  | Generic(regexExp)
 
 let defaultCardPattern = {
   issuer: "",
@@ -520,6 +538,22 @@ let formatCardExpiryNumber = val => {
   }
 }
 
+let isAtLeast18YearsOld = value => {
+  switch value->String.split("-") {
+  | [year, month, date] => {
+      let dob = Date.makeWithYMD(~year=year->toInt, ~month=month->toInt - 1, ~date=date->toInt)
+      let now = Date.make()
+      let threshold = Date.makeWithYMD(
+        ~year=now->Date.getFullYear - 18,
+        ~month=now->Date.getMonth,
+        ~date=now->Date.getDate,
+      )
+      dob->Date.getTime <= threshold->Date.getTime
+    }
+  | _ => false
+  }
+}
+
 let validateField = (
   value: string,
   rules: array<validationRule>,
@@ -531,10 +565,10 @@ let validateField = (
     | Some(_) => acc
     | None =>
       switch rule {
-      | Required => {
+      | Required(customMessage) => {
           let trimmedValue = value->String.trim
           if trimmedValue === "" {
-            Some(localeObject.mandatoryFieldText)
+            Some(customMessage->Option.getOr(localeObject.mandatoryFieldText))
           } else {
             None
           }
@@ -613,31 +647,135 @@ let validateField = (
       | Phone => {
           let cleanPhone = value->clearSpaces
           if cleanPhone->String.length < 10 {
-            Some("Enter a valid phone number")
+            Some(localeObject.phoneInvalidText)
           } else {
             None
           }
         }
       | PostalCode(country) =>
-        isValidZip(~zipCode=value, ~country) ? None : Some("Enter a valid postal code")
-      | IBAN => isValidIban(value) ? None : Some("Enter a valid IBAN")
+        isValidZip(~zipCode=value, ~country) ? None : Some(localeObject.postalCodeInvalidText)
+      | BankAccountNumber => {
+          let cleanValue = value->clearSpaces
+          if cleanValue->String.length === 0 {
+            Some(localeObject.mandatoryFieldText)
+          } else if !containsOnlyDigits(cleanValue) {
+            Some(localeObject.accountNumberInvalidText)
+          } else if cleanValue->String.length > 17 {
+            Some(localeObject.accountNumberInvalidText)
+          } else {
+            None
+          }
+        }
+      | IBAN => isValidIban(value) ? None : Some(localeObject.ibanEmptyText)
+      | BlikCode => {
+          let digits = value->String.replaceRegExp(%re("/[^0-9]/g"), "")
+          if value->String.length === 0 {
+            Some(localeObject.mandatoryFieldText)
+          } else if digits->String.length !== 6 {
+            Some(localeObject.blikCodeInvalidText)
+          } else {
+            None
+          }
+        }
+      | GiftCardNumber => value->String.length === 0 ? Some(localeObject.mandatoryFieldText) : None
+      | GiftCardPin => value->String.length === 0 ? Some(localeObject.mandatoryFieldText) : None
+      | Nickname => {
+          let digitMatches = value->String.match(%re("/\d/g"))
+          let digitCount = switch digitMatches {
+          | Some(arr) => arr->Array.length
+          | None => 0
+          }
+          if digitCount > 2 {
+            Some(localeObject.invalidNickNameError)
+          } else {
+            None
+          }
+        }
+      | PixKey =>
+        if value->String.length > 0 {
+          None
+        } else {
+          Some(localeObject.pixKeyEmptyText)
+        }
+      | PixCPF => {
+          let isCPFValid = CpfValidation.isValidCPF(value)
+          if isCPFValid {
+            None
+          } else if value->String.length === 0 {
+            Some(localeObject.pixCPFEmptyText)
+          } else {
+            Some(localeObject.pixCPFInvalidText)
+          }
+        }
+      | PixCNPJ => {
+          let isCNPJValid = CnpjValidation.isValidCNPJ(value)
+          if isCNPJValid {
+            None
+          } else if value->String.length === 0 {
+            Some(localeObject.pixCNPJEmptyText)
+          } else {
+            Some(localeObject.pixCNPJInvalidText)
+          }
+        }
+      | RoutingNumber => {
+          let cleanValue = value->clearSpaces
+          if cleanValue->String.length === 0 {
+            Some(localeObject.mandatoryFieldText)
+          } else if cleanValue->String.length !== 9 {
+            Some(localeObject.formFieldInvalidRoutingNumber)
+          } else if !containsOnlyDigits(cleanValue) {
+            Some(localeObject.formFieldInvalidRoutingNumber)
+          } else {
+            let firstWeight = 3
+            let weights = [firstWeight, 7, 1, 3, 7, 1, 3, 7, 1]
+            let sum =
+              cleanValue
+              ->String.split("")
+              ->Array.mapWithIndex((item, i) => item->toInt * weights[i]->Option.getOr(firstWeight))
+              ->Array.reduce(0, (acc, val) => acc + val)
+            if mod(sum, 10) == 0 {
+              None
+            } else {
+              Some(localeObject.formFieldInvalidRoutingNumber)
+            }
+          }
+        }
+      | DateOfBirth =>
+        if value->String.trim->String.length === 0 {
+          Some(localeObject.dateofBirthRequiredText)
+        } else if isAtLeast18YearsOld(value) {
+          None
+        } else {
+          Some(localeObject.dateOfBirthInvalidText)
+        }
+      | Generic(pattern) =>
+        if value === "" {
+          None
+        } else {
+          try {
+            let re = RegExp.fromString(pattern)
+            re->RegExp.test(value) ? None : Some(localeObject.enterValidDetailsText)
+          } catch {
+          | _ => {
+              Console.warn(
+                `Invalid regex pattern in Generic validator: "${pattern}", needs to be fixed for proper validation.`,
+              )
+              None
+            }
+          }
+        }
       }
     }
   })
 }
 
 let createFieldValidator = (
-  validationRule: validationRule,
+  validationRules: array<validationRule>,
   ~enabledCardSchemes: array<string>,
   ~localeObject,
 ) => {
   (value: option<string>) => {
-    validateField(
-      value->Option.getOr(""),
-      [validationRule, MaxLength(255)],
-      ~enabledCardSchemes,
-      ~localeObject,
-    )
+    validateField(value->Option.getOr(""), validationRules, ~enabledCardSchemes, ~localeObject)
   }
 }
 

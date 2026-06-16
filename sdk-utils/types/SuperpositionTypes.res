@@ -1,27 +1,45 @@
 type fieldType =
-  | CardNumberTextInput
-  | CvcPasswordInput
-  | TextInput
-  | PasswordInput
-  | MonthSelect
-  | YearSelect
-  | StateSelect
-  | CountrySelect
-  | EmailInput
-  | PhoneInput
-  | CountryCodeSelect
-  | DatePicker
-  | CurrencySelect
-  | DropdownSelect
+  | Generic
+  | Dropdown
+  | Phone
+  | Date
+  | CardNumber
+  | Cvc
+  | Email
+  | CardHolderName
+  | CardExpiryMonth
+  | CardExpiryYear
+  | CardNetwork
+  | PhoneCountryCode
+  | FirstName
+  | LastName
+  | CryptoCurrency
+  | CryptoNetwork
+  | DateOfBirth
+  | State
+  | Country
 
 type rec fieldConfig = {
-  name: string,
-  displayName: string,
-  fieldType: fieldType,
-  priority: int,
-  required: bool,
-  options: array<string>,
-  outputPath: string,
+  intentDataReadPath: option<string>,
+  defaultLabelText: string,
+  fieldRenderType: fieldType,
+  fieldDisplayOrder: int,
+  isRequired: bool,
+  dropdownOptions: option<array<string>>,
+  confirmRequestWritePath: string,
+  renderWhenPrefilled: option<bool>,
+  validationRuleType: option<string>,
+  validationRegexPattern: option<string>,
+  labelLocalizationKey: option<string>,
+  placeholderLocalizationKey: option<string>,
+  inputFormatPattern: option<string>,
+  htmlAutocompleteAttribute: option<string>,
+  keyboardType: option<string>,
+  maxInputLength: option<int>,
+  layoutRowId: option<string>,
+  layoutWidthRatio: option<float>,
+  merchantProvidedDisplayName: option<string>,
+  merchantProvidedPlaceholderText: option<string>,
 }
 
 type requiredFields = array<fieldConfig>
@@ -42,20 +60,24 @@ type superpositionContext = {
 
 let stringToFieldType = str => {
   switch str {
-  | "text_input" => TextInput
-  | "password_input" => PasswordInput
-  | "month_select" => MonthSelect
-  | "year_select" => YearSelect
-  | "country_select" => CountrySelect
-  | "email_input" => EmailInput
-  | "phone_input" => PhoneInput
-  | "country_code_select" => CountryCodeSelect
-  | "date_picker" => DatePicker
-  | "currency_select" => CurrencySelect
-  | "state_select" => StateSelect
-  | "card_number_text_input" => CardNumberTextInput
-  | "cvc_password_input" => CvcPasswordInput
-  | "dropdown_select" => DropdownSelect
-  | _ => TextInput
+  | "Dropdown" => Dropdown
+  | "Phone" => Phone
+  | "Date" => Date
+  | "CardNumber" => CardNumber
+  | "Cvc" => Cvc
+  | "Email" => Email
+  | "CardHolderName" => CardHolderName
+  | "CardExpiryMonth" => CardExpiryMonth
+  | "CardExpiryYear" => CardExpiryYear
+  | "CardNetwork" => CardNetwork
+  | "PhoneCountryCode" => PhoneCountryCode
+  | "FirstName" => FirstName
+  | "LastName" => LastName
+  | "CryptoCurrency" => CryptoCurrency
+  | "CryptoNetwork" => CryptoNetwork
+  | "DateOfBirth" => DateOfBirth
+  | "State" => State
+  | "Country" => Country
+  | _ => Generic
   }
 }
