@@ -57,25 +57,26 @@ let extractFieldValuesFromPML = (required_fields: Dict.t<JSON.t>) => {
   flatInitialValues
 }
 
+let resolveFieldValue = (field, intentDataDict) =>
+  switch field.intentDataReadPath {
+  | Some(readPath) =>
+    switch getStringAtPath(intentDataDict, readPath) {
+    | Some(val) if val !== "" => Some(val)
+    | _ => None
+    }
+  | None => None
+  }
+
 let filterFieldsBasedOnMissingData = (
   requiredFieldsFromSuperPosition: SuperpositionTypes.requiredFields,
-  flatIntentData,
+  intentDataDict,
 ) => {
   let firstNamePattern = "billing.address.first_name"
   let lastNamePattern = "billing.address.last_name"
   let phonePattern = "billing.phone"
   let addressPattern = "billing.address."
 
-  let isFieldMissing = field => {
-    switch field.intentDataReadPath {
-    | None => true
-    | Some(readPath) =>
-      switch flatIntentData->Dict.get(readPath) {
-      | Some(val) when val !== "" => false
-      | _ => true
-      }
-    }
-  }
+  let isFieldMissing = field => resolveFieldValue(field, intentDataDict)->Option.isNone
 
   let (
     fieldCategories,
@@ -117,15 +118,13 @@ let filterFieldsBasedOnMissingData = (
 
 let buildInitialValuesFromIntentData = (
   fields: SuperpositionTypes.requiredFields,
-  flatIntentData: Dict.t<string>,
+  intentDataDict: Dict.t<JSON.t>,
 ): Dict.t<string> => {
   fields->Array.reduce(Dict.make(), (acc, field) => {
-    field.intentDataReadPath->Option.forEach(readPath => {
-      switch flatIntentData->Dict.get(readPath) {
-      | Some(val) when val !== "" => acc->Dict.set(field.confirmRequestWritePath, val)
-      | _ => ()
-      }
-    })
+    switch resolveFieldValue(field, intentDataDict) {
+    | Some(val) => acc->Dict.set(field.confirmRequestWritePath, val)
+    | None => ()
+    }
     acc
   })
 }
