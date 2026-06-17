@@ -19,8 +19,9 @@ let useConfigurationService = (~rawConfigs: option<JSON.t>) => {
     (
       eligibleConnectors: array<RescriptCore.JSON.t>,
       configParams: SuperpositionTypes.superpositionBaseContext,
-      requiredFieldsFromPML,
+      intentData: JSON.t,
     ) => {
+      let intentDataDict = intentData->CommonUtils.getDictFromJson
       let requiredFieldsFromSuperPosition = switch (
         service,
         Array.length(eligibleConnectors) === 0,
@@ -59,10 +60,14 @@ let useConfigurationService = (~rawConfigs: option<JSON.t>) => {
 
       let missingRequiredFields = filterFieldsBasedOnMissingData(
         requiredFieldsFromSuperPosition,
-        requiredFieldsFromPML,
+        intentDataDict,
       )
 
-      let initialValues = convertFlatDictToNestedObject(requiredFieldsFromPML)
+      let initialValues =
+        buildInitialValuesFromIntentData(
+          requiredFieldsFromSuperPosition,
+          intentDataDict,
+        )->convertFlatDictToNestedObject
 
       (requiredFieldsFromSuperPosition, missingRequiredFields, initialValues)
     },

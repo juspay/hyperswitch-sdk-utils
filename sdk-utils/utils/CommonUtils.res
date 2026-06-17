@@ -97,6 +97,27 @@ let getDictFromDict = (dict, key) => {
   dict->getJsonObjectFromDict(key)->getDictFromJson
 }
 
+// Read the value at a dot-separated object path.
+let rec getValueAtNestedPath = (dict: Dict.t<JSON.t>, keys: array<string>): option<JSON.t> =>
+  switch keys {
+  | [] => None
+  | [key] => dict->Dict.get(key)
+  | _ =>
+    switch keys
+    ->Array.get(0)
+    ->Option.flatMap(key => dict->Dict.get(key))
+    ->Option.flatMap(JSON.Decode.object) {
+    | Some(innerDict) => getValueAtNestedPath(innerDict, keys->Array.sliceToEnd(~start=1))
+    | None => None
+    }
+  }
+
+let getNestedValue = (dict: Dict.t<JSON.t>, path: string): option<JSON.t> =>
+  getValueAtNestedPath(dict, path->String.split("."))
+
+let getStringAtPath = (dict: Dict.t<JSON.t>, path: string): option<string> =>
+  getNestedValue(dict, path)->Option.flatMap(JSON.Decode.string)
+
 let getBool = (dict, key, default) => {
   getOptionBool(dict, key)->Option.getOr(default)
 }

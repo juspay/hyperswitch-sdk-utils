@@ -57,21 +57,26 @@ let extractFieldValuesFromPML = (required_fields: Dict.t<JSON.t>) => {
   flatInitialValues
 }
 
+let resolveFieldValue = (field, intentDataDict) =>
+  switch field.intentDataReadPath {
+  | Some(readPath) =>
+    switch getStringAtPath(intentDataDict, readPath) {
+    | Some(val) if val !== "" => Some(val)
+    | _ => None
+    }
+  | None => None
+  }
+
 let filterFieldsBasedOnMissingData = (
   requiredFieldsFromSuperPosition: SuperpositionTypes.requiredFields,
-  requiredFieldsFromPML,
+  intentDataDict,
 ) => {
   let firstNamePattern = "billing.address.first_name"
   let lastNamePattern = "billing.address.last_name"
   let phonePattern = "billing.phone"
   let addressPattern = "billing.address."
 
-  let isFieldMissing = path => {
-    switch requiredFieldsFromPML->Dict.get(path) {
-    | Some("") | None => true
-    | _ => false
-    }
-  }
+  let isFieldMissing = field => resolveFieldValue(field, intentDataDict)->Option.isNone
 
   let (
     fieldCategories,
@@ -83,7 +88,7 @@ let filterFieldsBasedOnMissingData = (
     field,
   ) => {
     let path = field.confirmRequestWritePath
-    let fieldMissing = isFieldMissing(path)
+    let fieldMissing = isFieldMissing(field)
 
     let isNameField =
       path->String.includes(firstNamePattern) || path->String.includes(lastNamePattern)
@@ -101,15 +106,26 @@ let filterFieldsBasedOnMissingData = (
   })
 
   fieldCategories->Array.filterMap(((field, isNameField, isPhoneField, isAddressField)) => {
-    let path = field.confirmRequestWritePath
-
     let shouldInclude =
       (isNameField && nameFieldsMissing) ||
       isPhoneField && phoneFieldsMissing ||
       isAddressField && addressFieldsMissing ||
-      (!isNameField && !isPhoneField && !isAddressField && isFieldMissing(path))
+      (!isNameField && !isPhoneField && !isAddressField && isFieldMissing(field))
 
     shouldInclude ? Some(field) : None
+  })
+}
+
+let buildInitialValuesFromIntentData = (
+  fields: SuperpositionTypes.requiredFields,
+  intentDataDict: Dict.t<JSON.t>,
+): Dict.t<string> => {
+  fields->Array.reduce(Dict.make(), (acc, field) => {
+    switch resolveFieldValue(field, intentDataDict) {
+    | Some(val) => acc->Dict.set(field.confirmRequestWritePath, val)
+    | None => ()
+    }
+    acc
   })
 }
 
