@@ -18,6 +18,8 @@ type fieldType =
   | DateOfBirth
   | State
   | Country
+  | LanguagePreference
+  | BankNamesSelect
 
 type rec fieldConfig = {
   intentDataReadPath: option<string>,
@@ -78,6 +80,8 @@ let stringToFieldType = str => {
   | "DateOfBirth" => DateOfBirth
   | "State" => State
   | "Country" => Country
+  | "LanguagePreference" => LanguagePreference
+  | "BankNamesSelect" => BankNamesSelect
   | _ => Generic
   }
 }
