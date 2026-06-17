@@ -28,11 +28,37 @@ let parseSdkPaymentMethod = (json: JSON.t): sdkPaymentMethod => {
   }
 }
 
+let getVaultingActionFromName = (name: string): vaultingAction => {
+  switch name {
+  | "tokenize" => Tokenize
+  | _ => Skip
+  }
+}
+
+let parseProfile = (json: JSON.t): profile => {
+  let dict = json->getDictFromJson
+  {
+    vaulting_action: dict
+    ->getString("vaulting_action", "")
+    ->getVaultingActionFromName,
+  }
+}
+
+let parseProfileAccountConfig = (json: JSON.t): accountConfig => {
+  let dict = json->getDictFromJson
+  {
+    profile: dict->Dict.get("profile")->Option.map(parseProfile),
+  }
+}
+
 let itemToObjMapper = (json: JSON.t): sdkConfigValue => {
   let dict = json->getDictFromJson
   {
     raw_configs: dict->Dict.get("raw_configs"),
     payment_methods: dict->getArray("payment_methods")->Array.map(parseSdkPaymentMethod),
+    account_config: dict
+    ->Dict.get("account_config")
+    ->Option.map(parseProfileAccountConfig),
   }
 }
 
