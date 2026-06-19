@@ -16,7 +16,13 @@ type sdkPaymentMethod = {
   payment_method_types: array<sdkPaymentMethodType>,
 }
 
-type profile = {vaulting_action: vaultingAction}
+type profile = {
+  vaulting_action: vaultingAction,
+  collect_shipping_details_from_wallet_connector: option<bool>,
+  collect_billing_details_from_wallet_connector: option<bool>,
+  always_collect_shipping_details_from_wallet_connector: option<bool>,
+  always_collect_billing_details_from_wallet_connector: option<bool>,
+}
 
 type accountConfig = {profile: option<profile>}
 
