@@ -18,10 +18,10 @@ type sdkPaymentMethod = {
 
 type profile = {
   vaulting_action: vaultingAction,
-  collect_shipping_details_from_wallet_connector: option<bool>,
-  collect_billing_details_from_wallet_connector: option<bool>,
-  always_collect_shipping_details_from_wallet_connector: option<bool>,
-  always_collect_billing_details_from_wallet_connector: option<bool>,
+  collect_shipping_details_from_wallet_connector: bool,
+  collect_billing_details_from_wallet_connector: bool,
+  always_collect_shipping_details_from_wallet_connector: bool,
+  always_collect_billing_details_from_wallet_connector: bool,
 }
 
 type accountConfig = {profile: option<profile>}
