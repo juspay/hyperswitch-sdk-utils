@@ -29,6 +29,8 @@ type localeTypes =
   | Da
   | Ms
   | Tr_CY
+  | Zh
+  | ZhHant
 
 let localeTypeToString = locale => {
   switch locale {
@@ -62,6 +64,8 @@ let localeTypeToString = locale => {
   | Some(Da) => "da"
   | Some(Ms) => "ms"
   | Some(Tr_CY) => "tr-CY"
+  | Some(Zh) => "zh"
+  | Some(ZhHant) => "zh-Hant"
   | None => "en"
   }
 }
@@ -96,6 +100,8 @@ let localeStringToType = locale => {
   | "da" => Some(Da)
   | "ms" => Some(Ms)
   | "tr-CY" => Some(Tr_CY)
+  | "zh" => Some(Zh)
+  | "zh-Hant" => Some(ZhHant)
   | _ => Some(En)
   }
 }
