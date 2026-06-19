@@ -41,6 +41,22 @@ let parseProfile = (json: JSON.t): profile => {
     vaulting_action: dict
     ->getString("vaulting_action", "")
     ->getVaultingActionFromName,
+    collect_shipping_details_from_wallet_connector: dict->getBool(
+      "collect_shipping_details_from_wallet_connector",
+      false,
+    ),
+    collect_billing_details_from_wallet_connector: dict->getBool(
+      "collect_billing_details_from_wallet_connector",
+      true,
+    ),
+    always_collect_shipping_details_from_wallet_connector: dict->getBool(
+      "always_collect_shipping_details_from_wallet_connector",
+      false,
+    ),
+    always_collect_billing_details_from_wallet_connector: dict->getBool(
+      "always_collect_billing_details_from_wallet_connector",
+      false,
+    ),
   }
 }
 
@@ -48,6 +64,30 @@ let parseProfileAccountConfig = (json: JSON.t): accountConfig => {
   let dict = json->getDictFromJson
   {
     profile: dict->Dict.get("profile")->Option.map(parseProfile),
+  }
+}
+
+let getCollectBillingDetailsFromWalletConnector = (profile: option<profile>): bool => {
+  switch profile {
+  | None => true
+  | Some(p) =>
+    if p.always_collect_billing_details_from_wallet_connector {
+      true
+    } else {
+      p.collect_billing_details_from_wallet_connector
+    }
+  }
+}
+
+let getCollectShippingDetailsFromWalletConnector = (profile: option<profile>): bool => {
+  switch profile {
+  | None => false
+  | Some(p) =>
+    if p.always_collect_shipping_details_from_wallet_connector {
+      true
+    } else {
+      p.collect_shipping_details_from_wallet_connector
+    }
   }
 }
 
