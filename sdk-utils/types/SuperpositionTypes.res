@@ -24,6 +24,7 @@ type fieldType =
 type rec fieldConfig = {
   intentDataReadPath: option<string>,
   defaultLabelText: string,
+  defaultPlaceholderText: string,
   fieldRenderType: fieldType,
   fieldDisplayOrder: int,
   isRequired: bool,
