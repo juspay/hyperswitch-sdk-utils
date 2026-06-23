@@ -224,15 +224,15 @@ let computeFormStatus = (~isComplete: bool, ~isEmpty: bool): PaymentEventTypes.f
 }
 
 type cvcStatusEvent = {
-  isCvcFocused: bool,
-  isCvcBlur: bool,
+  isCvcFocused: option<bool>,
+  isCvcBlur: option<bool>,
   isCvcEmpty: bool,
   isCvcComplete: bool,
 }
 
 let buildCvcStatusEvent = (
-  ~isCvcFocused: bool=false,
-  ~isCvcBlur: bool=false,
+  ~isCvcFocused=?,
+  ~isCvcBlur=?,
   ~isCvcEmpty: bool=true,
   ~isCvcComplete: bool=false,
 ): cvcStatusEvent => {
@@ -240,19 +240,68 @@ let buildCvcStatusEvent = (
 }
 
 let cvcStatusEventToJson = (event: cvcStatusEvent): JSON.t => {
-  [
-    (
-      "cvcStatus",
-      [
-        ("isCvcFocused", event.isCvcFocused->JSON.Encode.bool),
-        ("isCvcBlur", event.isCvcBlur->JSON.Encode.bool),
-        ("isCvcEmpty", event.isCvcEmpty->JSON.Encode.bool),
-        ("isCvcComplete", event.isCvcComplete->JSON.Encode.bool),
-      ]
-      ->Dict.fromArray
-      ->JSON.Encode.object,
-    ),
+  let baseFields = [
+    ("isCvcEmpty", event.isCvcEmpty->JSON.Encode.bool),
+    ("isCvcComplete", event.isCvcComplete->JSON.Encode.bool),
   ]
+  let withFocused = switch event.isCvcFocused {
+  | Some(v) => Array.concat(baseFields, [("isCvcFocused", v->JSON.Encode.bool)])
+  | None => baseFields
+  }
+  let withBlur = switch event.isCvcBlur {
+  | Some(v) => Array.concat(withFocused, [("isCvcBlur", v->JSON.Encode.bool)])
+  | None => withFocused
+  }
+  [("cvcStatus", withBlur->Dict.fromArray->JSON.Encode.object)]
   ->Dict.fromArray
   ->JSON.Encode.object
+}
+
+type surchargeType = {
+  \"type": string,
+  value: float,
+}
+
+type surchargeEvent = {
+  surcharge: surchargeType,
+  taxOnSurcharge: option<float>,
+  displaySurchargeAmount: float,
+  displayTaxOnSurchargeAmount: float,
+  displayTotalSurchargeAmount: float,
+}
+
+let buildSurchargeEvent = (
+  ~surcharge: surchargeType,
+  ~taxOnSurcharge: option<float>=None,
+  ~displaySurchargeAmount: float=0.0,
+  ~displayTaxOnSurchargeAmount: float=0.0,
+  ~displayTotalSurchargeAmount: float=0.0,
+): surchargeEvent => {
+  {
+    surcharge,
+    taxOnSurcharge,
+    displaySurchargeAmount,
+    displayTaxOnSurchargeAmount,
+    displayTotalSurchargeAmount,
+  }
+}
+
+let surchargeEventToJson = (event: surchargeEvent): JSON.t => {
+  let surchargeJson = [
+    ("type", event.surcharge.\"type"->JSON.Encode.string),
+    ("value", event.surcharge.value->JSON.Encode.float),
+  ]->Dict.fromArray->JSON.Encode.object
+
+  let baseFields = [
+    ("surcharge", surchargeJson),
+    (
+      "taxOnSurcharge",
+      event.taxOnSurcharge->Option.map(JSON.Encode.float)->Option.getOr(JSON.Null),
+    ),
+    ("displaySurchargeAmount", event.displaySurchargeAmount->JSON.Encode.float),
+    ("displayTaxOnSurchargeAmount", event.displayTaxOnSurchargeAmount->JSON.Encode.float),
+    ("displayTotalSurchargeAmount", event.displayTotalSurchargeAmount->JSON.Encode.float),
+  ]
+
+  baseFields->Dict.fromArray->JSON.Encode.object
 }
