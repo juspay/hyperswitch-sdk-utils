@@ -231,6 +231,7 @@ let convertConfigurationToRequiredFields = resolvedConfig => {
     if isRequired {
       let confirmRequestWritePath = metadata->getString("confirm_request_write_path", baseName)
       let defaultLabelText = metadata->getString("default_label_text", baseName)
+      let defaultPlaceholderText = metadata->getString("default_placeholder_text", "")
       let fieldRenderTypeStr = metadata->getString("field_render_type", "")
       let fieldDisplayOrder = metadata->getInt("field_display_order", 1000)
       let dropdownOptions =
@@ -256,6 +257,7 @@ let convertConfigurationToRequiredFields = resolvedConfig => {
       Some({
         intentDataReadPath,
         defaultLabelText,
+        defaultPlaceholderText,
         fieldRenderType: fieldRenderTypeStr->stringToFieldType,
         fieldDisplayOrder,
         isRequired,
