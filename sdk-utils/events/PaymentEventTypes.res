@@ -26,6 +26,7 @@ type events =
   | FormStatus
   | PaymentMethodInfoBillingAddress
   | CvcStatus
+  | Surcharge
   | UnknownEvent
 
 let eventToString = (eventType: events): string => {
@@ -35,6 +36,7 @@ let eventToString = (eventType: events): string => {
   | FormStatus => "FORM_STATUS"
   | PaymentMethodInfoBillingAddress => "PAYMENT_METHOD_INFO_BILLING_ADDRESS"
   | CvcStatus => "CVC_STATUS"
+  | Surcharge => "SURCHARGE"
   | UnknownEvent => "UNKNOWN_EVENT"
   }
 }
@@ -46,6 +48,7 @@ let eventFromString = (str: string): events => {
   | "FORM_STATUS" => FormStatus
   | "PAYMENT_METHOD_INFO_BILLING_ADDRESS" => PaymentMethodInfoBillingAddress
   | "CVC_STATUS" => CvcStatus
+  | "SURCHARGE" => Surcharge
   | _ => UnknownEvent
   }
 }
