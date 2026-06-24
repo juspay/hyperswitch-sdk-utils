@@ -227,5 +227,10 @@
   "giftCardCvcPlaceholder": "CVC",
   "clientUidPlaceholder": "Client UID",
   "productNamePlaceholder": "Product Name",
-  "upiIdPlaceholder": "UPI ID"
+  "upiIdPlaceholder": "UPI ID",
+  "loadingText": "Loading...",
+  "completeButtonText": "Complete",
+  "processingText": "Processing...",
+  "processingRequestText": "Processing Your Request",
+  "processingRequestSubtext": "Please do not press back or close this screen"
 }

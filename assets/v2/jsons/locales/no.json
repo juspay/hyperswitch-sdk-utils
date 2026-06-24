@@ -125,5 +125,10 @@
     "sourceBankAccountIdLabel": "Kildebankkonto-ID",
     "sourceBankAccountIdPlaceholder": "Kildebankkonto-ID",
     "statePlaceholder": "Velg delstat",
-    "upiIdPlaceholder": "UPI-ID"
+    "upiIdPlaceholder": "UPI-ID",
+    "loadingText": "Laster inn...",
+    "completeButtonText": "Fullfør",
+    "processingText": "Behandler...",
+    "processingRequestText": "Forespørselen din behandles",
+    "processingRequestSubtext": "Ikke trykk tilbake eller lukk denne skjermen"
 }

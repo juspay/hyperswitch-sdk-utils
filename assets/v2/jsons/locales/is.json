@@ -1,6 +1,6 @@
 {
     "locale": "is",
-    "localeDirection": "Vinstri til hægri",
+    "localeDirection": "ltr",
     "cardDetailsLabel": "Kortagögn",
     "cardNumberLabel": "Kortanúmer",
     "inValidCardErrorText": "Kortanúmerið er ekki gilt.",
@@ -56,9 +56,9 @@
     "billingNameLabel": "Heiti reiknings",
     "cardHolderName": "Nafn korthafa",
     "cardNickname": "Kortanafn",
-    "billingNamePlaceholder": "Fornafn og eftirnafn",
-    "firstName": "Fyrsta nafn",
-    "lastName": "Eftirnafn",
+    "billingNamePlaceholder": "Fullt nafn",
+    "firstName": "Eiginnafn",
+    "lastName": "Kenninafn",
     "billingDetails": "Innheimtuupplýsingar",
     "requiredText": "Nauðsynlegt",
     "lastNameRequiredText": "Eftirnafn krafist",
@@ -125,5 +125,10 @@
     "sourceBankAccountIdLabel": "Auðkenni uppruna bankareiknings",
     "sourceBankAccountIdPlaceholder": "Auðkenni uppruna bankareiknings",
     "statePlaceholder": "Veldu ríki",
-    "upiIdPlaceholder": "UPI-auðkenni"
+    "upiIdPlaceholder": "UPI-auðkenni",
+    "loadingText": "Hleður...",
+    "completeButtonText": "Ljúka",
+    "processingText": "Vinnur úr...",
+    "processingRequestText": "Beiðni þín er í vinnslu",
+    "processingRequestSubtext": "Vinsamlegast ekki ýta til baka eða loka þessum skjá"
 }
