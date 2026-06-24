@@ -367,6 +367,11 @@ type localeStrings = {
   sourceBankAccountIdPlaceholder: string,
   statePlaceholder: string,
   upiIdPlaceholder: string,
+  loadingText: string,
+  completeButtonText: string,
+  processingText: string,
+  processingRequestText: string,
+  processingRequestSubtext: string,
 }
 
 let defaultLocale = {
@@ -610,4 +615,9 @@ let defaultLocale = {
   sourceBankAccountIdPlaceholder: "Source Bank Account ID",
   statePlaceholder: "Select State",
   upiIdPlaceholder: "UPI ID",
+  loadingText: "Loading...",
+  completeButtonText: "Complete",
+  processingText: "Processing...",
+  processingRequestText: "Processing Your Request",
+  processingRequestSubtext: "Please do not press back or close this screen",
 }
