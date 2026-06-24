@@ -29,6 +29,8 @@ type localeTypes =
   | Da
   | Ms
   | Tr_CY
+  | Zh
+  | ZhHant
 
 let localeTypeToString = locale => {
   switch locale {
@@ -62,6 +64,8 @@ let localeTypeToString = locale => {
   | Some(Da) => "da"
   | Some(Ms) => "ms"
   | Some(Tr_CY) => "tr-CY"
+  | Some(Zh) => "zh"
+  | Some(ZhHant) => "zh-Hant"
   | None => "en"
   }
 }
@@ -96,6 +100,8 @@ let localeStringToType = locale => {
   | "da" => Some(Da)
   | "ms" => Some(Ms)
   | "tr-CY" => Some(Tr_CY)
+  | "zh" => Some(Zh)
+  | "zh-Hant" => Some(ZhHant)
   | _ => Some(En)
   }
 }
@@ -367,6 +373,11 @@ type localeStrings = {
   sourceBankAccountIdPlaceholder: string,
   statePlaceholder: string,
   upiIdPlaceholder: string,
+  loadingText: string,
+  completeButtonText: string,
+  processingText: string,
+  processingRequestText: string,
+  processingRequestSubtext: string,
 }
 
 let defaultLocale = {
@@ -610,4 +621,9 @@ let defaultLocale = {
   sourceBankAccountIdPlaceholder: "Source Bank Account ID",
   statePlaceholder: "Select State",
   upiIdPlaceholder: "UPI ID",
+  loadingText: "Loading...",
+  completeButtonText: "Complete",
+  processingText: "Processing...",
+  processingRequestText: "Processing Your Request",
+  processingRequestSubtext: "Please do not press back or close this screen",
 }

@@ -287,10 +287,13 @@ let buildSurchargeEvent = (
 }
 
 let surchargeEventToJson = (event: surchargeEvent): JSON.t => {
-  let surchargeJson = [
-    ("type", event.surcharge.\"type"->JSON.Encode.string),
-    ("value", event.surcharge.value->JSON.Encode.float),
-  ]->Dict.fromArray->JSON.Encode.object
+  let surchargeJson =
+    [
+      ("type", event.surcharge.\"type"->JSON.Encode.string),
+      ("value", event.surcharge.value->JSON.Encode.float),
+    ]
+    ->Dict.fromArray
+    ->JSON.Encode.object
 
   let baseFields = [
     ("surcharge", surchargeJson),
