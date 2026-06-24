@@ -1,6 +1,8 @@
 open CommonUtils
 open SuperpositionTypes
 
+let findFieldByName = (fields: array<fieldConfig>, name) => fields->Array.find(f => f.name === name)
+
 let sortFieldsByPriorityOrder = fields => {
   fields->Array.sort((a, b) => Int.compare(a.fieldDisplayOrder, b.fieldDisplayOrder))
   fields
