@@ -19,7 +19,7 @@ type localeTypes =
   | Lt
   | Cs
   | Sk
-  | Ls
+  | Is
   | Cy
   | El
   | Et
@@ -54,7 +54,7 @@ let localeTypeToString = locale => {
   | Some(Lt) => "lt"
   | Some(Cs) => "cs"
   | Some(Sk) => "sk"
-  | Some(Ls) => "ls"
+  | Some(Is) => "is"
   | Some(Cy) => "cy"
   | Some(El) => "el"
   | Some(Et) => "et"
@@ -71,38 +71,51 @@ let localeTypeToString = locale => {
 }
 let localeStringToType = locale => {
   switch locale {
-  | "he" => Some(He)
-  | "fr" => Some(Fr)
+  | "he" | "he-IL" | "iw" => Some(He)
+  | "fr" | "fr-FR" | "fr-CA" | "fr-CH" => Some(Fr)
   | "en-GB" => Some(En_GB)
   | "ar" => Some(Ar)
-  | "ja" => Some(Ja)
-  | "de" => Some(De)
+  | "ja" | "ja-JP" => Some(Ja)
+  | "de" | "de-DE" | "de-AT" | "de-CH" | "de-LI" => Some(De)
   | "fr-BE" => Some(Fr_BE)
-  | "es" => Some(Es)
-  | "ca" => Some(Ca)
-  | "pt" => Some(Pt)
-  | "it" => Some(It)
-  | "pl" => Some(Pl)
-  | "nl" => Some(Nl)
+  | "es"
+  | "es-419"
+  | "es-AR"
+  | "es-CL"
+  | "es-CO"
+  | "es-CR"
+  | "es-ES"
+  | "es-HN"
+  | "es-MX"
+  | "es-PE"
+  | "es-US"
+  | "es-UY"
+  | "es-VE" =>
+    Some(Es)
+  | "ca" | "ca-ES" => Some(Ca)
+  | "pt" | "pt-BR" | "pt-PT" => Some(Pt)
+  | "it" | "it-IT" | "it-CH" => Some(It)
+  | "pl" | "pl-PL" => Some(Pl)
+  | "nl" | "nl-NL" => Some(Nl)
   | "nl-BE" => Some(NL_BE)
-  | "sv" => Some(Sv)
-  | "ru" => Some(Ru)
-  | "lt" => Some(Lt)
-  | "cs" => Some(Cs)
-  | "sk" => Some(Sk)
-  | "ls" => Some(Ls)
-  | "cy" => Some(Cy)
-  | "el" => Some(El)
-  | "et" => Some(Et)
-  | "fi" => Some(Fi)
-  | "nb" => Some(Nb)
-  | "bs" => Some(Bs)
-  | "da" => Some(Da)
-  | "ms" => Some(Ms)
-  | "tr-CY" => Some(Tr_CY)
-  | "zh" => Some(Zh)
+  | "sv" | "sv-SE" | "sv-FI" => Some(Sv)
+  | "ru" | "ru-RU" => Some(Ru)
+  | "lt" | "lt-LT" => Some(Lt)
+  | "cs" | "cs-CZ" => Some(Cs)
+  | "sk" | "sk-SK" => Some(Sk)
+  | "is" | "is-IS" => Some(Is)
+  | "cy" | "cy-GB" => Some(Cy)
+  | "el" | "el-GR" | "el-CY" => Some(El)
+  | "et" | "et-EE" => Some(Et)
+  | "fi" | "fi-FI" => Some(Fi)
+  | "nb" | "nb-NO" | "no" | "nn" | "nn-NO" => Some(Nb)
+  | "bs" | "bs-BA" => Some(Bs)
+  | "da" | "da-DK" => Some(Da)
+  | "ms" | "ms-MY" => Some(Ms)
+  | "tr-CY" | "tr" | "tr-TR" => Some(Tr_CY)
   | "zh-Hant" => Some(ZhHant)
-  | _ => Some(En)
+  | "zh" | "zh-CN" | "zh-Hans" | "zh-SG" | "zh-TW" | "zh-HK" | "zh-MO" => Some(Zh)
+  | "en" | "en-US" | "en-AU" | "en-CA" | "en-IN" | "en-NZ" | "en-IE" | "en-ZA" | _ => Some(En)
   }
 }
 
