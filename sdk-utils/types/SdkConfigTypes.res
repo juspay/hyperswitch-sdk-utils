@@ -26,14 +26,22 @@ type profile = {
 
 type accountConfig = {profile: option<profile>}
 
+type contextUsed = {
+  profile_id: option<string>,
+  merchant_id: option<string>,
+  organization_id: option<string>,
+}
+
 type sdkConfigValue = {
   raw_configs: option<JSON.t>,
   payment_methods: array<sdkPaymentMethod>,
   account_config: option<accountConfig>,
+  context_used: option<contextUsed>,
 }
 
 let defaultSdkConfigValue: sdkConfigValue = {
   raw_configs: None,
   payment_methods: [],
   account_config: None,
+  context_used: None,
 }

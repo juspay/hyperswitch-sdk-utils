@@ -54,6 +54,9 @@ type superpositionBaseContext = {
   mandate_type: string,
   collect_shipping_details_from_wallet_connector: string,
   collect_billing_details_from_wallet_connector: string,
+  profile_id?: string,
+  merchant_id?: string,
+  organization_id?: string,
 }
 
 type superpositionContext = {

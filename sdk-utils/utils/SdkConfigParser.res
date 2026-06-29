@@ -67,6 +67,15 @@ let parseProfileAccountConfig = (json: JSON.t): accountConfig => {
   }
 }
 
+let parseContextUsed = (json: JSON.t): contextUsed => {
+  let dict = json->getDictFromJson
+  {
+    profile_id: dict->getOptionString("profile_id"),
+    merchant_id: dict->getOptionString("merchant_id"),
+    organization_id: dict->getOptionString("organization_id"),
+  }
+}
+
 let getCollectBillingDetailsFromWalletConnector = (profile: option<profile>): bool => {
   switch profile {
   | None => true
@@ -91,6 +100,13 @@ let getCollectShippingDetailsFromWalletConnector = (profile: option<profile>): b
   }
 }
 
+let getProfileContext = (contextUsed: option<contextUsed>) => {
+  switch contextUsed {
+  | Some(context) => (context.profile_id, context.merchant_id, context.organization_id)
+  | None => (None, None, None)
+  }
+}
+
 let itemToObjMapper = (json: JSON.t): sdkConfigValue => {
   let dict = json->getDictFromJson
   {
@@ -99,6 +115,7 @@ let itemToObjMapper = (json: JSON.t): sdkConfigValue => {
     account_config: dict
     ->Dict.get("account_config")
     ->Option.map(parseProfileAccountConfig),
+    context_used: dict->Dict.get("context_used")->Option.map(parseContextUsed),
   }
 }
 
