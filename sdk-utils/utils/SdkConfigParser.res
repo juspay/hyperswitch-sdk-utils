@@ -71,7 +71,7 @@ let parseContextUsed = (json: JSON.t): contextUsed => {
   let dict = json->getDictFromJson
   {
     profile_id: dict->getOptionString("profile_id"),
-    merchant_id: dict->getOptionString("merchant_id"),
+    processor_merchant_id: dict->getOptionString("processor_merchant_id"),
     organization_id: dict->getOptionString("organization_id"),
   }
 }
@@ -102,7 +102,7 @@ let getCollectShippingDetailsFromWalletConnector = (profile: option<profile>): b
 
 let getProfileContext = (contextUsed: option<contextUsed>) => {
   switch contextUsed {
-  | Some(context) => (context.profile_id, context.merchant_id, context.organization_id)
+  | Some(context) => (context.profile_id, context.processor_merchant_id, context.organization_id)
   | None => (None, None, None)
   }
 }

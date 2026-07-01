@@ -45,7 +45,7 @@ let useConfigurationService = (~rawConfigs: option<JSON.t>) => {
                 collect_billing_details_from_wallet_connector: configParams.collect_billing_details_from_wallet_connector,
                 collect_shipping_details_from_wallet_connector: configParams.collect_shipping_details_from_wallet_connector,
                 profile_id: ?configParams.profile_id,
-                merchant_id: ?configParams.merchant_id,
+                processor_merchant_id: ?configParams.processor_merchant_id,
                 organization_id: ?configParams.organization_id,
               }
               let resolvedConfig =

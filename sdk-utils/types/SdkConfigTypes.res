@@ -28,7 +28,7 @@ type accountConfig = {profile: option<profile>}
 
 type contextUsed = {
   profile_id: option<string>,
-  merchant_id: option<string>,
+  processor_merchant_id: option<string>,
   organization_id: option<string>,
 }
 
