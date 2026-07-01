@@ -50,6 +50,7 @@ type requiredFields = array<fieldConfig>
 type superpositionBaseContext = {
   payment_method: string,
   payment_method_type: string,
+  platform: string,
   country: string,
   mandate_type: string,
   collect_shipping_details_from_wallet_connector: string,
