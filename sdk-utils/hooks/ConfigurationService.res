@@ -17,6 +17,7 @@ let useConfigurationService = (~rawConfigs: option<JSON.t>) => {
 
   React.useCallback(
     (
+      ~includeShipping=false,
       eligibleConnectors: array<RescriptCore.JSON.t>,
       configParams: SuperpositionTypes.superpositionBaseContext,
       intentData: JSON.t,
@@ -60,7 +61,8 @@ let useConfigurationService = (~rawConfigs: option<JSON.t>) => {
           }
           acc
         })
-        ->removeShippingAndDuplicateFields
+        ->removeDuplicateFields
+        ->(fields => includeShipping ? fields : fields->removeShippingFields)
         ->sortFieldsByPriorityOrder
       }
 
