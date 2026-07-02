@@ -19,14 +19,11 @@ let removeDuplicateConnectors = fields => {
   )
 }
 
-let removeShippingAndDuplicateFields = fields => {
+let removeDuplicateFields = fields => {
   let seen = Set.make()
 
   fields->Array.filter(f =>
-    if (
-      f.intentDataReadPath->Option.mapOr(false, s => s->String.startsWith("shipping.")) ||
-        Set.has(seen, f.confirmRequestWritePath)
-    ) {
+    if Set.has(seen, f.confirmRequestWritePath) {
       false
     } else {
       Set.add(seen, f.confirmRequestWritePath)
@@ -34,6 +31,11 @@ let removeShippingAndDuplicateFields = fields => {
     }
   )
 }
+
+let removeShippingFields = fields =>
+  fields->Array.filter(f =>
+    !(f.intentDataReadPath->Option.mapOr(false, s => s->String.startsWith("shipping.")))
+  )
 
 let extractFieldValuesFromPML = (required_fields: Dict.t<JSON.t>) => {
   let flatInitialValues = Dict.make()
