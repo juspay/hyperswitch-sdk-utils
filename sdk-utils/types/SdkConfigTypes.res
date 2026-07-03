@@ -45,3 +45,10 @@ let defaultSdkConfigValue: sdkConfigValue = {
   account_config: None,
   context_used: None,
 }
+
+let getVaultingAction = (config: option<sdkConfigValue>): vaultingAction =>
+  config
+  ->Option.flatMap(c => c.account_config)
+  ->Option.flatMap(ac => ac.profile)
+  ->Option.map(p => p.vaulting_action)
+  ->Option.getOr(Skip)
