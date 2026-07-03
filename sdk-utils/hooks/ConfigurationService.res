@@ -60,7 +60,7 @@ let useConfigurationService = (~rawConfigs: option<JSON.t>) => {
           }
           acc
         })
-        ->removeShippingAndDuplicateFields
+        ->removeDuplicateFields
         ->sortFieldsByPriorityOrder
       }
 
