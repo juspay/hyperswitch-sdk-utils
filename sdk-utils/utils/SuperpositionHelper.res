@@ -1,6 +1,30 @@
 open CommonUtils
 open SuperpositionTypes
 
+// Billing-address required fields share the write-path prefix `payment_method_data.billing.address.*`
+// `isUseBillingAddress` force-collects the whole set regardless of resolved config;
+// `line2` is the exception — force-rendered but never force-*required* (pre-revamp parity: AddressLine2 was always optional).
+// behaviour controlled via flag `isUseBillingAddress` in the config service, which is set by the merchant via the SDK config.
+let billingAddressPathPrefix = "payment_method_data.billing.address."
+let billingAddressLine2Path = billingAddressPathPrefix ++ "line2"
+
+let isBillingAddressPath = path => path->String.startsWith(billingAddressPathPrefix)
+let isBillingAddressLine2 = path => path === billingAddressLine2Path
+
+// (shouldInclude, isRequired) for a required-fields candidate, given the billing-force flag.
+// Non-billing fields fall through to the connector's own `is_required`.
+let resolveFieldInclusion = (
+  ~confirmRequestWritePath,
+  ~connectorRequired,
+  ~isUseBillingAddress,
+) => {
+  let forcedBilling = isUseBillingAddress && isBillingAddressPath(confirmRequestWritePath)
+  let shouldInclude = connectorRequired || forcedBilling
+  let isRequired =
+    connectorRequired || (forcedBilling && !isBillingAddressLine2(confirmRequestWritePath))
+  (shouldInclude, isRequired)
+}
+
 let sortFieldsByPriorityOrder = fields => {
   fields->Array.sort((a, b) => Int.compare(a.fieldDisplayOrder, b.fieldDisplayOrder))
   fields
@@ -54,19 +78,24 @@ let extractFieldValuesFromPML = (required_fields: Dict.t<JSON.t>) => {
   flatInitialValues
 }
 
-let resolveFieldValue = (field, intentDataDict) =>
-  switch field.intentDataReadPath {
-  | Some(readPath) =>
-    switch getStringAtPath(intentDataDict, readPath) {
-    | Some(val) if val !== "" => Some(val)
-    | _ => None
+let resolveFieldValue = (field, intentDataDict, ~suppressBillingPrefill=false) =>
+  if suppressBillingPrefill && isBillingAddressPath(field.confirmRequestWritePath) {
+    None
+  } else {
+    switch field.intentDataReadPath {
+    | Some(readPath) =>
+      switch getStringAtPath(intentDataDict, readPath) {
+      | Some(val) if val !== "" => Some(val)
+      | _ => None
+      }
+    | None => None
     }
-  | None => None
   }
 
 let filterFieldsBasedOnMissingData = (
   requiredFieldsFromSuperPosition: SuperpositionTypes.requiredFields,
   intentDataDict,
+  ~isUseBillingAddress=false,
 ) => {
   let firstNamePattern = "billing.address.first_name"
   let lastNamePattern = "billing.address.last_name"
@@ -103,8 +132,13 @@ let filterFieldsBasedOnMissingData = (
   })
 
   fieldCategories->Array.filterMap(((field, isNameField, isPhoneField, isAddressField)) => {
+    // When isUseBillingAddress is set, always render the billing.address.* set (name + address),
+    // even when intent data prefills them — the merchant wants billing collected on the UI.
+    let forceBillingAddress = isUseBillingAddress && (isNameField || isAddressField)
+
     let shouldInclude =
-      (isNameField && nameFieldsMissing) ||
+      forceBillingAddress ||
+      isNameField && nameFieldsMissing ||
       isPhoneField && phoneFieldsMissing ||
       isAddressField && addressFieldsMissing ||
       (!isNameField && !isPhoneField && !isAddressField && isFieldMissing(field))
@@ -116,9 +150,10 @@ let filterFieldsBasedOnMissingData = (
 let buildInitialValuesFromIntentData = (
   fields: SuperpositionTypes.requiredFields,
   intentDataDict: Dict.t<JSON.t>,
+  ~suppressBillingPrefill=false,
 ): Dict.t<string> => {
   fields->Array.reduce(Dict.make(), (acc, field) => {
-    switch resolveFieldValue(field, intentDataDict) {
+    switch resolveFieldValue(field, intentDataDict, ~suppressBillingPrefill) {
     | Some(val) => acc->Dict.set(field.confirmRequestWritePath, val)
     | None => ()
     }
@@ -199,7 +234,7 @@ let convertFlatDictToNestedObject = (flatDict: Dict.t<string>): Dict.t<JSON.t> =
   resultDict->removeEmptyObjects
 }
 
-let convertConfigurationToRequiredFields = resolvedConfig => {
+let convertConfigurationToRequiredFields = (resolvedConfig, ~isUseBillingAddress=false) => {
   let fieldGroups = Dict.make()
   resolvedConfig
   ->Dict.toArray
@@ -224,9 +259,14 @@ let convertConfigurationToRequiredFields = resolvedConfig => {
   fieldGroups
   ->Dict.toArray
   ->Array.filterMap(((baseName, metadata)) => {
-    let isRequired = metadata->getBool("is_required", false)
-    if isRequired {
-      let confirmRequestWritePath = metadata->getString("confirm_request_write_path", baseName)
+    let connectorRequired = metadata->getBool("is_required", false)
+    let confirmRequestWritePath = metadata->getString("confirm_request_write_path", baseName)
+    let (shouldInclude, isRequired) = resolveFieldInclusion(
+      ~confirmRequestWritePath,
+      ~connectorRequired,
+      ~isUseBillingAddress,
+    )
+    if shouldInclude {
       let defaultLabelText = metadata->getString("default_label_text", baseName)
       let defaultPlaceholderText = metadata->getString("default_placeholder_text", "")
       let fieldRenderTypeStr = metadata->getString("field_render_type", "")

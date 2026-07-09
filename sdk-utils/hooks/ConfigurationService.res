@@ -20,6 +20,8 @@ let useConfigurationService = (~rawConfigs: option<JSON.t>) => {
       eligibleConnectors: array<RescriptCore.JSON.t>,
       configParams: SuperpositionTypes.superpositionBaseContext,
       intentData: JSON.t,
+      ~isUseBillingAddress=false,
+      ~suppressBillingPrefill=false,
     ) => {
       let intentDataDict = intentData->CommonUtils.getDictFromJson
       let requiredFieldsFromSuperPosition = switch (
@@ -52,7 +54,9 @@ let useConfigurationService = (~rawConfigs: option<JSON.t>) => {
                 organization_id: ?configParams.organization_id,
               }
               let resolvedConfig =
-                svc.evaluateConfig(transformedContext)->convertConfigurationToRequiredFields
+                svc.evaluateConfig(transformedContext)->convertConfigurationToRequiredFields(
+                  ~isUseBillingAddress,
+                )
               acc->Array.pushMany(resolvedConfig)
             }
           } catch {
@@ -67,12 +71,14 @@ let useConfigurationService = (~rawConfigs: option<JSON.t>) => {
       let missingRequiredFields = filterFieldsBasedOnMissingData(
         requiredFieldsFromSuperPosition,
         intentDataDict,
+        ~isUseBillingAddress,
       )
 
       let initialValues =
         buildInitialValuesFromIntentData(
           requiredFieldsFromSuperPosition,
           intentDataDict,
+          ~suppressBillingPrefill,
         )->convertFlatDictToNestedObject
 
       (requiredFieldsFromSuperPosition, missingRequiredFields, initialValues)
