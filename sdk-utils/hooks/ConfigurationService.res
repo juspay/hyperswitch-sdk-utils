@@ -83,7 +83,7 @@ let useConfigurationService = (~rawConfigs: option<JSON.t>) => {
           ~suppressBillingPrefill,
         )->convertFlatDictToNestedObject
 
-      (requiredFieldsFromSuperPosition, missingRequiredFields, fieldsToRender, initialValues)
+      (requiredFieldsFromSuperPosition, fieldsToRender, initialValues)
     },
     [service],
   )
