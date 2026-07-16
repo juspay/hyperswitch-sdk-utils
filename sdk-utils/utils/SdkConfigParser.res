@@ -140,3 +140,24 @@ let getEligibleConnectorsFromPaymentMethods = (
     acc
   })
 }
+
+let getPaymentExperienceFromPaymentMethods = (
+  paymentMethods: array<sdkPaymentMethod>,
+  paymentMethod: string,
+  paymentMethodType: string,
+) => {
+  paymentMethods
+  ->Array.filter(pm => pm.payment_method === paymentMethod)
+  ->Array.flatMap(pm => pm.payment_method_types)
+  ->Array.filter(pmt =>
+    pmt.payment_method_type === paymentMethodType &&
+      pmt.payment_method_criteria === "payment_experience"
+  )
+  ->Array.flatMap(pmt => pmt.criteria_rules)
+  ->Array.reduce([], (acc, rule) => {
+    if rule.criteria_value !== "default" && !(acc->Array.includes(rule.criteria_value)) {
+      acc->Array.push(rule.criteria_value)
+    }
+    acc
+  })
+}
