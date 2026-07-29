@@ -11,6 +11,8 @@ external cacReader: JSON.t => Nullable.t<configurationService> = "CacReader"
 let service = ref(None)
 
 let useConfigurationService = () => {
+  let (isInitialized, setIsInitialized) = React.useState(() => service.contents->Option.isSome)
+
   React.useEffect0(() => {
     let initializeService = async () => {
       if service.contents->Option.isNone {
@@ -34,12 +36,13 @@ let useConfigurationService = () => {
         | _ex => service := None
         }
       }
+      setIsInitialized(_ => true)
     }
     initializeService()->ignore
     None
   })
 
-  (
+  let getSuperpositionFinalFields = (
     eligibleConnectors: array<RescriptCore.JSON.t>,
     configParams: SuperpositionTypes.superpositionBaseContext,
     requiredFieldsFromPML,
@@ -89,4 +92,6 @@ let useConfigurationService = () => {
 
     (requiredFieldsFromSuperPosition, missingRequiredFields, initialValues)
   }
+
+  (getSuperpositionFinalFields, isInitialized)
 }
