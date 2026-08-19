@@ -37,7 +37,7 @@ let eventToString = (eventType: events): string => {
   | BillingDetailsChange => "billingDetailsChange"
   | CvcStatusChange => "cvcStatusChange"
   | SurchargeInfo => "surchargeInfo"
-  | UnknownEvent => "UNKNOWN_EVENT"
+  | UnknownEvent => "unknownEvent"
   }
 }
 
