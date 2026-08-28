@@ -38,6 +38,8 @@
   "addNewCard": "Ychwanegwch gerdyn credyd neu ddebyd",
   "useExisitingSavedCards": "Defnyddiwch gardiau debyd/credyd a gadwyd",
   "saveCardDetails": "Cadw manylion y cerdyn",
+  "savePaymentDetails": "Cadw fy manylion talu yn ddiogel ar gyfer taliadau cyflymach",
+  "savePaymentDetailsWhereverPossible": "Cadw fy manylion talu yn ddiogel ar gyfer taliadau cyflymach, lle bo hynny ar gael",
   "addBankAccount": "Ychwanegwch gyfrif banc",
   "payNowButton": "Talu Nawr",
   "cardNumberEmptyText": "Ni all Rhif y Cerdyn fod yn wag",

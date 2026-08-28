@@ -38,6 +38,8 @@
   "addNewCard": "Kredi/banka kartı ekle",
   "useExisitingSavedCards": "Kayıtlı banka/kredi kartını kullanın",
   "saveCardDetails": "Kart bilgilerini kaydet",
+  "savePaymentDetails": "Daha hızlı ödemeler için ödeme bilgilerimi güvenle kaydet",
+  "savePaymentDetailsWhereverPossible": "Daha hızlı ödemeler için ödeme bilgilerimi güvenle kaydet, mümkün olduğunda",
   "addBankAccount": "Banka hesabı ekle",
   "payNowButton": "Şimdi Ödeyin",
   "cardNumberEmptyText": "Kart Numarası boş olamaz",

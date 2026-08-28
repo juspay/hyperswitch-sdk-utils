@@ -38,6 +38,8 @@
   "addNewCard": "Afegeixi una targeta de crèdit o dèbit",
   "useExisitingSavedCards": "Faci servir les targetes de dèbit o crèdit desades",
   "saveCardDetails": "Desi les dades de la targeta",
+  "savePaymentDetails": "Desa de manera segura les meves dades de pagament per a pagaments més ràpids",
+  "savePaymentDetailsWhereverPossible": "Desa de manera segura les meves dades de pagament per a pagaments més ràpids, quan estigui disponible",
   "addBankAccount": "Afegeixi un compte bancari",
   "payNowButton": "Pagui ara",
   "cardNumberEmptyText": "Cal indicar el número de la targeta",
