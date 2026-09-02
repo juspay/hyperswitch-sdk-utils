@@ -38,6 +38,8 @@
   "addNewCard": "添加信用卡/借记卡",
   "useExisitingSavedCards": "使用保存的支付方式",
   "saveCardDetails": "保存卡片详情",
+  "savePaymentDetails": "安全保存我的支付信息以便更快付款",
+  "savePaymentDetailsWhereverPossible": "安全保存我的支付信息以便更快付款（如适用）",
   "addBankAccount": "添加银行账户",
   "payNowButton": "立即付款",
   "cardNumberEmptyText": "卡号不能为空",

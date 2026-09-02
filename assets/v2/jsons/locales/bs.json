@@ -38,6 +38,8 @@
   "addNewCard": "Dodajte kreditnu/debitnu karticu",
   "useExisitingSavedCards": "Koristite sačuvane debitne/kreditne kartice",
   "saveCardDetails": "Sačuvajte podatke o kartici",
+  "savePaymentDetails": "Sigurno sačuvajte moje podatke o plaćanju za brža plaćanja",
+  "savePaymentDetailsWhereverPossible": "Sigurno sačuvajte moje podatke o plaćanju za brža plaćanja, gdje je dostupno",
   "addBankAccount": "Dodajte bankovni račun",
   "payNowButton": "Plati odmah",
   "cardNumberEmptyText": "Polje za broj kartice ne može biti prazno",

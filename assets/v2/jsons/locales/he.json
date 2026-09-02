@@ -38,6 +38,8 @@
   "addNewCard": "הוספת כרטיס אשראי/כרטיס חיוב (דביט)",
   "useExisitingSavedCards": "שימוש בכרטיסי חיוב/ אשראי שמורים",
   "saveCardDetails": "שמירת פרטי הכרטיס",
+  "savePaymentDetails": "שמור את פרטי התשלום שלי באופן מאובטח לתשלומים מהירים יותר",
+  "savePaymentDetailsWhereverPossible": "שמור את פרטי התשלום שלי באופן מאובטח לתשלומים מהירים יותר, כאשר זמין",
   "addBankAccount": "הוסף חשבון בנק",
   "payNowButton": "שלם עכשיו",
   "cardNumberEmptyText": "מספר הכרטיס אינו יכול להיות ריק",

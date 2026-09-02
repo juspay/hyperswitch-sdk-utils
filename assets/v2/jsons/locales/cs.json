@@ -38,6 +38,8 @@
   "addNewCard": "Přidat novou kreditní/debetní kartu",
   "useExisitingSavedCards": "Použít uložené debetní/kreditní karty",
   "saveCardDetails": "Uložit údaje o kartě",
+  "savePaymentDetails": "Bezpečně uložit mé platební údaje pro rychlejší platby",
+  "savePaymentDetailsWhereverPossible": "Bezpečně uložit mé platební údaje pro rychlejší platby, pokud je to možné",
   "addBankAccount": "Přidat bankovní účet",
   "payNowButton": "Zaplatit nyní",
   "cardNumberEmptyText": "Číslo karty nesmí být prázdné",

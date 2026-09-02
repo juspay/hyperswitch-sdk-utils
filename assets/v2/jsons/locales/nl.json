@@ -38,6 +38,8 @@
   "addNewCard": "Creditcard/betaalkaart toevoegen",
   "useExisitingSavedCards": "Gebruik opgeslagen betaalmethoden",
   "saveCardDetails": "Kaartgegevens opslaan",
+  "savePaymentDetails": "Mijn betaalgegevens veilig opslaan voor snellere betalingen",
+  "savePaymentDetailsWhereverPossible": "Mijn betaalgegevens veilig opslaan voor snellere betalingen, waar beschikbaar",
   "addBankAccount": "Bankrekening toevoegen",
   "payNowButton": "Nu betalen",
   "cardNumberEmptyText": "Kaartnummer mag niet leeg zijn",

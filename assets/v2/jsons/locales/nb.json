@@ -38,6 +38,8 @@
   "addNewCard": "Legg til kreditt-/debetkort",
   "useExisitingSavedCards": "Bruk lagrede betalingsmetoder",
   "saveCardDetails": "Lagre kortopplysninger",
+  "savePaymentDetails": "Lagre betalingsopplysningene mine sikkert for raskere betalinger",
+  "savePaymentDetailsWhereverPossible": "Lagre betalingsopplysningene mine sikkert for raskere betalinger, der det er tilgjengelig",
   "addBankAccount": "Legg til bankkonto",
   "payNowButton": "Betal nå",
   "cardNumberEmptyText": "Kortnummer kan ikke stå tomt",
