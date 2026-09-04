@@ -7,6 +7,7 @@ type localeTypes =
   | Ja
   | De
   | Fr_BE
+  | Fr_CA
   | Es
   | Ca
   | Pt
@@ -42,6 +43,7 @@ let localeTypeToString = locale => {
   | Some(Ja) => "ja"
   | Some(De) => "de"
   | Some(Fr_BE) => "fr-BE"
+  | Some(Fr_CA) => "fr-CA"
   | Some(Es) => "es"
   | Some(Ca) => "ca"
   | Some(Pt) => "pt"
@@ -72,12 +74,13 @@ let localeTypeToString = locale => {
 let localeStringToType = locale => {
   switch locale {
   | "he" | "he-IL" | "iw" => Some(He)
-  | "fr" | "fr-FR" | "fr-CA" | "fr-CH" => Some(Fr)
+  | "fr" | "fr-FR" | "fr-CH" => Some(Fr)
   | "en-GB" => Some(En_GB)
   | "ar" => Some(Ar)
   | "ja" | "ja-JP" => Some(Ja)
   | "de" | "de-DE" | "de-AT" | "de-CH" | "de-LI" => Some(De)
   | "fr-BE" => Some(Fr_BE)
+  | "fr-CA" => Some(Fr_CA)
   | "es"
   | "es-419"
   | "es-AR"
