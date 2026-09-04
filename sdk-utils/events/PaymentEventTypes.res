@@ -21,37 +21,37 @@ let formStatusValueFromString = (str: string): formStatusValue => {
 }
 
 type events =
-  | PaymentMethodInfoCard
-  | PaymentMethodStatus
-  | FormStatus
-  | PaymentMethodInfoBillingAddress
-  | CvcStatus
-  | Surcharge
-  | Offers
+  | CardDetailsChange
+  | PaymentMethodChange
+  | FormStatusChange
+  | BillingDetailsChange
+  | CvcStatusChange
+  | SurchargeInfo
+  | AppliedOffersInfo
   | UnknownEvent
 
 let eventToString = (eventType: events): string => {
   switch eventType {
-  | PaymentMethodInfoCard => "PAYMENT_METHOD_INFO_CARD"
-  | PaymentMethodStatus => "PAYMENT_METHOD_STATUS"
-  | FormStatus => "FORM_STATUS"
-  | PaymentMethodInfoBillingAddress => "PAYMENT_METHOD_INFO_BILLING_ADDRESS"
-  | CvcStatus => "CVC_STATUS"
-  | Surcharge => "SURCHARGE"
-  | Offers => "OFFERS"
-  | UnknownEvent => "UNKNOWN_EVENT"
+  | CardDetailsChange => "cardDetailsChange"
+  | PaymentMethodChange => "paymentMethodChange"
+  | FormStatusChange => "formStatusChange"
+  | BillingDetailsChange => "billingDetailsChange"
+  | CvcStatusChange => "cvcStatusChange"
+  | SurchargeInfo => "surchargeInfo"
+  | AppliedOffersInfo => "appliedOffersInfo"
+  | UnknownEvent => "unknownEvent"
   }
 }
 
 let eventFromString = (str: string): events => {
   switch str {
-  | "PAYMENT_METHOD_INFO_CARD" => PaymentMethodInfoCard
-  | "PAYMENT_METHOD_STATUS" => PaymentMethodStatus
-  | "FORM_STATUS" => FormStatus
-  | "PAYMENT_METHOD_INFO_BILLING_ADDRESS" => PaymentMethodInfoBillingAddress
-  | "CVC_STATUS" => CvcStatus
-  | "SURCHARGE" => Surcharge
-  | "OFFERS" => Offers
+  | "cardDetailsChange" => CardDetailsChange
+  | "paymentMethodChange" => PaymentMethodChange
+  | "formStatusChange" => FormStatusChange
+  | "billingDetailsChange" => BillingDetailsChange
+  | "cvcStatusChange" => CvcStatusChange
+  | "surchargeInfo" => SurchargeInfo
+  | "appliedOffersInfo" => AppliedOffersInfo
   | _ => UnknownEvent
   }
 }
