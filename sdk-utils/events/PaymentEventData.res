@@ -308,3 +308,42 @@ let surchargeEventToJson = (event: surchargeEvent): JSON.t => {
 
   baseFields->Dict.fromArray->JSON.Encode.object
 }
+
+type eligibleOffer = {
+  offerQuoteId: string,
+  offerAmount: int,
+  currency: string,
+  code: string,
+  title: string,
+  description: string,
+}
+
+type offersEvent = {
+  offers: array<eligibleOffer>,
+}
+
+let buildOffersEvent = (~offers=[]) => {
+  {offers: offers}
+}
+
+let offersEventToJson = (event: offersEvent): JSON.t => {
+  let offers =
+    event.offers
+    ->Array.map(offer =>
+      [
+        ("offerQuoteId", offer.offerQuoteId->JSON.Encode.string),
+        ("offerAmount", offer.offerAmount->JSON.Encode.int),
+        ("currency", offer.currency->JSON.Encode.string),
+        ("code", offer.code->JSON.Encode.string),
+        ("title", offer.title->JSON.Encode.string),
+        ("description", offer.description->JSON.Encode.string),
+      ]
+      ->Dict.fromArray
+      ->JSON.Encode.object
+    )
+    ->JSON.Encode.array
+
+  [("offers", offers)]
+  ->Dict.fromArray
+  ->JSON.Encode.object
+}

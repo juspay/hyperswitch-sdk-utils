@@ -38,6 +38,8 @@
   "addNewCard": "Aggiungi una carta di credito/debito",
   "useExisitingSavedCards": "Utilizza carte di debito/credito salvate",
   "saveCardDetails": "Salva i dati della carta",
+  "savePaymentDetails": "Salva in modo sicuro i miei dati di pagamento per pagamenti più rapidi",
+  "savePaymentDetailsWhereverPossible": "Salva in modo sicuro i miei dati di pagamento per pagamenti più rapidi, dove disponibile",
   "addBankAccount": "Aggiungi un conto bancario",
   "payNowButton": "Paga ora",
   "cardNumberEmptyText": "Il campo Numero della carta non può essere vuoto",

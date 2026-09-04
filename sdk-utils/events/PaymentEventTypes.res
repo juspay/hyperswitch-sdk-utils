@@ -27,6 +27,7 @@ type events =
   | BillingDetailsChange
   | CvcStatusChange
   | SurchargeInfo
+  | Offers
   | UnknownEvent
 
 let eventToString = (eventType: events): string => {
@@ -37,6 +38,7 @@ let eventToString = (eventType: events): string => {
   | BillingDetailsChange => "billingDetailsChange"
   | CvcStatusChange => "cvcStatusChange"
   | SurchargeInfo => "surchargeInfo"
+  | Offers => "OFFERS"
   | UnknownEvent => "unknownEvent"
   }
 }
@@ -49,6 +51,7 @@ let eventFromString = (str: string): events => {
   | "billingDetailsChange" => BillingDetailsChange
   | "cvcStatusChange" => CvcStatusChange
   | "surchargeInfo" => SurchargeInfo
+  | "OFFERS" => Offers
   | _ => UnknownEvent
   }
 }

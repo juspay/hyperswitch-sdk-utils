@@ -38,6 +38,8 @@
   "addNewCard": "新しいカードを追加",
   "useExisitingSavedCards": "既存の保存済みカードを使用する",
   "saveCardDetails": "カードの詳細を保存",
+  "savePaymentDetails": "支払い情報を安全に保存して、より迅速に支払う",
+  "savePaymentDetailsWhereverPossible": "支払い情報を安全に保存してより迅速に支払う（利用可能な場合）",
   "addBankAccount": "銀行口座を追加",
   "payNowButton": "今払う",
   "cardNumberEmptyText": "カード番号を空にすることはできません",
