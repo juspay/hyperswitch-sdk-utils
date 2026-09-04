@@ -13,7 +13,7 @@
   "validThruText": "Expiration",
   "sortCodeText": "Code de tri",
   "accountNumberText": "Numéro de compte",
-  "cvcTextLabel": "Code CVC",
+  "cvcTextLabel": "CVC",
   "emailLabel": "E-mail",
   "emailInvalidText": "Adresse e-mail invalide",
   "emailEmptyText": "L'e-mail ne peut pas être vide",
