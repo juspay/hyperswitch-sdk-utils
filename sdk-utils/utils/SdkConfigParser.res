@@ -141,23 +141,37 @@ let getEligibleConnectorsFromPaymentMethods = (
   })
 }
 
-let getPaymentExperienceFromPaymentMethods = (
+let paymentExperienceCriteria = "payment_experience"
+let defaultCriteriaValue = "default"
+
+let paymentMethodKey = (paymentMethod: string, paymentMethodType: string) =>
+  `${paymentMethod}:${paymentMethodType}`
+
+let buildPaymentExperienceIndex = (
   paymentMethods: array<sdkPaymentMethod>,
-  paymentMethod: string,
-  paymentMethodType: string,
-) => {
-  paymentMethods
-  ->Array.filter(pm => pm.payment_method === paymentMethod)
-  ->Array.flatMap(pm => pm.payment_method_types)
-  ->Array.filter(pmt =>
-    pmt.payment_method_type === paymentMethodType &&
-      pmt.payment_method_criteria === "payment_experience"
+): Dict.t<array<string>> => {
+  let index = Dict.make()
+  paymentMethods->Array.forEach(pm =>
+    pm.payment_method_types->Array.forEach(pmt =>
+      if pmt.payment_method_criteria === paymentExperienceCriteria {
+        let key = paymentMethodKey(pm.payment_method, pmt.payment_method_type)
+        let experiences = switch index->Dict.get(key) {
+        | Some(existing) => existing
+        | None =>
+          let created = []
+          index->Dict.set(key, created)
+          created
+        }
+        pmt.criteria_rules->Array.forEach(rule =>
+          if (
+            rule.criteria_value !== defaultCriteriaValue &&
+              !(experiences->Array.includes(rule.criteria_value))
+          ) {
+            experiences->Array.push(rule.criteria_value)
+          }
+        )
+      }
+    )
   )
-  ->Array.flatMap(pmt => pmt.criteria_rules)
-  ->Array.reduce([], (acc, rule) => {
-    if rule.criteria_value !== "default" && !(acc->Array.includes(rule.criteria_value)) {
-      acc->Array.push(rule.criteria_value)
-    }
-    acc
-  })
+  index
 }
