@@ -11,6 +11,7 @@ let shouldEmitEvent = (
 
 type cardInfo = {
   bin: option<string>,
+  extendedBin: option<string>,
   last4: option<string>,
   brand: option<string>,
   expiryMonth: option<string>,
@@ -34,6 +35,12 @@ let buildCardInfo = (
 
   let bin = if len >= 6 {
     Some(cleanNumber->String.substring(~start=0, ~end=6))
+  } else {
+    None
+  }
+
+  let extendedBin = if len >= 8 {
+    Some(cleanNumber->String.substring(~start=0, ~end=8))
   } else {
     None
   }
@@ -73,6 +80,7 @@ let buildCardInfo = (
 
   {
     bin,
+    extendedBin,
     last4,
     brand: if brand === "" {
       None
@@ -105,8 +113,15 @@ let buildCardInfoFromSavedCard = (
   }
   let formattedExpiry = `${expiryMonth}/${shortYear}`
 
+  let extendedBin = if bin->String.length >= 8 {
+    Some(bin->String.substring(~start=0, ~end=8))
+  } else {
+    None
+  }
+
   {
     bin: Some(bin),
+    extendedBin,
     last4: Some(last4),
     brand: Some(brand),
     expiryMonth: Some(expiryMonth),
@@ -123,6 +138,7 @@ let buildCardInfoFromSavedCard = (
 let cardInfoToJson = (info: cardInfo): JSON.t => {
   [
     ("bin", info.bin->Option.map(JSON.Encode.string)->Option.getOr(JSON.Null)),
+    ("extendedBin", info.extendedBin->Option.map(JSON.Encode.string)->Option.getOr(JSON.Null)),
     ("last4", info.last4->Option.map(JSON.Encode.string)->Option.getOr(JSON.Null)),
     ("brand", info.brand->Option.map(JSON.Encode.string)->Option.getOr(JSON.Null)),
     ("expiryMonth", info.expiryMonth->Option.map(JSON.Encode.string)->Option.getOr(JSON.Null)),
