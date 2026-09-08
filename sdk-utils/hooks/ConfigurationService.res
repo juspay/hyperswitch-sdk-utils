@@ -74,6 +74,8 @@ let useConfigurationService = (~rawConfigs: option<JSON.t>) => {
         ~isUseBillingAddress,
       )
 
+      let fieldsToRender = getFieldsToRender(requiredFieldsFromSuperPosition, missingRequiredFields)
+
       let initialValues =
         buildInitialValuesFromIntentData(
           requiredFieldsFromSuperPosition,
@@ -81,7 +83,7 @@ let useConfigurationService = (~rawConfigs: option<JSON.t>) => {
           ~suppressBillingPrefill,
         )->convertFlatDictToNestedObject
 
-      (requiredFieldsFromSuperPosition, missingRequiredFields, initialValues)
+      (requiredFieldsFromSuperPosition, fieldsToRender, initialValues)
     },
     [service],
   )

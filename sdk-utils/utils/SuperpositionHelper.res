@@ -147,6 +147,21 @@ let filterFieldsBasedOnMissingData = (
   })
 }
 
+let getFieldsToRender = (
+  requiredFieldsFromSuperPosition: SuperpositionTypes.requiredFields,
+  missingRequiredFields: SuperpositionTypes.requiredFields,
+) => {
+  requiredFieldsFromSuperPosition->Array.filter(field =>
+    switch field.renderWhenPrefilled {
+    | Some(true) => true
+    | _ =>
+      missingRequiredFields->Array.some(missingField =>
+        missingField.confirmRequestWritePath === field.confirmRequestWritePath
+      )
+    }
+  )
+}
+
 let buildInitialValuesFromIntentData = (
   fields: SuperpositionTypes.requiredFields,
   intentDataDict: Dict.t<JSON.t>,
