@@ -38,6 +38,8 @@
   "addNewCard": "Bættu við kredit-/debetkorti",
   "useExisitingSavedCards": "Nota vistuð debet-/kreditkort",
   "saveCardDetails": "Vista kortaupplýsingar",
+  "savePaymentDetails": "Vista greiðsluupplýsingar mínar á öruggan hátt fyrir hraðari greiðslur",
+  "savePaymentDetailsWhereverPossible": "Vista greiðsluupplýsingar mínar á öruggan hátt fyrir hraðari greiðslur, þar sem það er í boði",
   "addBankAccount": "Bættu við bankareikningi",
   "payNowButton": "Greiða núna",
   "cardNumberEmptyText": "Kortanúmer má ekki vera autt.",

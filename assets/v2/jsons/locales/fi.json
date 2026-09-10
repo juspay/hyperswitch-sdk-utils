@@ -38,6 +38,8 @@
   "addNewCard": "Lisää luotto-/pankkikortti",
   "useExisitingSavedCards": "Käytä tallennettuja maksutapoja",
   "saveCardDetails": "Tallenna kortin tiedot",
+  "savePaymentDetails": "Tallenna maksutietoni turvallisesti nopeampia maksuja varten",
+  "savePaymentDetailsWhereverPossible": "Tallenna maksutietoni turvallisesti nopeampia maksuja varten, kun se on saatavilla",
   "addBankAccount": "Lisää pankkitili",
   "payNowButton": "Maksa nyt",
   "cardNumberEmptyText": "Kortin numero ei voi olla tyhjä",

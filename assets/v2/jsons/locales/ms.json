@@ -38,6 +38,8 @@
   "addNewCard": "Tambah kad kredit/debit",
   "useExisitingSavedCards": "Gunakan kad debit/kredit yang disimpan",
   "saveCardDetails": "Simpan butiran kad",
+  "savePaymentDetails": "Simpan butiran pembayaran saya dengan selamat untuk pembayaran lebih pantas",
+  "savePaymentDetailsWhereverPossible": "Simpan butiran pembayaran saya dengan selamat untuk pembayaran lebih pantas, jika tersedia",
   "addBankAccount": "Tambah akaun bank",
   "payNowButton": "Bayar Sekarang",
   "cardNumberEmptyText": "Nombor Kad tidak boleh kosong",

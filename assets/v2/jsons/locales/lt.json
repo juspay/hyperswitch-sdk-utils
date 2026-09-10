@@ -38,6 +38,8 @@
   "addNewCard": "Pridėti kredito / debeto kortelę",
   "useExisitingSavedCards": "Naudoti išsaugotas debeto / kredito korteles",
   "saveCardDetails": "Išsaugoti kortelės duomenis",
+  "savePaymentDetails": "Saugiai išsaugoti mano mokėjimo duomenis, kad mokėjimai būtų greitesni",
+  "savePaymentDetailsWhereverPossible": "Saugiai išsaugoti mano mokėjimo duomenis, kad mokėjimai būtų greitesni, kai tai įmanoma",
   "addBankAccount": "Pridėti banko sąskaitą",
   "payNowButton": "Apmokėti dabar",
   "cardNumberEmptyText": "Kortelės numeris negali būti tuščias",

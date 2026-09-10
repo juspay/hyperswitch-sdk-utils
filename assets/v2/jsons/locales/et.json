@@ -38,6 +38,8 @@
   "addNewCard": "Lisa krediit-/deebetkaart",
   "useExisitingSavedCards": "Kasuta salvestatud deebet-/krediitkaarte",
   "saveCardDetails": "Salvesta kaardi andmed",
+  "savePaymentDetails": "Salvesta minu makseandmed turvaliselt kiiremate maksete jaoks",
+  "savePaymentDetailsWhereverPossible": "Salvesta minu makseandmed turvaliselt kiiremate maksete jaoks, kui see on saadaval",
   "addBankAccount": "Lisa kontonumber",
   "payNowButton": "Maksa kohe",
   "cardNumberEmptyText": "Kaardi numbri väli peab olema täidetud",

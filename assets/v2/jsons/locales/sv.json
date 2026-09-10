@@ -38,6 +38,8 @@
   "addNewCard": "Lägg till kredit-/betalkort",
   "useExisitingSavedCards": "Använd sparade betal-/kreditkort",
   "saveCardDetails": "Spara kortuppgifter",
+  "savePaymentDetails": "Spara mina betalningsuppgifter säkert för snabbare betalningar",
+  "savePaymentDetailsWhereverPossible": "Spara mina betalningsuppgifter säkert för snabbare betalningar, där det är tillgängligt",
   "addBankAccount": "Lägg till bankkonto",
   "payNowButton": "Betala nu",
   "cardNumberEmptyText": "Kortnummer får inte vara tomt",
