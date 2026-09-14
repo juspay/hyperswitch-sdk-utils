@@ -33,7 +33,9 @@ let buildNested = (
   ->Array.forEach(((key, value)) => {
     if key->String.startsWith(prefix) && !(key->String.includes("[]")) {
       switch value->JSON.Classify.classify {
-      | Null => () 
+      | Null => ()
+      | String("") => ()
+      | Array([]) => ()
       | _ =>
         switch mapEntry(key->String.sliceToEnd(~start=prefix->String.length), value) {
         | Some((path, mappedValue)) => setValueAtPath(result, path->String.split("."), mappedValue)
