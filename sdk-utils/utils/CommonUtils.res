@@ -33,6 +33,10 @@ let getOptionFloat = (dict, key) => {
 
 let getFloatFromString = (str, default) => str->Float.fromString->Option.getOr(default)
 
+// "2027" -> "27"; an already two-digit year stays as-is.
+let twoDigitYear = (year: string) =>
+  year->String.length == 2 ? year : year->String.sliceToEnd(~start=-2)
+
 let getFloatFromJson = (json, default) => {
   switch json->JSON.Classify.classify {
   | String(str) => getFloatFromString(str, default)
