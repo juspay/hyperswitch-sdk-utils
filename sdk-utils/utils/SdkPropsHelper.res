@@ -5,12 +5,12 @@ let rec setValueAtPath = (dict, segments, value) => {
   | 0 => ()
   | 1 =>
     let key = segments->Array.getUnsafe(0)
-    if key !== "" {
+    if SuperpositionHelper.isWritableKey(key) {
       dict->Dict.set(key, value)
     }
   | _ =>
     let key = segments->Array.getUnsafe(0)
-    if key !== "" {
+    if SuperpositionHelper.isWritableKey(key) {
       let rest = segments->Array.sliceToEnd(~start=1)
       let child = switch dict->Dict.get(key)->Option.flatMap(JSON.Decode.object) {
       | Some(obj) => obj
