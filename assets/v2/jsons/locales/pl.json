@@ -10,7 +10,7 @@
   "inValidExpiryErrorText": "Data ważności Twojej karty jest nieprawidłowa.",
   "pastExpiryErrorText": "Rok w dacie ważności karty minął.",
   "poweredBy": "Na oprogramowaniu Hyperswitch",
-  "validThruText": "Dada ważności",
+  "validThruText": "Data ważności",
   "sortCodeText": "Kod sortowania",
   "accountNumberText": "Numer rachunku",
   "cvcTextLabel": "CVC",
