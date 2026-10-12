@@ -363,3 +363,32 @@ let offersEventToJson = (event: offersEvent): JSON.t => {
   ->Dict.fromArray
   ->JSON.Encode.object
 }
+
+type customMessageElementClickedEvent = {
+  key: string,
+  \"type": string,
+  paymentMethod: string,
+  paymentMethodType: string,
+}
+
+let buildCustomMessageElementClickedEvent = (
+  ~key: string,
+  ~elementType: string,
+  ~paymentMethod: string,
+  ~paymentMethodType: string,
+): customMessageElementClickedEvent => {
+  key,
+  \"type": elementType,
+  paymentMethod,
+  paymentMethodType,
+}
+
+let customMessageElementClickedEventToJson = (event: customMessageElementClickedEvent): JSON.t =>
+  [
+    ("key", event.key->JSON.Encode.string),
+    ("type", event.\"type"->JSON.Encode.string),
+    ("paymentMethod", event.paymentMethod->JSON.Encode.string),
+    ("paymentMethodType", event.paymentMethodType->JSON.Encode.string),
+  ]
+  ->Dict.fromArray
+  ->JSON.Encode.object
