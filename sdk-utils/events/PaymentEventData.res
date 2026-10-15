@@ -1,11 +1,11 @@
 let shouldEmitEvent = (
   ~eventType: PaymentEventTypes.events,
-  ~subscribedEvents: array<PaymentEventTypes.events>,
+  ~subscriptionEvents: array<PaymentEventTypes.events>,
 ): bool => {
-  if subscribedEvents->Array.length === 0 {
+  if subscriptionEvents->Array.length === 0 {
     false
   } else {
-    subscribedEvents->Array.some(subscribed => subscribed === eventType)
+    subscriptionEvents->Array.some(subscribed => subscribed === eventType)
   }
 }
 
