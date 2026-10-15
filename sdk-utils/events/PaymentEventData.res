@@ -39,15 +39,16 @@ let buildCardInfo = (
     None
   }
 
-  let extendedBin = if len >= 8 {
+  let extendedBin = if len >= 8 && Validation.maxCardLength(brand) >= 16 {
     Some(cleanNumber->String.substring(~start=0, ~end=8))
   } else {
     None
   }
 
   let isCardNumberComplete = Validation.isCardNumberEqualsMax(cleanNumber, brand)
+  let isCardNumberValid = Validation.cardValid(cardNumber, brand)
 
-  let last4 = if isCardNumberComplete {
+  let last4 = if isCardNumberComplete && isCardNumberValid {
     Some(cleanNumber->String.substring(~start=len - 4, ~end=len))
   } else {
     None
@@ -71,7 +72,6 @@ let buildCardInfo = (
     None
   }
 
-  let isCardNumberValid = Validation.cardValid(cardNumber, brand)
   let isExpiryValid = Validation.checkCardExpiry(expiry)
 
   let isCardNumberComplete = isCardNumberComplete && isCardNumberValid
