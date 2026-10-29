@@ -363,3 +363,17 @@ let offersEventToJson = (event: offersEvent): JSON.t => {
   ->Dict.fromArray
   ->JSON.Encode.object
 }
+
+let paymentFlowCancelEventToJson = (
+  ~step: PaymentEventTypes.paymentFlowStep,
+  ~paymentMethod: string,
+  ~paymentMethodType: string,
+): JSON.t => {
+  [
+    ("step", step->PaymentEventTypes.paymentFlowStepToString->JSON.Encode.string),
+    ("paymentMethod", paymentMethod->JSON.Encode.string),
+    ("paymentMethodType", paymentMethodType->JSON.Encode.string),
+  ]
+  ->Dict.fromArray
+  ->JSON.Encode.object
+}
