@@ -28,7 +28,7 @@ type events =
   | CvcStatusChange
   | SurchargeInfo
   | AppliedOffersInfo
-  | PaymentFlowCancel
+  | PaymentMethodFlowCancel
   | UnknownEvent
 
 let eventToString = (eventType: events): string => {
@@ -40,7 +40,7 @@ let eventToString = (eventType: events): string => {
   | CvcStatusChange => "cvcStatusChange"
   | SurchargeInfo => "surchargeInfo"
   | AppliedOffersInfo => "appliedOffersInfo"
-  | PaymentFlowCancel => "paymentFlowCancel"
+  | PaymentMethodFlowCancel => "paymentMethodFlowCancel"
   | UnknownEvent => "unknownEvent"
   }
 }
@@ -54,23 +54,20 @@ let eventFromString = (str: string): events => {
   | "cvcStatusChange" => CvcStatusChange
   | "surchargeInfo" => SurchargeInfo
   | "appliedOffersInfo" => AppliedOffersInfo
-  | "paymentFlowCancel" => PaymentFlowCancel
+  | "paymentMethodFlowCancel" => PaymentMethodFlowCancel
   | _ => UnknownEvent
   }
 }
 
-// The step of the payment flow the shopper cancelled. Only Sheet happens
-// before confirm; every other step happens after the payment is confirmed.
-type paymentFlowStep =
-  | Sheet
-  | DelayedSheet
+// The screen the shopper closed when cancelling a payment method flow.
+type paymentMethodFlowStep =
+  | PaymentSheet
   | ThreeDsChallenge
   | QrCode
 
-let paymentFlowStepToString = (step: paymentFlowStep): string => {
+let paymentMethodFlowStepToString = (step: paymentMethodFlowStep): string => {
   switch step {
-  | Sheet => "sheet"
-  | DelayedSheet => "delayedSheet"
+  | PaymentSheet => "paymentSheet"
   | ThreeDsChallenge => "threeDsChallenge"
   | QrCode => "qrCode"
   }
