@@ -63,12 +63,10 @@ let eventFromString = (str: string): events => {
 type paymentMethodFlowStep =
   | PaymentSheet
   | ThreeDsChallenge
-  | QrCode
 
 let paymentMethodFlowStepToString = (step: paymentMethodFlowStep): string => {
   switch step {
   | PaymentSheet => "paymentSheet"
   | ThreeDsChallenge => "threeDsChallenge"
-  | QrCode => "qrCode"
   }
 }
