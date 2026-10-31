@@ -28,6 +28,7 @@ type events =
   | CvcStatusChange
   | SurchargeInfo
   | AppliedOffersInfo
+  | PaymentMethodFlowCancel
   | UnknownEvent
 
 let eventToString = (eventType: events): string => {
@@ -39,6 +40,7 @@ let eventToString = (eventType: events): string => {
   | CvcStatusChange => "cvcStatusChange"
   | SurchargeInfo => "surchargeInfo"
   | AppliedOffersInfo => "appliedOffersInfo"
+  | PaymentMethodFlowCancel => "paymentMethodFlowCancel"
   | UnknownEvent => "unknownEvent"
   }
 }
@@ -52,6 +54,19 @@ let eventFromString = (str: string): events => {
   | "cvcStatusChange" => CvcStatusChange
   | "surchargeInfo" => SurchargeInfo
   | "appliedOffersInfo" => AppliedOffersInfo
+  | "paymentMethodFlowCancel" => PaymentMethodFlowCancel
   | _ => UnknownEvent
+  }
+}
+
+// The screen the shopper closed when cancelling a payment method flow.
+type paymentMethodFlowStep =
+  | PaymentSheet
+  | ThreeDsChallenge
+
+let paymentMethodFlowStepToString = (step: paymentMethodFlowStep): string => {
+  switch step {
+  | PaymentSheet => "paymentSheet"
+  | ThreeDsChallenge => "threeDsChallenge"
   }
 }
