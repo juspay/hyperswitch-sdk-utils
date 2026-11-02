@@ -12,8 +12,8 @@ let observeMerchantCall = (
   ~message=?,
   ~call,
 ) =>
-  SharedHyperLoaderLogger.observeMerchantCall(
-    ~event,
+  SharedLoggerProducer.observeMerchantCall(
+    ~event, ~severity=event->merchantCallSeverity, ~dataOf=SharedLoggerRuntime.eventDetails,
     ~run=(~category, ~spec, ~severity, ~data) =>
       SharedLoggerRuntime.observe(~category, ~spec, ~severity, ~data,
         ~details?, ~timeoutMs?, ~failureOf, ~detailsOf?, ~source?, ~context?, ~message?, ~call),
@@ -27,8 +27,8 @@ let observeMerchantCallback = (
   ~message=?,
   ~callback,
 ) =>
-  SharedHyperLoaderLogger.observeMerchantCallback(
-    ~event,
+  SharedLoggerProducer.observeMerchantCallback(
+    ~event, ~severity=event->merchantCallbackSeverity, ~dataOf=SharedLoggerRuntime.eventDetails,
     ~run=(~category, ~spec, ~severity, ~data) =>
       SharedLoggerRuntime.observeCallback(~category, ~spec, ~severity, ~data,
         ~context?, ~source?, ~timeoutMs?,
@@ -36,10 +36,11 @@ let observeMerchantCallback = (
   )
 
 let logMerchantCall = (~event: merchantCallEvent, ~details=?, ~message=?) =>
-  SharedHyperLoaderLogger.logMerchantCall(
-    ~event,
+  SharedLoggerProducer.logMerchantCall(
+    ~event, ~severity=(event->merchantCallSeverity).success, ~dataOf=SharedLoggerRuntime.eventDetails,
     ~emit=(~category, ~spec, ~severity, ~data) =>
-      SharedLoggerRuntime.emit(~category, ~spec, ~severity, ~data, ~details?, ~message?),
+      SharedLoggerRuntime.emit(~category, ~spec={...spec, outcome: Some(Returned)},
+        ~severity, ~data, ~details?, ~message?),
   )
 
 let logMerchantProps = (
@@ -50,8 +51,8 @@ let logMerchantProps = (
   ~message=?,
 ) =>
   if !SharedLoggerRuntime.isNestedElement() && event->merchantPropSeverity->SharedLoggerRuntime.isEnabled {
-    SharedHyperLoaderLogger.logMerchantProps(
-      ~event,
+    SharedLoggerProducer.logMerchantProps(
+      ~event, ~severity=event->merchantPropSeverity, ~dataOf=SharedLoggerRuntime.eventDetails,
       ~emit=(~category, ~spec, ~severity, ~data) =>
         SharedLoggerRuntime.emit(~category, ~spec, ~severity, ~data, ~details?,
           ~verbatim=?config->Option.map(config => config->SharedLoggerFormatting.configSnapshot(~isSensitive)),
@@ -61,8 +62,8 @@ let logMerchantProps = (
 
 let logMerchantIssue = (~issue: merchantIssue, ~details=?, ~context=?, ~message=?) =>
   if !SharedLoggerRuntime.isNestedElement() {
-    SharedHyperLoaderLogger.logMerchantIssue(
-      ~issue,
+    SharedLoggerProducer.logMerchantIssue(
+      ~event=issue, ~severity=issue->merchantIssueSeverity, ~dataOf=SharedLoggerRuntime.eventDetails,
       ~emit=(~category, ~spec, ~severity, ~data) =>
         SharedLoggerRuntime.emit(~category, ~spec, ~severity, ~data,
           ~context?, ~details?, ~message?, ~once=true),

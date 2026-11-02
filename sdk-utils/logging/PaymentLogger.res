@@ -12,8 +12,8 @@ let logLifecycle = (
   ~source=?,
   ~message=?,
 ) =>
-  SharedPaymentLogger.logLifecycle(
-    ~event,
+  SharedLoggerProducer.logLifecycle(
+    ~event, ~severity=event->lifecycleSeverity, ~dataOf=SharedLoggerRuntime.eventDetails,
     ~emit=(~category, ~spec, ~severity, ~data) =>
       SharedLoggerRuntime.emit(
         ~category,
