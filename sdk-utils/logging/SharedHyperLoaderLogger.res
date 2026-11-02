@@ -13,8 +13,5 @@ let logMerchantCall = (~event: merchantCallEvent, ~dataOf, ~emit) =>
       emit(~category, ~spec={...spec, outcome: Some(SharedLoggerTypes.Returned)}, ~severity, ~data),
   )
 
-let logMerchantProps = (~event: merchantPropEvent, ~dataOf, ~emit) =>
-  SharedLoggerProducer.logMerchantProps(~event, ~severity=event->merchantPropSeverity, ~dataOf, ~emit)
-
 let logMerchantIssue = (~issue: merchantIssue, ~dataOf, ~emit) =>
   SharedLoggerProducer.logMerchantIssue(~event=issue, ~severity=issue->merchantIssueSeverity, ~dataOf, ~emit)
