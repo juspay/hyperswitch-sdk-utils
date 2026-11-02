@@ -1,6 +1,23 @@
 open SharedLoggerTypes
 include SdkLoggerEvents
 
+let namedField = field =>
+  switch field->String.trim {
+  | "" => "unnamed"
+  | "cardNoInput" => "card_number"
+  | "expiryInput" => "card_expiry"
+  | "cvvInput" => "card_cvc"
+  | field => field->SharedLoggerEvent.snakeCase
+  }
+
+let normalizeUserEvent = event =>
+  switch event {
+  | FieldFocused({field}) => FieldFocused({field: field->namedField})
+  | FieldBlurred({field}) => FieldBlurred({field: field->namedField})
+  | FieldToggled({field, enabled}) => FieldToggled({field: field->namedField, enabled})
+  | event => event
+  }
+
 let logLifecycle = (
   ~event: lifecycleEvent,
   ~details=?,
@@ -37,7 +54,7 @@ let logState = (
   )
 
 let logUser = (~event: userEvent, ~details=?, ~paymentMethod=?, ~message=?) => {
-  let event = event->SharedSdkLogger.normalizeUserEvent
+  let event = event->normalizeUserEvent
   SharedLoggerProducer.logUser(
     ~event, ~severity=event->userSeverity, ~dataOf=SharedLoggerRuntime.eventDetails,
     ~emit=(~category, ~spec, ~severity, ~data) =>
