@@ -78,7 +78,6 @@ type lifecycleEvent =
   | BankAuthConnectorUnsupported(unsupportedConnectorData)
   | CustomerRedirectStarted(customerRedirectData)
   | NextActionUnsupported(nextActionFailureData)
-  | ThreeDsPopupRequested
   | DdcStarted
   | DdcCompleted
   | DdcFailed(ddcFailureData)
@@ -118,7 +117,6 @@ let lifecycleSeverity = value =>
   | ElementIframeMounted
   | WalletFlowResolved(_)
   | WalletStageReached(_)
-  | ThreeDsPopupRequested
   | DdcStarted
   | DdcCompleted
   | CountryDataServedFromBundle
@@ -268,7 +266,6 @@ type apiEvent =
   | CompleteAuthorize
   | PostSessionTokens
   | Sessions
-  | Authentication
   | PollStatus
   | CreateCustomerPaymentMethods
   | PaymentMethodEligibility
@@ -288,7 +285,6 @@ let apiSeverity = value =>
   | ConfirmPayoutCall
   | CompleteAuthorize
   | PostSessionTokens
-  | Authentication
   | CreateCustomerPaymentMethods
   | PaymentMethodsAuthLink
   | PaymentMethodsAuthExchange
