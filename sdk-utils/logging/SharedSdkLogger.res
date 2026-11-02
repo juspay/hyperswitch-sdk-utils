@@ -17,37 +17,37 @@ let normalizeUserEvent = event =>
   | event => event
   }
 
-let logLifecycle = (~event: lifecycleEvent, ~dataOf, ~emit) =>
-  SharedLoggerProducer.logLifecycle(~event, ~severity=event->lifecycleSeverity, ~dataOf, ~emit)
+let logLifecycle = (~event: lifecycleEvent, ~emit) =>
+  SharedLoggerProducer.logLifecycle(~event, ~severity=event->lifecycleSeverity, ~dataOf=SharedLoggerRuntime.eventDetails, ~emit)
 
-let logState = (~event: stateEvent, ~dataOf, ~emit) =>
-  SharedLoggerProducer.logState(~event, ~severity=event->stateSeverity, ~dataOf, ~emit)
+let logState = (~event: stateEvent, ~emit) =>
+  SharedLoggerProducer.logState(~event, ~severity=event->stateSeverity, ~dataOf=SharedLoggerRuntime.eventDetails, ~emit)
 
-let logUser = (~event: userEvent, ~dataOf, ~emit) => {
+let logUser = (~event: userEvent, ~emit) => {
   let event = event->normalizeUserEvent
-  SharedLoggerProducer.logUser(~event, ~severity=event->userSeverity, ~dataOf, ~emit)
+  SharedLoggerProducer.logUser(~event, ~severity=event->userSeverity, ~dataOf=SharedLoggerRuntime.eventDetails, ~emit)
 }
 
 let logCrash = (~origin: crashOrigin, ~emit) =>
   SharedLoggerProducer.logCrash(~event=origin, ~severity=origin->crashSeverity, ~emit)
 
-let observeApi = (~event: apiEvent, ~dataOf, ~run) =>
-  SharedLoggerProducer.observeApi(~event, ~severity=event->apiSeverity, ~dataOf, ~run)
+let observeApi = (~event: apiEvent, ~run) =>
+  SharedLoggerProducer.observeApi(~event, ~severity=event->apiSeverity, ~dataOf=SharedLoggerRuntime.eventDetails, ~run)
 
-let observeStaticAsset = (~event: staticAssetEvent, ~dataOf, ~run) =>
-  SharedLoggerProducer.observeResource(~event, ~severity=event->staticAssetSeverity, ~dataOf, ~run)
+let observeStaticAsset = (~event: staticAssetEvent, ~run) =>
+  SharedLoggerProducer.observeResource(~event, ~severity=event->staticAssetSeverity, ~dataOf=SharedLoggerRuntime.eventDetails, ~run)
 
-let logApi = (~event: apiEvent, ~dataOf, ~emit) =>
-  SharedLoggerProducer.logApi(~event, ~severity=event->apiSeverity, ~dataOf, ~emit)
+let logApi = (~event: apiEvent, ~emit) =>
+  SharedLoggerProducer.logApi(~event, ~severity=event->apiSeverity, ~dataOf=SharedLoggerRuntime.eventDetails, ~emit)
 
-let logFunction = (~event: functionEvent, ~dataOf, ~emit) =>
-  SharedLoggerProducer.logFunction(~event, ~severity=event->functionSeverity, ~dataOf, ~emit)
+let logFunction = (~event: functionEvent, ~emit) =>
+  SharedLoggerProducer.logFunction(~event, ~severity=event->functionSeverity, ~dataOf=SharedLoggerRuntime.eventDetails, ~emit)
 
-let observeFunction = (~event: functionEvent, ~dataOf, ~run) =>
-  SharedLoggerProducer.observeFunction(~event, ~severity=event->functionSeverity, ~dataOf, ~run)
+let observeFunction = (~event: functionEvent, ~run) =>
+  SharedLoggerProducer.observeFunction(~event, ~severity=event->functionSeverity, ~dataOf=SharedLoggerRuntime.eventDetails, ~run)
 
-let observeFunctionCallback = (~event: functionCallbackEvent, ~dataOf, ~run) =>
-  SharedLoggerProducer.observeFunctionCallback(~event, ~severity=event->functionCallbackSeverity, ~dataOf, ~run)
+let observeFunctionCallback = (~event: functionCallbackEvent, ~run) =>
+  SharedLoggerProducer.observeFunctionCallback(~event, ~severity=event->functionCallbackSeverity, ~dataOf=SharedLoggerRuntime.eventDetails, ~run)
 
 let observeResource = (~event: resourceEvent, ~run) =>
   SharedLoggerProducer.resource(~event, ~severity=event->resourceSeverity, ~run)

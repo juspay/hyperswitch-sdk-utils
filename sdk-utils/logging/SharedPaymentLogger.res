@@ -1,4 +1,4 @@
 include PaymentLoggerEvents
 
-let logLifecycle = (~event: lifecycleEvent, ~dataOf, ~emit) =>
-  SharedLoggerProducer.logLifecycle(~event, ~severity=event->lifecycleSeverity, ~dataOf, ~emit)
+let logLifecycle = (~event: lifecycleEvent, ~emit) =>
+  SharedLoggerProducer.logLifecycle(~event, ~severity=event->lifecycleSeverity, ~dataOf=SharedLoggerRuntime.eventDetails, ~emit)

@@ -1,0 +1,171 @@
+open SharedLoggerTypes
+include SdkLoggerEvents
+
+let logLifecycle = (
+  ~event: lifecycleEvent,
+  ~details=?,
+  ~exn=?,
+  ~failure=?,
+  ~durationMs=?,
+  ~paymentMethod=?,
+  ~source=?,
+  ~context=?,
+  ~message=?,
+) =>
+  SharedSdkLogger.logLifecycle(
+    ~event,
+    ~emit=(~category, ~spec, ~severity, ~data) =>
+      SharedLoggerRuntime.emit(~category, ~spec, ~severity, ~data,
+        ~details?, ~exn?, ~failure?, ~durationMs?, ~paymentMethod?, ~source?, ~context?, ~message?),
+  )
+
+let logState = (
+  ~event: stateEvent,
+  ~details=?,
+  ~failure=?,
+  ~durationMs=?,
+  ~paymentMethod=?,
+  ~context=?,
+  ~source=?,
+  ~message=?,
+) =>
+  SharedSdkLogger.logState(
+    ~event,
+    ~emit=(~category, ~spec, ~severity, ~data) =>
+      SharedLoggerRuntime.emit(~category, ~spec, ~severity, ~data,
+        ~details?, ~failure?, ~durationMs?, ~paymentMethod?, ~context?, ~source?, ~message?),
+  )
+
+let logUser = (~event: userEvent, ~details=?, ~paymentMethod=?, ~message=?) =>
+  SharedSdkLogger.logUser(
+    ~event,
+    ~emit=(~category, ~spec, ~severity, ~data) =>
+      SharedLoggerRuntime.emit(~category, ~spec, ~severity, ~data, ~details?, ~paymentMethod?, ~message?),
+  )
+
+let logCrash = (~origin: crashOrigin, ~exn=?, ~details=?, ~context=?, ~message=?) =>
+  SharedSdkLogger.logCrash(
+    ~origin,
+    ~emit=(~category, ~spec, ~severity) =>
+      SharedLoggerRuntime.emit(~category, ~spec, ~severity, ~details?, ~exn?, ~context?, ~message?),
+  )
+
+let observeApi = (
+  ~event: apiEvent,
+  ~url,
+  ~details=?,
+  ~failureOf,
+  ~detailsOf,
+  ~paymentMethod=?,
+  ~context=?,
+  ~source=?,
+  ~message=?,
+  ~call,
+) =>
+  SharedSdkLogger.observeApi(
+    ~event,
+    ~run=(~category, ~spec, ~severity, ~data) =>
+      SharedLoggerRuntime.observe(~category, ~spec, ~severity,
+        ~data=data->Array.concat([("url", url->JSON.Encode.string)]),
+        ~details?, ~failureOf, ~detailsOf, ~paymentMethod?, ~context?, ~source?, ~message?, ~call),
+  )
+
+let observeStaticAsset = (~event: staticAssetEvent, ~url, ~details=?, ~message=?, ~call) =>
+  SharedSdkLogger.observeStaticAsset(
+    ~event,
+    ~run=(~category, ~spec, ~severity, ~data) =>
+      SharedLoggerRuntime.observe(~category, ~spec, ~severity,
+        ~data=data->Array.concat([
+          ("url", url->JSON.Encode.string),
+          ("resource_type", "static_asset"->JSON.Encode.string),
+        ]), ~details?,
+        ~failureOf=SharedLoggerRuntime.httpFailure, ~detailsOf=SharedLoggerRuntime.httpDetails, ~message?, ~call),
+  )
+
+let logApi = (
+  ~event: apiEvent,
+  ~outcome,
+  ~details=?,
+  ~startedAt=?,
+  ~exn=?,
+  ~paymentMethod=?,
+  ~context=?,
+  ~message=?,
+) =>
+  SharedSdkLogger.logApi(
+    ~event,
+    ~emit=(~category, ~spec, ~severity, ~data) =>
+      SharedLoggerRuntime.emitPhase(~category, ~spec, ~severity, ~data, ~outcome,
+        ~details?, ~startedAt?, ~exn?, ~paymentMethod?, ~context?, ~message?),
+  )
+
+let logFunction = (
+  ~event: functionEvent,
+  ~outcome,
+  ~details=?,
+  ~startedAt=?,
+  ~exn=?,
+  ~paymentMethod=?,
+  ~context=?,
+  ~message=?,
+) =>
+  SharedSdkLogger.logFunction(
+    ~event,
+    ~emit=(~category, ~spec, ~severity, ~data) =>
+      SharedLoggerRuntime.emitPhase(~category, ~spec, ~severity, ~data, ~outcome,
+        ~details?, ~startedAt?, ~exn?, ~paymentMethod?, ~context?, ~message?),
+  )
+
+let observeFunction = (
+  ~event: functionEvent,
+  ~details=?,
+  ~timeoutMs=?,
+  ~paymentMethod=?,
+  ~source=?,
+  ~context=?,
+  ~message=?,
+  ~call,
+) =>
+  SharedSdkLogger.observeFunction(
+    ~event,
+    ~run=(~category, ~spec, ~severity, ~data) =>
+      SharedLoggerRuntime.observe(~category, ~spec, ~severity, ~data, ~details?,
+        ~timeoutMs?, ~paymentMethod?, ~source?, ~context?, ~message?, ~call),
+  )
+
+let observeFunctionCallback = (
+  ~event: functionCallbackEvent,
+  ~details=?,
+  ~timeoutMs=?,
+  ~paymentMethod=?,
+  ~context=?,
+  ~message=?,
+  ~callback,
+) =>
+  SharedSdkLogger.observeFunctionCallback(
+    ~event,
+    ~run=(~category, ~spec, ~severity, ~data) =>
+      SharedLoggerRuntime.observeCallback(~category, ~spec, ~severity, ~data,
+        ~details?, ~timeoutMs?, ~paymentMethod?, ~context?, ~message?, ~callback),
+  )
+
+let observeResource = (
+  ~event: resourceEvent,
+  ~url,
+  ~attributes=?,
+  ~matchQuery=?,
+  ~paymentMethod=?,
+  ~context=?,
+  ~abandoned=?,
+  ~message=?,
+  ~onLoad=?,
+  ~onError=?,
+) =>
+  SharedSdkLogger.observeResource(
+    ~event,
+    ~run=(~spec, ~severity) =>
+      SharedLoggerRuntime.observeResource(~spec, ~severity, ~url,
+        ~resource=event->isStylesheet ? SharedLoggerRuntime.Stylesheet : SharedLoggerRuntime.Script,
+        ~context?, ~attributes?, ~matchQuery?, ~paymentMethod?, ~abandoned?,
+        ~message?, ~onLoad?, ~onError?),
+  )
