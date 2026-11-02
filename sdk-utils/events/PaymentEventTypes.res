@@ -58,15 +58,3 @@ let eventFromString = (str: string): events => {
   | _ => UnknownEvent
   }
 }
-
-// The screen the shopper closed when cancelling a payment method flow.
-type paymentMethodFlowStep =
-  | PaymentSheet
-  | ThreeDsChallenge
-
-let paymentMethodFlowStepToString = (step: paymentMethodFlowStep): string => {
-  switch step {
-  | PaymentSheet => "paymentSheet"
-  | ThreeDsChallenge => "threeDsChallenge"
-  }
-}
