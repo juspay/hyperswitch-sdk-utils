@@ -11,8 +11,8 @@ let logLifecycle = (
   ~context=?,
   ~message=?,
 ) =>
-  SharedAuthenticationLogger.logLifecycle(
-    ~event,
+  SharedLoggerProducer.logLifecycle(
+    ~event, ~severity=event->lifecycleSeverity, ~dataOf=SharedLoggerRuntime.eventDetails,
     ~emit=(~category, ~spec, ~severity, ~data) =>
       SharedLoggerRuntime.emit(
         ~category, ~spec, ~severity, ~data, ~details?, ~exn?, ~failure?,
@@ -21,15 +21,15 @@ let logLifecycle = (
   )
 
 let logUser = (~event: userEvent, ~details=?, ~paymentMethod=?) =>
-  SharedAuthenticationLogger.logUser(
-    ~event,
+  SharedLoggerProducer.logUser(
+    ~event, ~severity=event->userSeverity, ~dataOf=SharedLoggerRuntime.eventDetails,
     ~emit=(~category, ~spec, ~severity, ~data) =>
       SharedLoggerRuntime.emit(~category, ~spec, ~severity, ~data, ~details?, ~paymentMethod?),
   )
 
 let observeApi = (~event: apiEvent, ~url, ~details=?, ~call) =>
-  SharedAuthenticationLogger.observeApi(
-    ~event,
+  SharedLoggerProducer.observeApi(
+    ~event, ~severity=event->apiSeverity, ~dataOf=SharedLoggerRuntime.eventDetails,
     ~run=(~category, ~spec, ~severity, ~data) =>
       SharedLoggerRuntime.observe(
         ~category, ~spec, ~severity,

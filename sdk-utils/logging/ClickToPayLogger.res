@@ -7,8 +7,8 @@ let source = () =>
   SharedLoggerRuntime.isMerchantWindow() ? Some(SharedLoggerRuntime.AuthenticationSession) : None
 
 let logLifecycle = (~event: lifecycleEvent, ~details=?, ~exn=?, ~message=?) =>
-  SharedClickToPayLogger.logLifecycle(
-    ~event,
+  SharedLoggerProducer.logLifecycle(
+    ~event, ~severity=event->lifecycleSeverity, ~dataOf=SharedLoggerRuntime.eventDetails,
     ~emit=(~category, ~spec, ~severity, ~data) =>
       SharedLoggerRuntime.emit(
         ~category, ~spec, ~severity, ~data, ~details?, ~exn?, ~paymentMethod,
@@ -17,15 +17,15 @@ let logLifecycle = (~event: lifecycleEvent, ~details=?, ~exn=?, ~message=?) =>
   )
 
 let logState = (~event: stateEvent) =>
-  SharedClickToPayLogger.logState(
-    ~event,
+  SharedLoggerProducer.logState(
+    ~event, ~severity=event->stateSeverity, ~dataOf=SharedLoggerRuntime.eventDetails,
     ~emit=(~category, ~spec, ~severity, ~data) =>
       SharedLoggerRuntime.emit(~category, ~spec, ~severity, ~data, ~paymentMethod, ~source=?source()),
   )
 
 let logUser = (~event: userEvent) =>
-  SharedClickToPayLogger.logUser(
-    ~event,
+  SharedLoggerProducer.logUser(
+    ~event, ~severity=event->userSeverity, ~dataOf=SharedLoggerRuntime.eventDetails,
     ~emit=(~category, ~spec, ~severity, ~data) =>
       SharedLoggerRuntime.emit(~category, ~spec, ~severity, ~data, ~paymentMethod, ~source=?source()),
   )
@@ -45,16 +45,16 @@ let observe = (
     ~detailsOf?, ~paymentMethod, ~source=?source(), ~message?, ~call)
 
 let observeFunction = (~event: functionEvent, ~detailsOf=?, ~message=?, ~call) =>
-  SharedClickToPayLogger.observeFunction(
-    ~event,
+  SharedLoggerProducer.observeFunction(
+    ~event, ~severity=event->functionSeverity, ~dataOf=SharedLoggerRuntime.eventDetails,
     ~run=(~category, ~spec, ~severity, ~data) =>
       observe(~category, ~spec, ~severity, ~data,
         ~failureOf=SharedLoggerRuntime.summarizeErrorResponse, ~detailsOf?, ~message?, ~call),
   )
 
 let observeMerchantCall = (~method: merchantMethod, ~details=?, ~detailsOf=?, ~message=?, ~call) =>
-  SharedClickToPayLogger.observeMerchantCall(
-    ~method,
+  SharedLoggerProducer.observeMerchantCall(
+    ~event=method, ~severity=method->merchantCallSeverity, ~dataOf=SharedLoggerRuntime.eventDetails,
     ~run=(~category, ~spec, ~severity, ~data) =>
       observe(~category, ~spec, ~severity,
         ~data=[("surface", "AUTHENTICATION_SESSION"->JSON.Encode.string)], ~details?,
@@ -62,8 +62,8 @@ let observeMerchantCall = (~method: merchantMethod, ~details=?, ~detailsOf=?, ~m
   )
 
 let observeApi = (~event: apiEvent, ~url, ~message=?, ~call) =>
-  SharedClickToPayLogger.observeApi(
-    ~event,
+  SharedLoggerProducer.observeApi(
+    ~event, ~severity=event->apiSeverity, ~dataOf=SharedLoggerRuntime.eventDetails,
     ~run=(~category, ~spec, ~severity, ~data) =>
       observe(~category, ~spec, ~severity,
         ~data=data->Array.concat([("url", url->JSON.Encode.string)]),
@@ -80,8 +80,8 @@ let observeResource = (
   ~onLoad=?,
   ~onError=?,
 ) =>
-  SharedClickToPayLogger.observeResource(
-    ~event,
+  SharedLoggerProducer.resource(
+    ~event, ~severity=event->resourceSeverity,
     ~run=(~spec, ~severity) =>
       SharedLoggerRuntime.observeResource(~spec, ~severity, ~url,
         ~resource=event->isStylesheet ? SharedLoggerRuntime.Stylesheet : SharedLoggerRuntime.Script,

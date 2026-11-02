@@ -2,8 +2,8 @@ open SharedLoggerTypes
 include PaymentMethodSessionLoggerEvents
 
 let logState = (~event: stateEvent, ~context=?, ~durationMs=?) =>
-  SharedPaymentMethodSessionLogger.logState(
-    ~event,
+  SharedLoggerProducer.logState(
+    ~event, ~severity=event->stateSeverity, ~dataOf=SharedLoggerRuntime.eventDetails,
     ~emit=(~category, ~spec, ~severity, ~data) =>
       SharedLoggerRuntime.emit(~category, ~spec, ~severity, ~data, ~context?, ~durationMs?),
   )
@@ -17,8 +17,8 @@ let observeApi = (
   ~detailsOf,
   ~call,
 ) =>
-  SharedPaymentMethodSessionLogger.observeApi(
-    ~event,
+  SharedLoggerProducer.observeApi(
+    ~event, ~severity=event->apiSeverity, ~dataOf=SharedLoggerRuntime.eventDetails,
     ~run=(~category, ~spec, ~severity, ~data) =>
       SharedLoggerRuntime.observe(~category, ~spec, ~severity,
         ~data=data->Array.concat([("url", url->JSON.Encode.string)]),
@@ -34,8 +34,8 @@ let logLifecycle = (
   ~paymentMethod=?,
   ~message=?,
 ) =>
-  SharedPaymentMethodSessionLogger.logLifecycle(
-    ~event,
+  SharedLoggerProducer.logLifecycle(
+    ~event, ~severity=event->lifecycleSeverity, ~dataOf=SharedLoggerRuntime.eventDetails,
     ~emit=(~category, ~spec, ~severity, ~data) =>
       SharedLoggerRuntime.emit(~category, ~spec, ~severity, ~data,
         ~context?, ~details?, ~exn?, ~failure?, ~paymentMethod?, ~message?),
@@ -50,16 +50,16 @@ let logFunction = (
   ~paymentMethod=SharedLoggerPaymentMethod.Card,
   ~message=?,
 ) =>
-  SharedPaymentMethodSessionLogger.logFunction(
-    ~event,
+  SharedLoggerProducer.logFunction(
+    ~event, ~severity=event->functionSeverity, ~dataOf=SharedLoggerRuntime.eventDetails,
     ~emit=(~category, ~spec, ~severity, ~data) =>
       SharedLoggerRuntime.emitPhase(~category, ~spec, ~severity, ~data, ~outcome,
         ~context?, ~startedAt?, ~exn?, ~paymentMethod, ~message?),
   )
 
 let observeFunctionCallback = (~event: functionCallbackEvent, ~context=?, ~paymentMethod=?, ~callback) =>
-  SharedPaymentMethodSessionLogger.observeFunctionCallback(
-    ~event,
+  SharedLoggerProducer.observeFunctionCallback(
+    ~event, ~severity=event->functionCallbackSeverity, ~dataOf=SharedLoggerRuntime.eventDetails,
     ~run=(~category, ~spec, ~severity, ~data) =>
       SharedLoggerRuntime.observeCallback(~category, ~spec, ~severity, ~data,
         ~context?, ~paymentMethod?, ~callback),
@@ -75,8 +75,8 @@ let logApi = (
   ~paymentMethod=SharedLoggerPaymentMethod.Card,
   ~message=?,
 ) =>
-  SharedPaymentMethodSessionLogger.logApi(
-    ~event,
+  SharedLoggerProducer.logApi(
+    ~event, ~severity=event->apiSeverity, ~dataOf=SharedLoggerRuntime.eventDetails,
     ~emit=(~category, ~spec, ~severity, ~data) =>
       SharedLoggerRuntime.emitPhase(~category, ~spec, ~severity, ~data, ~outcome,
         ~context?, ~details?, ~startedAt?, ~exn?, ~paymentMethod, ~message?),
@@ -92,8 +92,8 @@ let observeResource = (
   ~onLoad=?,
   ~onError=?,
 ) =>
-  SharedPaymentMethodSessionLogger.observeResource(
-    ~event,
+  SharedLoggerProducer.resource(
+    ~event, ~severity=event->resourceSeverity,
     ~run=(~spec, ~severity) =>
       SharedLoggerRuntime.observeResource(~spec, ~severity, ~url, ~resource=SharedLoggerRuntime.Script,
         ~attributes?, ~matchQuery?, ~context?, ~abandoned?, ~onLoad?, ~onError?),
