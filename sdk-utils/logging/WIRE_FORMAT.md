@@ -1,0 +1,7 @@
+# Logging wire serialization
+
+The typed row and value-envelope contracts remain complete in memory. Both native and Web queues use `SharedLoggerSerialization.serializeRow` at the wire boundary.
+
+**Intentional change requested after the behavior-preserving extraction:** object properties whose value is exactly the empty string are recursively omitted from outgoing JSON. This includes top-level empty identifiers/metadata and `href` inside the JSON-encoded `value` envelope. `value` remains a JSON string, not a nested object on the wire. Nonempty strings (including whitespace), 0, false, null, empty objects, and array positions/empty-string array elements are preserved. Arbitrary JSON-looking detail strings are not parsed. Serialization does not mutate the original row or context; backfill/counters/dedup logic is unchanged. Native cached payload text and Web's payment-method-session fallback projection both use this serializer; byte accounting uses the projected serialization.
+
+The row/envelope ReScript types still require their original fields. `schema_version` remains 8; the explicit omission rule changes wire key presence. The local receiver accepts absent optional IDs and href, but that does not establish production compatibility. No backend/ClickHouse table schema or missing-key ingestion setting is present in these checkouts. Confirm production missing-key/default handling (and whether wire-version policy needs a bump) before publishing. No backend was contacted to infer acceptance.

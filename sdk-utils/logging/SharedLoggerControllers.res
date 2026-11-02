@@ -7,6 +7,28 @@ module NativeFunnel = (
   open! SharedLoggerTypes
   open! SdkLoggerEvents
 
+  // Retain only the current credential reference/kind in memory, never in rows or storage.
+  let activeCredential = ref(None)
+  let prepareCredentials = (~sdkAuthorization, ~clientSecret) => {
+    let incoming = sdkAuthorization !== ""
+      ? Some(("SDK_AUTHORIZATION", sdkAuthorization))
+      : clientSecret !== "" ? Some(("CLIENT_SECRET", clientSecret)) : None
+    let changed = switch (activeCredential.contents, incoming) {
+    | (None, Some(_)) => true
+    | (Some((oldKind, oldValue)), Some((kind, value))) => oldKind !== kind || oldValue !== value
+    | _ => false
+    }
+    if changed {
+      activeCredential := incoming
+      LoggerContext.context := {
+        sdkInitAt: None, attemptId: "", sessionId: "", merchantId: "",
+        paymentId: "", authenticationId: "",
+      }
+      LoggerContext.onSessionChange.contents()
+    }
+    changed
+  }
+
   // Reuse the logger's session/counters; no second global session store or credentials.
   let details = (~context=LoggerContext.current(), ()) => {
     let entries = []
@@ -175,6 +197,7 @@ module NativeSdk = (
       ~paymentMethod: LoggerRuntime.paymentMethodType=?,
     ) => unit
     let init: (~sdkAuthorization: string, ~clientSecret: string) => unit
+    let prepareCredentials: (~sdkAuthorization: string, ~clientSecret: string) => bool
     let mounted: unit => unit
     let shimmerShown: unit => unit
     let rendered: (~startupApiCount: int, ~degraded: bool=?) => unit
@@ -418,6 +441,13 @@ module NativeSdk = (
     }
 
   let adoptSessionFromNativeProp = (nativeProp: Host.nativeProp) => {
+    LoggerUtils.safeRun(() => {
+      let credentials = Host.credentials(nativeProp)
+      if SdkFunnelLogger.prepareCredentials(
+        ~sdkAuthorization=credentials.sdkAuthorization,
+        ~clientSecret=credentials.clientSecret,
+      ) { stopIdleTracking() }
+    })
     LoggerUtils.safeRun(() => {
       Host.adoptProps(nativeProp)
     })

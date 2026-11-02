@@ -34,7 +34,59 @@ type defaults = {
   webMaskOverrides: array<string>,
 }
 
-@module("./LoggerDefaults.json") external defaults: defaults = "default"
+let defaults: defaults = {
+  schemaVersion: 8,
+  maxRowsPerEventName: 100,
+  maxUserEventsPerName: 20,
+  defaultTimeoutMs: 30000,
+  userGatedTimeoutMs: 600000,
+  flushDelayMs: 2000,
+  maxFlushBackoffMs: 60000,
+  maxBatchBytes: 30000,
+  maxQueuedRows: 100,
+  maxSendAttemptsPerBatch: 4,
+  sendTimeoutMs: 15000,
+  maxTextLength: 256,
+  maxRowTextLength: 1024,
+  maxDetailBytes: 8192,
+  maxPayloadFields: 120,
+  maxConfigBytes: 2048,
+  maxConfigDepth: 6,
+  maxConfigArrayItems: 20,
+  maxConfigOmitted: 10,
+  minimumRank: 0,
+  loggingLevel: "DEBUG",
+  enableLogging: false,
+  endpoint: "",
+  idleTimeoutMs: 120000,
+  logsPath: "/api/logs/sdk",
+  nonProdLogsPath: "/logs/sdk",
+  nativeUnmaskedFields: [
+    "locale",
+    "primaryButtonLabel",
+    "paymentSheetHeaderLabel",
+    "savedPaymentSheetHeaderLabel",
+    "merchantDisplayName",
+    "placeholder",
+    "walletButtonsConfiguration",
+    "subscribedEvents",
+    "paymentMethodLayout",
+  ],
+  webUnmaskedFields: [
+    "layout",
+    "wallets",
+    "paymentMethodsConfig",
+    "terms",
+  ],
+  webMaskOverrides: [
+    "wallets.walletReturnUrl",
+    "paymentMethodsConfig.paymentMethodTypes.message.value",
+  ],
+  nativeDecodeConstructorPayload: true,
+  webDecodeConstructorPayload: false,
+  nativeDdcStartedSeverity: SharedLoggerTypes.Info,
+  webDdcStartedSeverity: SharedLoggerTypes.Debug,
+}
 
 module Common = {
   let schemaVersion = defaults.schemaVersion
@@ -110,6 +162,12 @@ module Native = {
 }
 
 module Web = {
+  // Undefined means no override. Explicit false, 0 and empty strings stay explicit.
+  let resolveEnabled = value => value->Option.getOr(defaults.enableLogging)
+  let resolveEndpoint = value => value->Option.getOr(defaults.endpoint)->normalizeEndpoint
+  let resolveMinimumRank = value => value->Option.getOr(defaults.loggingLevel)->rankOfLevel
+  let resolveMaxRowsPerEventName = value => value->Option.getOr(defaults.maxRowsPerEventName)
+  let resolveMaxUserEventsPerName = value => value->Option.getOr(defaults.maxUserEventsPerName)
   let ddcStartedSeverity = defaults.webDdcStartedSeverity
   let decodeConstructorPayload = defaults.webDecodeConstructorPayload
   include Common

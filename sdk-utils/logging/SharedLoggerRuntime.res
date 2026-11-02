@@ -1,6 +1,3 @@
-// Only runtime primitives with identical behavior across the two hosts.
-// Initialization, event emission, context, transport and rethrow stay local.
-open SharedLoggerTypes
 
 type browserInfo = {name: string, version: string}
 
@@ -33,15 +30,15 @@ let detectBrowser: unit => browserInfo = %raw(`
   }
 `)
 
-let rank = severity =>
+let rank = (severity: SharedLoggerTypes.severity) =>
   switch severity {
-  | Debug => 0
-  | Info => 1
-  | Warning => 2
-  | Error => 3
+  | SharedLoggerTypes.Debug => 0
+  | SharedLoggerTypes.Info => 1
+  | SharedLoggerTypes.Warning => 2
+  | SharedLoggerTypes.Error => 3
   }
 
-let step = (~outcome, ~durationMs=?, ~failureClass=?, ~error=?, ~timeoutMs=0) => {
+let step = (~outcome, ~durationMs=?, ~failureClass=?, ~error=?, ~timeoutMs=0): SharedLoggerTypes.step => {
   outcome,
   durationMs,
   failureClass,

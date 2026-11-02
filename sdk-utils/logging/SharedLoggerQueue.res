@@ -76,7 +76,7 @@ module Engine = (LoggerConfig: EngineConfig, Host: Host) => {
   let sendFailures = ref(0)
   let clearTimer = () => Policy.clearTimer(flushTimer)
   let serialize = entry => {
-    let text = entry.row->JSON.stringifyAny->Option.getOr("")
+    let text = entry.row->SharedLoggerSerialization.serializeRow
     if Host.native {
       entry.text = text
     }
@@ -105,7 +105,7 @@ module Engine = (LoggerConfig: EngineConfig, Host: Host) => {
         `[${batch
           ->Array.map(entry => {
             let paymentId = entry.row.paymentId !== "" ? entry.row.paymentId : entry.pmSessionId
-            {...entry.row, paymentId}->JSON.stringifyAny->Option.getOr("")
+            {...entry.row, paymentId}->SharedLoggerSerialization.serializeRow
           })
           ->Array.join(",")}]`,
       )
