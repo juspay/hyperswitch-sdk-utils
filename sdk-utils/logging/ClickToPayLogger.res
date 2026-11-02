@@ -3,31 +3,65 @@ include ClickToPayLoggerEvents
 
 let paymentMethod = SharedLoggerPaymentMethod.Card
 
-let source = () =>
-  SharedLoggerRuntime.isMerchantWindow() ? Some(SharedLoggerRuntime.AuthenticationSession) : None
-
-let logLifecycle = (~event: lifecycleEvent, ~details=?, ~exn=?, ~message=?) =>
+let logLifecycle = (
+  ~event: lifecycleEvent,
+  ~details=?,
+  ~exn=?,
+  ~context=?,
+  ~source=?,
+  ~message=?,
+) =>
   SharedLoggerProducer.logLifecycle(
-    ~event, ~severity=event->lifecycleSeverity, ~dataOf=SharedLoggerRuntime.eventDetails,
+    ~event,
+    ~severity=event->lifecycleSeverity,
+    ~dataOf=SharedLoggerRuntime.eventDetails,
     ~emit=(~category, ~spec, ~severity, ~data) =>
       SharedLoggerRuntime.emit(
-        ~category, ~spec, ~severity, ~data, ~details?, ~exn?, ~paymentMethod,
-        ~source=?source(), ~message?,
+        ~category,
+        ~spec,
+        ~severity,
+        ~data,
+        ~details?,
+        ~exn?,
+        ~paymentMethod,
+        ~context?,
+        ~source?,
+        ~message?,
       ),
   )
 
-let logState = (~event: stateEvent) =>
+let logState = (~event: stateEvent, ~context=?, ~source=?) =>
   SharedLoggerProducer.logState(
-    ~event, ~severity=event->stateSeverity, ~dataOf=SharedLoggerRuntime.eventDetails,
+    ~event,
+    ~severity=event->stateSeverity,
+    ~dataOf=SharedLoggerRuntime.eventDetails,
     ~emit=(~category, ~spec, ~severity, ~data) =>
-      SharedLoggerRuntime.emit(~category, ~spec, ~severity, ~data, ~paymentMethod, ~source=?source()),
+      SharedLoggerRuntime.emit(
+        ~category,
+        ~spec,
+        ~severity,
+        ~data,
+        ~paymentMethod,
+        ~context?,
+        ~source?,
+      ),
   )
 
-let logUser = (~event: userEvent) =>
+let logUser = (~event: userEvent, ~context=?, ~source=?) =>
   SharedLoggerProducer.logUser(
-    ~event, ~severity=event->userSeverity, ~dataOf=SharedLoggerRuntime.eventDetails,
+    ~event,
+    ~severity=event->userSeverity,
+    ~dataOf=SharedLoggerRuntime.eventDetails,
     ~emit=(~category, ~spec, ~severity, ~data) =>
-      SharedLoggerRuntime.emit(~category, ~spec, ~severity, ~data, ~paymentMethod, ~source=?source()),
+      SharedLoggerRuntime.emit(
+        ~category,
+        ~spec,
+        ~severity,
+        ~data,
+        ~paymentMethod,
+        ~context?,
+        ~source?,
+      ),
   )
 
 let observe = (
@@ -38,37 +72,100 @@ let observe = (
   ~details=?,
   ~failureOf,
   ~detailsOf=?,
+  ~context=?,
+  ~source=?,
   ~message=?,
   ~call,
 ) =>
-  SharedLoggerRuntime.observe(~category, ~spec, ~severity, ~data, ~details?, ~failureOf,
-    ~detailsOf?, ~paymentMethod, ~source=?source(), ~message?, ~call)
+  SharedLoggerRuntime.observe(
+    ~category,
+    ~spec,
+    ~severity,
+    ~data,
+    ~details?,
+    ~failureOf,
+    ~detailsOf?,
+    ~paymentMethod,
+    ~context?,
+    ~source?,
+    ~message?,
+    ~call,
+  )
 
-let observeFunction = (~event: functionEvent, ~detailsOf=?, ~message=?, ~call) =>
+let observeFunction = (
+  ~event: functionEvent,
+  ~detailsOf=?,
+  ~context=?,
+  ~source=?,
+  ~message=?,
+  ~call,
+) =>
   SharedLoggerProducer.observeFunction(
-    ~event, ~severity=event->functionSeverity, ~dataOf=SharedLoggerRuntime.eventDetails,
+    ~event,
+    ~severity=event->functionSeverity,
+    ~dataOf=SharedLoggerRuntime.eventDetails,
     ~run=(~category, ~spec, ~severity, ~data) =>
-      observe(~category, ~spec, ~severity, ~data,
-        ~failureOf=SharedLoggerRuntime.summarizeErrorResponse, ~detailsOf?, ~message?, ~call),
+      observe(
+        ~category,
+        ~spec,
+        ~severity,
+        ~data,
+        ~context?,
+        ~source?,
+        ~failureOf=SharedLoggerRuntime.summarizeErrorResponse,
+        ~detailsOf?,
+        ~message?,
+        ~call,
+      ),
   )
 
-let observeMerchantCall = (~method: merchantMethod, ~details=?, ~detailsOf=?, ~message=?, ~call) =>
+let observeMerchantCall = (
+  ~method: merchantMethod,
+  ~details=?,
+  ~detailsOf=?,
+  ~context=?,
+  ~source=?,
+  ~message=?,
+  ~call,
+) =>
   SharedLoggerProducer.observeMerchantCall(
-    ~event=method, ~severity=method->merchantCallSeverity, ~dataOf=SharedLoggerRuntime.eventDetails,
+    ~event=method,
+    ~severity=method->merchantCallSeverity,
+    ~dataOf=SharedLoggerRuntime.eventDetails,
     ~run=(~category, ~spec, ~severity, ~data) =>
-      observe(~category, ~spec, ~severity,
-        ~data=[("surface", "AUTHENTICATION_SESSION"->JSON.Encode.string)], ~details?,
-        ~failureOf=SharedLoggerRuntime.summarizeErrorResponse, ~detailsOf?, ~message?, ~call),
+      observe(
+        ~category,
+        ~spec,
+        ~severity,
+        ~data=[("surface", "AUTHENTICATION_SESSION"->JSON.Encode.string)],
+        ~details?,
+        ~context?,
+        ~source?,
+        ~failureOf=SharedLoggerRuntime.summarizeErrorResponse,
+        ~detailsOf?,
+        ~message?,
+        ~call,
+      ),
   )
 
-let observeApi = (~event: apiEvent, ~url, ~message=?, ~call) =>
+let observeApi = (~event: apiEvent, ~url, ~context=?, ~source=?, ~message=?, ~call) =>
   SharedLoggerProducer.observeApi(
-    ~event, ~severity=event->apiSeverity, ~dataOf=SharedLoggerRuntime.eventDetails,
+    ~event,
+    ~severity=event->apiSeverity,
+    ~dataOf=SharedLoggerRuntime.eventDetails,
     ~run=(~category, ~spec, ~severity, ~data) =>
-      observe(~category, ~spec, ~severity,
+      observe(
+        ~category,
+        ~spec,
+        ~severity,
         ~data=data->Array.concat([("url", url->JSON.Encode.string)]),
-        ~failureOf=SharedLoggerRuntime.httpFailure, ~detailsOf=SharedLoggerRuntime.httpDetails,
-        ~message?, ~call),
+        ~context?,
+        ~source?,
+        ~failureOf=SharedLoggerRuntime.httpFailure,
+        ~detailsOf=SharedLoggerRuntime.httpDetails,
+        ~message?,
+        ~call,
+      ),
   )
 
 let observeResource = (
@@ -76,15 +173,28 @@ let observeResource = (
   ~url,
   ~attributes=?,
   ~matchQuery=?,
+  ~context=?,
+  ~source=?,
   ~message=?,
   ~onLoad=?,
   ~onError=?,
 ) =>
-  SharedLoggerProducer.resource(
-    ~event, ~severity=event->resourceSeverity,
-    ~run=(~spec, ~severity) =>
-      SharedLoggerRuntime.observeResource(~spec, ~severity, ~url,
-        ~resource=event->isStylesheet ? SharedLoggerRuntime.Stylesheet : SharedLoggerRuntime.Script,
-        ~attributes?, ~matchQuery?, ~paymentMethod, ~source=?source(),
-        ~message?, ~onLoad?, ~onError?),
+  SharedLoggerProducer.resource(~event, ~severity=event->resourceSeverity, ~run=(
+    ~spec,
+    ~severity,
+  ) =>
+    SharedLoggerRuntime.observeResource(
+      ~spec,
+      ~severity,
+      ~url,
+      ~resource=event->isStylesheet ? SharedLoggerRuntime.Stylesheet : SharedLoggerRuntime.Script,
+      ~attributes?,
+      ~matchQuery?,
+      ~paymentMethod,
+      ~context?,
+      ~source?,
+      ~message?,
+      ~onLoad?,
+      ~onError?,
+    )
   )

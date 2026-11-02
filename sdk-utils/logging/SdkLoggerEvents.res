@@ -50,6 +50,18 @@ type nextActionFailureData = {nextAction: string, recovered: bool}
 
 type unknownPaymentMethodData = {value: string}
 
+type paymentOutcomeData = {status: string, manualRetryAllowed?: bool}
+type retryExhaustionData = {operation: string, attempts: int}
+type paymentStatusUnknownData = {inferred: bool}
+
+type transStatusData = {transStatus: string}
+type threeDsMethodFailure = MissingContainer | FormSubmitFailed | IframeLoadFailed
+type threeDsMethodFailureData = {reason: threeDsMethodFailure}
+module ThreeDsPopup = {
+  type failure = MessageHandlingFailed
+}
+type threeDsPopupFailureData = {reason: ThreeDsPopup.failure}
+
 type unsupportedConnectorData = {connector: string}
 
 type validationFailureData = {reason: string}
@@ -65,6 +77,25 @@ type operationBlockedData = {operation: blockedOperation, reason: string}
 
 type lifecycleEvent =
   | ElementIframeMounted
+  | PaymentAttempted
+  | PaymentSucceeded(paymentOutcomeData)
+  | PaymentFailed(paymentOutcomeData)
+  | PaymentRejected
+  | PaymentStatusUnknown(paymentStatusUnknownData)
+  | PaymentRetriesExhausted(retryExhaustionData)
+  | PaymentErrorHandlingFailed
+  | PaymentStatusPollExhausted
+  | ThreeDsChallengeShown(transStatusData)
+  | ThreeDsFrictionlessResolved(transStatusData)
+  | ThreeDsAuthContainerMissing(transStatusData)
+  | ThreeDsAuthRequestFailed
+  | ThreeDsMethodStarted
+  | ThreeDsMethodCompleted
+  | ThreeDsMethodSkipped
+  | ThreeDsMethodFailed(threeDsMethodFailureData)
+  | ThreeDsMethodTimedOut
+  | ThreeDsPopupRequested
+  | ThreeDsPopupFailed(threeDsPopupFailureData)
   | ElementInitReceived
   | AppRendered
   | OperationBlocked(operationBlockedData)
@@ -114,6 +145,22 @@ let walletFailureSeverity = reason =>
 
 let lifecycleSeverity = value =>
   switch value {
+  | PaymentAttempted | PaymentSucceeded(_) | PaymentFailed(_) => Info
+  | PaymentStatusUnknown(_) | PaymentStatusPollExhausted => Warning
+  | PaymentRejected | PaymentRetriesExhausted(_) | PaymentErrorHandlingFailed => Error
+  | ThreeDsMethodStarted
+  | ThreeDsMethodCompleted
+  | ThreeDsMethodSkipped
+  | ThreeDsPopupRequested =>
+    Debug
+  | ThreeDsChallengeShown(_) | ThreeDsFrictionlessResolved(_) => Info
+  | ThreeDsMethodTimedOut => Warning
+  | ThreeDsAuthContainerMissing(_) | ThreeDsAuthRequestFailed | ThreeDsPopupFailed(_) => Error
+  | ThreeDsMethodFailed({reason}) =>
+    switch reason {
+    | MissingContainer | FormSubmitFailed => Error
+    | IframeLoadFailed => Warning
+    }
   | ElementIframeMounted
   | WalletFlowResolved(_)
   | WalletStageReached(_)
@@ -220,6 +267,7 @@ type openedViewData = {view: openedView}
 type submitData = {source: submitSource}
 
 type userEvent =
+  | ThreeDsPopupDismissed
   | PaymentMethodSelected(methodData)
   | CardSchemeSelected(methodData)
   | SavedMethodSelected(savedMethodSelectionData)
@@ -238,6 +286,7 @@ type userEvent =
 
 let userSeverity = value =>
   switch value {
+  | ThreeDsPopupDismissed => Info
   | PaymentMethodSelected(_)
   | CardSchemeSelected(_)
   | SavedMethodSelected(_)
@@ -260,6 +309,7 @@ let userSeverity = value =>
 // Api
 
 type apiEvent =
+  | Authentication
   | RetrievePaymentIntent
   | ConfirmCall
   | ConfirmPayoutCall
@@ -281,6 +331,7 @@ let apiSeverity = value =>
   | PaymentMethodEligibility
   | PollStatus => softFailure
   | RetrievePaymentIntent
+  | Authentication
   | ConfirmCall
   | ConfirmPayoutCall
   | CompleteAuthorize
