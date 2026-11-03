@@ -26,6 +26,7 @@ type events =
   | FormStatusChange
   | BillingDetailsChange
   | CvcStatusChange
+  | CustomMessageElementClicked
   | SurchargeInfo
   | AppliedOffersInfo
   | UnknownEvent
@@ -37,6 +38,7 @@ let eventToString = (eventType: events): string => {
   | FormStatusChange => "formStatusChange"
   | BillingDetailsChange => "billingDetailsChange"
   | CvcStatusChange => "cvcStatusChange"
+  | CustomMessageElementClicked => "customMessageElementClicked"
   | SurchargeInfo => "surchargeInfo"
   | AppliedOffersInfo => "appliedOffersInfo"
   | UnknownEvent => "unknownEvent"
@@ -50,6 +52,7 @@ let eventFromString = (str: string): events => {
   | "formStatusChange" => FormStatusChange
   | "billingDetailsChange" => BillingDetailsChange
   | "cvcStatusChange" => CvcStatusChange
+  | "customMessageElementClicked" => CustomMessageElementClicked
   | "surchargeInfo" => SurchargeInfo
   | "appliedOffersInfo" => AppliedOffersInfo
   | _ => UnknownEvent
