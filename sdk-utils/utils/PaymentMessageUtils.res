@@ -130,7 +130,6 @@ let defaultMessage: message = {
 let readMessage = (json, path): option<message> =>
   switch json->JSON.Classify.classify {
   | Null => None
-  | String(value) => Some({...defaultMessage, displayMode: #custom_message, value: Some(value)})
   | Object(dict) =>
     let value = dict->getOptionString("value")
     let displayMode = switch dict->getOptionString("displayMode") {
@@ -160,9 +159,12 @@ let readMessage = (json, path): option<message> =>
       })
     }
   | _ =>
-    warn(path ++ " must be a message object or a string; it will be ignored.")
+    warn(path ++ " must be a message object such as {value: \"...\"}; it will be ignored.")
     None
   }
+
+let readOptionalMessage = (dict, path) =>
+  dict->Dict.get("message")->Option.flatMap(json => readMessage(json, path ++ ".message"))
 
 let readConfigs = (config: Dict.t<JSON.t>): array<paymentMethodConfig> =>
   config
@@ -172,21 +174,49 @@ let readConfigs = (config: Dict.t<JSON.t>): array<paymentMethodConfig> =>
     ->JSON.Decode.object
     ->Option.map(dict => {
       let paymentMethod = dict->getString("paymentMethod", "")
+      let path = "paymentMethodsConfig." ++ paymentMethod
+      let paymentMethodTypes =
+        dict
+        ->getArray("paymentMethodTypes")
+        ->Array.filterMap(
+          json =>
+            json
+            ->JSON.Decode.object
+            ->Option.map(
+              typeDict => {
+                let paymentMethodType = typeDict->getString("paymentMethodType", "")
+                {
+                  paymentMethodType,
+                  message: typeDict->readOptionalMessage(path ++ "." ++ paymentMethodType),
+                }
+              },
+            ),
+        )
+      /* Cards take one message for credit and debit alike, as on web. */
+      let paymentMethodTypes = if paymentMethod == "card" && paymentMethodTypes->Array.length > 0 {
+        warn(path ++ ".paymentMethodTypes is not supported for cards; it will be ignored.")
+        []
+      } else {
+        paymentMethodTypes
+      }
       {
         paymentMethod,
-        message: dict
-        ->Dict.get("message")
-        ->Option.flatMap(
-          json => readMessage(json, "paymentMethodsConfig." ++ paymentMethod ++ ".message"),
-        ),
+        message: dict->readOptionalMessage(path),
+        paymentMethodTypes,
       }
     })
   )
 
-let resolve = (configs: array<paymentMethodConfig>, ~paymentMethod) =>
+/* A payment method type's message wins over its payment method's message. */
+let resolve = (configs: array<paymentMethodConfig>, ~paymentMethod, ~paymentMethodType) =>
   configs
   ->Array.find(config => config.paymentMethod == paymentMethod)
-  ->Option.flatMap(config => config.message)
+  ->Option.flatMap(config =>
+    config.paymentMethodTypes
+    ->Array.find(typeConfig => typeConfig.paymentMethodType == paymentMethodType)
+    ->Option.flatMap(typeConfig => typeConfig.message)
+    ->Option.orElse(config.message)
+  )
 
 /* The element's own style wins per property over the message's elementStyles.action;
  the renderer applies the theme for whatever is still unset. */

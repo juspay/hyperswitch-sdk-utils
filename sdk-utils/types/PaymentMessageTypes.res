@@ -22,9 +22,15 @@ type message = {
   elements: Dict.t<element>,
 }
 
+type paymentMethodTypeConfig = {
+  paymentMethodType: string,
+  message: option<message>,
+}
+
 type paymentMethodConfig = {
   paymentMethod: string,
   message: option<message>,
+  paymentMethodTypes: array<paymentMethodTypeConfig>,
 }
 
 type elementClickedEvent = {
