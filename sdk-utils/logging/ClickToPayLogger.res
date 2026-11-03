@@ -121,6 +121,7 @@ let observeFunction = (
 
 let observeMerchantCall = (
   ~method: merchantMethod,
+  ~surface=?,
   ~details=?,
   ~detailsOf=?,
   ~context=?,
@@ -137,7 +138,9 @@ let observeMerchantCall = (
         ~category,
         ~spec,
         ~severity,
-        ~data=[("surface", "AUTHENTICATION_SESSION"->JSON.Encode.string)],
+        ~data=data->Array.concat(
+          surface->Option.mapOr([], surface => [("surface", surface->JSON.Encode.string)]),
+        ),
         ~details?,
         ~context?,
         ~source?,

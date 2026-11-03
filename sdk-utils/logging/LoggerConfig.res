@@ -15,20 +15,17 @@ let configure = (
   enableLogging->Option.forEach(value => enabled := value)
   logEndpoint->Option.forEach(value => endpoint := value->String.trim)
   loggingLevel->Option.forEach(value =>
-    minimumRank := switch value->String.trim->String.toUpperCase {
-    | "INFO" => 1
-    | "WARNING" | "WARN" => 2
-    | "ERROR" => 3
-    | "SILENT" => 4
-    | _ => 0
-    }
+    minimumRank :=
+      switch value->String.trim->String.toUpperCase {
+      | "INFO" => 1
+      | "WARNING" | "WARN" => 2
+      | "ERROR" => 3
+      | "SILENT" => 4
+      | _ => 0
+      }
   )
-  maxLogsPushedPerEventName->Option.forEach(value =>
-    maxRowsPerEventName := Math.Int.max(1, value)
-  )
-  userEventLimit->Option.forEach(value =>
-    maxUserEventsPerName := Math.Int.max(1, value)
-  )
+  maxLogsPushedPerEventName->Option.forEach(value => maxRowsPerEventName := Math.Int.max(1, value))
+  userEventLimit->Option.forEach(value => maxUserEventsPerName := Math.Int.max(1, value))
 }
 
 let schemaVersion = 8
@@ -45,8 +42,3 @@ let maxTextLength = 256
 let maxRowTextLength = 1024
 let maxDetailBytes = 8192
 let maxPayloadFields = 120
-
-let maxConfigBytes = 2048
-let maxConfigDepth = 6
-let maxConfigArrayItems = 20
-let maxConfigOmitted = 10

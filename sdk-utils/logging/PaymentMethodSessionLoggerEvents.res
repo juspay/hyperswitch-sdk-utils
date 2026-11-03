@@ -1,4 +1,4 @@
-type cardFormScope = PaymentForm | VaultForm
+type cardFormScope = VaultForm
 type cardFormData = {scope: cardFormScope}
 type cardFieldData = {scope: cardFormScope, field: string}
 type cardFormCompletionData = {scope: cardFormScope, fields: array<string>}

@@ -46,6 +46,7 @@ let observeFunction = (~event: functionEvent, ~detailsOf=?, ~message=?, ~call) =
 let observeMerchantCall = (~method: merchantMethod, ~details=?, ~detailsOf=?, ~message=?, ~call) =>
   ClickToPayLogger.observeMerchantCall(
     ~method,
+    ~surface="AUTHENTICATION_SESSION",
     ~details?,
     ~detailsOf?,
     ~message?,
