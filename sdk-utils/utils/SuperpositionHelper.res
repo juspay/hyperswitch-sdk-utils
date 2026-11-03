@@ -25,6 +25,8 @@ let resolveFieldInclusion = (
   (shouldInclude, isRequired)
 }
 
+let isWritableKey = key => key !== "" && !CommonUtils.isReservedObjectKey(key)
+
 let sortFieldsByPriorityOrder = fields => {
   fields->Array.sort((a, b) => Int.compare(a.fieldDisplayOrder, b.fieldDisplayOrder))
   fields
@@ -192,7 +194,7 @@ let setValueAtNestedPath = (dict: Dict.t<JSON.t>, keys: array<string>, value: st
     dict
   } else if keysLength === 1 {
     let key = CommonUtils.getArrayElement(keys, 0, "")
-    if key !== "" && value !== "" {
+    if isWritableKey(key) && value !== "" {
       dict->Dict.set(key, value->JSON.Encode.string)
     }
     dict
@@ -202,7 +204,7 @@ let setValueAtNestedPath = (dict: Dict.t<JSON.t>, keys: array<string>, value: st
 
     for i in 0 to pathLength - 1 {
       let key = CommonUtils.getArrayElement(keys, i, "")
-      if key !== "" {
+      if isWritableKey(key) {
         let nestedDict = getOrCreateNestedDictionary(currentDict.contents, key)
         currentDict.contents->Dict.set(key, nestedDict->JSON.Encode.object)
         currentDict := nestedDict
@@ -210,7 +212,7 @@ let setValueAtNestedPath = (dict: Dict.t<JSON.t>, keys: array<string>, value: st
     }
 
     let finalKey = CommonUtils.getArrayElement(keys, pathLength, "")
-    if finalKey !== "" && value !== "" {
+    if isWritableKey(finalKey) && value !== "" {
       currentDict.contents->Dict.set(finalKey, value->JSON.Encode.string)
     }
 
@@ -256,7 +258,11 @@ let convertConfigurationToRequiredFields = (resolvedConfig, ~isUseBillingAddress
   ->Array.forEach(((key, value)) => {
     let parts = key->String.split("._")
     switch (parts->Array.get(0), parts->Array.get(1)) {
-    | (Some(baseName), Some(metadataKey)) if baseName !== "" && metadataKey !== "" => {
+    | (Some(baseName), Some(metadataKey))
+      if baseName !== "" &&
+      metadataKey !== "" &&
+      !CommonUtils.isReservedObjectKey(baseName) &&
+      !CommonUtils.isReservedObjectKey(metadataKey) => {
         let fieldGroup = switch fieldGroups->Dict.get(baseName) {
         | Some(group) => group
         | None => {

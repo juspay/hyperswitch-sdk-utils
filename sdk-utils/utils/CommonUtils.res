@@ -1,3 +1,16 @@
+// Object keys that reach Object.prototype when written with `dict[key] = value`
+// (which is what Dict.set compiles to). Config keys and required-field write
+// paths arrive from the server and are split on "." to build nested objects, so
+// a segment like `__proto__` would otherwise pollute every object in the SDK --
+// Dict.get walks the prototype chain, and the caller-side allowlists only
+// enumerate own keys, so they are no defence. `constructor`/`prototype` close
+// the indirect `constructor.prototype.x` route.
+let isReservedObjectKey = key =>
+  switch key {
+  | "__proto__" | "constructor" | "prototype" => true
+  | _ => false
+  }
+
 let getOptionString = (dict, key) => {
   dict->Dict.get(key)->Option.flatMap(JSON.Decode.string)
 }
