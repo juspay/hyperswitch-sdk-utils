@@ -11,18 +11,26 @@ let logState = (~event: stateEvent, ~context=?, ~durationMs=?) =>
 let observeApi = (
   ~event: apiEvent,
   ~url,
+  ~request: Fetch.Request.init={},
   ~context=?,
   ~details=?,
-  ~failureOf,
-  ~detailsOf,
-  ~call,
 ) =>
   SharedLoggerProducer.observeApi(
-    ~event, ~severity=event->apiSeverity, ~dataOf=SharedLoggerRuntime.eventDetails,
+    ~event,
+    ~severity=event->apiSeverity,
+    ~dataOf=SharedLoggerRuntime.eventDetails,
     ~run=(~category, ~spec, ~severity, ~data) =>
-      SharedLoggerRuntime.observe(~category, ~spec, ~severity,
+      SharedLoggerRuntime.observe(
+        ~category,
+        ~spec,
+        ~severity,
         ~data=data->Array.concat([("url", url->JSON.Encode.string)]),
-        ~details?, ~failureOf, ~detailsOf, ~context?, ~call),
+        ~details?,
+        ~failureOf=SharedLoggerRuntime.httpFailure,
+        ~detailsOf=SharedLoggerRuntime.httpDetails,
+        ~context?,
+        ~call=() => Fetch.fetch(url, request),
+      ),
   )
 
 let logLifecycle = (

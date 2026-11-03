@@ -151,7 +151,14 @@ let observeMerchantCall = (
       ),
   )
 
-let observeApi = (~event: apiEvent, ~url, ~context=?, ~source=?, ~message=?, ~call) =>
+let observeApi = (
+  ~event: apiEvent,
+  ~url,
+  ~request: Fetch.Request.init={},
+  ~context=?,
+  ~source=?,
+  ~message=?,
+) =>
   SharedLoggerProducer.observeApi(
     ~event,
     ~severity=event->apiSeverity,
@@ -167,7 +174,7 @@ let observeApi = (~event: apiEvent, ~url, ~context=?, ~source=?, ~message=?, ~ca
         ~failureOf=SharedLoggerRuntime.httpFailure,
         ~detailsOf=SharedLoggerRuntime.httpDetails,
         ~message?,
-        ~call,
+        ~call=() => Fetch.fetch(url, request),
       ),
   )
 

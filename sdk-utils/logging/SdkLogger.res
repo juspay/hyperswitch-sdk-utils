@@ -72,21 +72,32 @@ let logCrash = (~origin: crashOrigin, ~exn=?, ~details=?, ~context=?, ~message=?
 let observeApi = (
   ~event: apiEvent,
   ~url,
+  ~request: Fetch.Request.init={},
   ~details=?,
-  ~failureOf,
-  ~detailsOf,
   ~paymentMethod=?,
   ~context=?,
   ~source=?,
   ~message=?,
-  ~call,
 ) =>
   SharedLoggerProducer.observeApi(
-    ~event, ~severity=event->apiSeverity, ~dataOf=SharedLoggerRuntime.eventDetails,
+    ~event,
+    ~severity=event->apiSeverity,
+    ~dataOf=SharedLoggerRuntime.eventDetails,
     ~run=(~category, ~spec, ~severity, ~data) =>
-      SharedLoggerRuntime.observe(~category, ~spec, ~severity,
+      SharedLoggerRuntime.observe(
+        ~category,
+        ~spec,
+        ~severity,
         ~data=data->Array.concat([("url", url->JSON.Encode.string)]),
-        ~details?, ~failureOf, ~detailsOf, ~paymentMethod?, ~context?, ~source?, ~message?, ~call),
+        ~details?,
+        ~failureOf=SharedLoggerRuntime.httpFailure,
+        ~detailsOf=SharedLoggerRuntime.httpDetails,
+        ~paymentMethod?,
+        ~context?,
+        ~source?,
+        ~message?,
+        ~call=() => Fetch.fetch(url, request),
+      ),
   )
 
 let observeStaticAsset = (~event: staticAssetEvent, ~url, ~details=?, ~message=?, ~call) =>
