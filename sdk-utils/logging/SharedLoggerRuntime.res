@@ -81,12 +81,6 @@ let httpError = response => {
 
 let httpDetails = response => [("status_code", response->Fetch.Response.status->JSON.Encode.int)]
 let httpFailure = response => response->Fetch.Response.ok ? None : Some(response->httpError)
-let httpBodyFailure = ((response, data)) =>
-  response->Fetch.Response.ok
-    ? None
-    : Some(data->summarizeErrorResponse->Option.getOr(response->httpError))
-let httpBodyDetails = ((response, _)) => response->httpDetails
-
 external anyToJson: 'value => JSON.t = "%identity"
 
 let emit = (

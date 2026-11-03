@@ -55,12 +55,12 @@ let observeMerchantCall = (~method: merchantMethod, ~details=?, ~detailsOf=?, ~m
     ~source=SharedLoggerRuntime.AuthenticationSession,
   )
 
-let observeApi = (~event: apiEvent, ~url, ~message=?, ~call) =>
+let observeApi = (~event: apiEvent, ~url, ~request: Fetch.Request.init={}, ~message=?) =>
   ClickToPayLogger.observeApi(
     ~event,
     ~url,
     ~message?,
-    ~call,
+    ~request,
     ~context=context(),
     ~source=SharedLoggerRuntime.AuthenticationSession,
   )
