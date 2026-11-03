@@ -210,7 +210,14 @@ type formCompletionData = {savedMethod: bool}
 
 type merchantControlData = {control: string}
 
+type paymentFormData = {scope: string}
+type cardFieldData = {scope: string, field: string}
+
 type stateEvent =
+  | CardFormCreated(paymentFormData)
+  | CardFormDestroyed(paymentFormData)
+  | CardFieldCreated(cardFieldData)
+  | CardFieldUnmounted(cardFieldData)
   | NetworkStatusChanged(networkData)
   | ElementOptionsChanged
   | LoaderStateChanged(loaderData)
@@ -233,6 +240,7 @@ let stateSeverity = value =>
   | PaymentFormCompleted(_)
   | UpdateIntentProgressChanged(_) =>
     Debug
+  | CardFormCreated(_) | CardFormDestroyed(_) | CardFieldCreated(_) | CardFieldUnmounted(_) => Debug
   }
 
 // User
