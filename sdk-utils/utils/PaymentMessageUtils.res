@@ -3,8 +3,6 @@ open CommonUtils
 
 /* This decodes the bridge JSON. Native adapters own merchant-facing builders,
  interpolation, generated element keys, and callback registration. */
-let warn = message => Console.warn("[Hyperswitch] " ++ message)
-
 let readField = (dict, key, decode) => dict->Dict.get(key)->Option.flatMap(decode)
 
 let readEnum = (json, values: array<(string, 'a)>) =>
@@ -27,11 +25,7 @@ let readStyle = (json): elementStyle =>
       fontSize: ?readField(dict, "fontSize", json =>
         json->JSON.Decode.float->Option.filter(size => size >= 0. && Float.isFinite(size))
       ),
-      fontWeight: ?readField(
-        dict,
-        "fontWeight",
-        readEnum(_, [("400", #400), ("500", #500), ("600", #600), ("700", #700)]),
-      ),
+      fontWeight: ?readField(dict, "fontWeight", JSON.Decode.string),
       fontStyle: ?readField(
         dict,
         "fontStyle",
@@ -92,7 +86,7 @@ let defaultMessage: message = {
   elements: Dict.make(),
 }
 
-let readMessage = (json, path): option<message> =>
+let readMessage = (json): option<message> =>
   switch json->JSON.Classify.classify {
   | Null => None
   | Object(dict) =>
@@ -106,9 +100,6 @@ let readMessage = (json, path): option<message> =>
     if displayMode !== #custom_message {
       Some({...defaultMessage, displayMode})
     } else {
-      if value->Option.isNone {
-        warn(path ++ ".value is missing; no custom message will be shown.")
-      }
       Some({
         displayMode,
         value,
@@ -120,13 +111,10 @@ let readMessage = (json, path): option<message> =>
         elements: dict->getDictFromDict("elements")->readElements,
       })
     }
-  | _ =>
-    warn(path ++ " must be a message object such as {value: \"...\"}; it will be ignored.")
-    None
+  | _ => None
   }
 
-let readOptionalMessage = (dict, path) =>
-  dict->Dict.get("message")->Option.flatMap(json => readMessage(json, path ++ ".message"))
+let readOptionalMessage = dict => dict->Dict.get("message")->Option.flatMap(readMessage)
 
 let readConfigs = (config: Dict.t<JSON.t>): array<paymentMethodConfig> =>
   config
@@ -136,7 +124,6 @@ let readConfigs = (config: Dict.t<JSON.t>): array<paymentMethodConfig> =>
     ->JSON.Decode.object
     ->Option.map(dict => {
       let paymentMethod = dict->getString("paymentMethod", "")
-      let path = "paymentMethodsConfig." ++ paymentMethod
       let paymentMethodTypes =
         dict
         ->getArray("paymentMethodTypes")
@@ -149,21 +136,16 @@ let readConfigs = (config: Dict.t<JSON.t>): array<paymentMethodConfig> =>
                 let paymentMethodType = typeDict->getString("paymentMethodType", "")
                 {
                   paymentMethodType,
-                  message: typeDict->readOptionalMessage(path ++ "." ++ paymentMethodType),
+                  message: typeDict->readOptionalMessage,
                 }
               },
             ),
         )
       /* Cards take one message for credit and debit alike, as on web. */
-      let paymentMethodTypes = if paymentMethod == "card" && paymentMethodTypes->Array.length > 0 {
-        warn(path ++ ".paymentMethodTypes is not supported for cards; it will be ignored.")
-        []
-      } else {
-        paymentMethodTypes
-      }
+      let paymentMethodTypes = paymentMethod == "card" ? [] : paymentMethodTypes
       {
         paymentMethod,
-        message: dict->readOptionalMessage(path),
+        message: dict->readOptionalMessage,
         paymentMethodTypes,
       }
     })
@@ -194,15 +176,8 @@ type interactiveText = {key: string, label: string, style: elementStyle}
 type segment =
   | Text(string)
   | CallbackAction(interactiveText)
-type content = {segments: array<segment>, warnings: array<string>}
-
-let renderContent = (message: message, ~subscribed): content => {
+let renderContent = (message: message, ~subscribed): array<segment> => {
   let segments = []
-  let warnings = []
-  let addWarning = warning =>
-    if !(warnings->Array.includes(warning)) {
-      warnings->Array.push(warning)
-    }
   if message.displayMode === #custom_message {
     let elementKeys = message.elements->Dict.keysToArray
     /* Splitting on a capturing regex alternates literal text (even) and placeholder keys (odd). */
@@ -221,9 +196,7 @@ let renderContent = (message: message, ~subscribed): content => {
         let element = elementKeys->Array.includes(part) ? message.elements->Dict.get(part) : None
         segments->Array.push(
           switch element {
-          | None =>
-            addWarning("No element matches " ++ literal ++ "; showing the placeholder literally.")
-            Text(literal)
+          | None => Text(literal)
           | Some(Invalid) => Text(literal)
           | Some(Action({label, style})) =>
             if subscribed {
@@ -240,5 +213,5 @@ let renderContent = (message: message, ~subscribed): content => {
       }
     })
   }
-  {segments, warnings}
+  segments
 }

@@ -1,12 +1,12 @@
 type displayMode = [#custom_message | #default_sdk_message | #hidden]
-type fontWeight = [#400 | #500 | #600 | #700]
 type fontStyle = [#normal | #italic]
 type textDecoration = [#none | #underline]
 
 type elementStyle = {
   color?: string,
   fontSize?: float,
-  fontWeight?: fontWeight,
+  /* Platform-specific weight names pass through; each renderer maps what it supports. */
+  fontWeight?: string,
   fontStyle?: fontStyle,
   textDecoration?: textDecoration,
 }
