@@ -5,16 +5,7 @@ open CommonUtils
  interpolation, generated element keys, and callback registration. */
 let warn = message => Console.warn("[Hyperswitch] " ++ message)
 
-let readField = (dict, key, decode, path) =>
-  dict
-  ->Dict.get(key)
-  ->Option.flatMap(json => {
-    let value = decode(json)
-    if value->Option.isNone {
-      warn(path ++ "." ++ key ++ " has an invalid value; it will be ignored.")
-    }
-    value
-  })
+let readField = (dict, key, decode) => dict->Dict.get(key)->Option.flatMap(decode)
 
 let readEnum = (json, values: array<(string, 'a)>) =>
   json
@@ -22,100 +13,74 @@ let readEnum = (json, values: array<(string, 'a)>) =>
   ->Option.flatMap(str => values->Array.find(((name, _)) => name == str))
   ->Option.map(((_, value)) => value)
 
-let supportedStyleKeys = ["color", "fontSize", "fontWeight", "fontStyle", "textDecoration"]
-
-let readStyle = (json, path): elementStyle =>
+let readStyle = (json): elementStyle =>
   switch json->JSON.Decode.object {
-  | None =>
-    warn(path ++ " must be an object; it will be ignored.")
-    {}
-  | Some(dict) =>
-    dict
-    ->Dict.keysToArray
-    ->Array.forEach(key =>
-      if !(supportedStyleKeys->Array.includes(key)) {
-        warn(path ++ "." ++ key ++ " is not a supported style property; it will be ignored.")
-      }
-    )
-    {
-      color: ?readField(
-        dict,
-        "color",
-        json =>
-          json
-          ->JSON.Decode.string
-          ->Option.filter(color =>
-            %re("/^#(?:[0-9a-fA-F]{3,4}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})$/")->RegExp.test(color)
-          ),
-        path,
+  | None => {}
+  | Some(dict) => {
+      color: ?readField(dict, "color", json =>
+        json
+        ->JSON.Decode.string
+        ->Option.filter(color =>
+          %re("/^#(?:[0-9a-fA-F]{3,4}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})$/")->RegExp.test(color)
+        )
       ),
-      fontSize: ?readField(
-        dict,
-        "fontSize",
-        json => json->JSON.Decode.float->Option.filter(size => size >= 0. && Float.isFinite(size)),
-        path,
+      fontSize: ?readField(dict, "fontSize", json =>
+        json->JSON.Decode.float->Option.filter(size => size >= 0. && Float.isFinite(size))
       ),
       fontWeight: ?readField(
         dict,
         "fontWeight",
         readEnum(_, [("400", #400), ("500", #500), ("600", #600), ("700", #700)]),
-        path,
       ),
       fontStyle: ?readField(
         dict,
         "fontStyle",
         readEnum(_, [("normal", #normal), ("italic", #italic)]),
-        path,
       ),
       textDecoration: ?readField(
         dict,
         "textDecoration",
         readEnum(_, [("none", #none), ("underline", #underline)]),
-        path,
       ),
     }
   }
 
-let readOptionalStyle = (dict, key, path): elementStyle =>
-  dict->Dict.get(key)->Option.mapOr(({}: elementStyle), json => readStyle(json, path ++ "." ++ key))
+let readOptionalStyle = (dict, key): elementStyle =>
+  dict->Dict.get(key)->Option.mapOr(({}: elementStyle), readStyle)
 
-let readElement = (json, path): element => {
+let readElement = (json): element => {
   let dict = json->getDictFromJson
   switch dict->getOptionString("label") {
   | Some(label) =>
     Action({
       label,
-      style: dict->readOptionalStyle("style", path),
+      style: dict->readOptionalStyle("style"),
     })
-  | None =>
-    warn(path ++ ".label is missing; showing the placeholder literally.")
-    Invalid
+  | None => Invalid
   }
 }
 
-let readElements = (dict, path): Dict.t<element> => {
+let readElements = (dict): Dict.t<element> => {
   let entries = []
   let seen = []
   let duplicates = []
   switch dict->Dict.get("action") {
   | None => ()
   | Some(json) =>
-    switch json->JSON.Decode.array {
-    | None => warn(path ++ ".action must be an array; it will be ignored.")
-    | Some(items) =>
-      items->Array.forEach(item => {
-        let key = item->getDictFromJson->getString("key", "")
-        if !(%re("/^[a-zA-Z0-9_]+$/")->RegExp.test(key)) {
-          warn(path ++ ".action has an invalid key; it will be ignored.")
-        } else if seen->Array.includes(key) {
+    json
+    ->JSON.Decode.array
+    ->Option.getOr([])
+    ->Array.forEach(item => {
+      let key = item->getDictFromJson->getString("key", "")
+      if %re("/^[a-zA-Z0-9_]+$/")->RegExp.test(key) {
+        if seen->Array.includes(key) {
           duplicates->Array.push(key)
-          warn(path ++ " contains duplicate key " ++ key ++ "; its placeholder will stay literal.")
         } else {
           seen->Array.push(key)
-          entries->Array.push((key, readElement(item, path ++ ".action." ++ key)))
+          entries->Array.push((key, readElement(item)))
         }
-      })
-    }
+      }
+    })
   }
   entries->Array.filter(((key, _)) => !(duplicates->Array.includes(key)))->Dict.fromArray
 }
@@ -135,11 +100,8 @@ let readMessage = (json, path): option<message> =>
     let displayMode = switch dict->getOptionString("displayMode") {
     | Some("custom_message") => #custom_message
     | Some("hidden") => #hidden
-    | Some("default_sdk_message") => #default_sdk_message
     | None => value->Option.isSome ? #custom_message : #default_sdk_message
-    | Some(_) =>
-      warn(path ++ ".displayMode is invalid; the SDK default will be used.")
-      #default_sdk_message
+    | Some(_) => #default_sdk_message
     }
     if displayMode !== #custom_message {
       Some({...defaultMessage, displayMode})
@@ -153,9 +115,9 @@ let readMessage = (json, path): option<message> =>
         elementStyles: {
           action: dict
           ->getDictFromDict("elementStyles")
-          ->readOptionalStyle("action", path ++ ".elementStyles"),
+          ->readOptionalStyle("action"),
         },
-        elements: dict->getDictFromDict("elements")->readElements(path ++ ".elements"),
+        elements: dict->getDictFromDict("elements")->readElements,
       })
     }
   | _ =>
@@ -243,7 +205,6 @@ let renderContent = (message: message, ~subscribed): content => {
     }
   if message.displayMode === #custom_message {
     let elementKeys = message.elements->Dict.keysToArray
-    let usedKeys = []
     /* Splitting on a capturing regex alternates literal text (even) and placeholder keys (odd). */
     message.value
     ->Option.getOr("")
@@ -256,7 +217,6 @@ let renderContent = (message: message, ~subscribed): content => {
         }
       } else {
         let literal = "{{" ++ part ++ "}}"
-        usedKeys->Array.push(part)
         /* The includes check keeps keys such as "constructor" off the object prototype. */
         let element = elementKeys->Array.includes(part) ? message.elements->Dict.get(part) : None
         segments->Array.push(
@@ -273,18 +233,12 @@ let renderContent = (message: message, ~subscribed): content => {
                 style: mergeStyles(message.elementStyles.action, style),
               })
             } else {
-              addWarning("Subscribe to customMessageElementClicked to enable message actions.")
               Text(label)
             }
           },
         )
       }
     })
-    elementKeys->Array.forEach(key =>
-      if !(usedKeys->Array.includes(key)) {
-        addWarning("Message element " ++ key ++ " is unused; it will be ignored.")
-      }
-    )
   }
   {segments, warnings}
 }
