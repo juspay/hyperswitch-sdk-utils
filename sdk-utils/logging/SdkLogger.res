@@ -100,7 +100,13 @@ let observeApi = (
       ),
   )
 
-let observeStaticAsset = (~event: staticAssetEvent, ~url, ~details=?, ~message=?, ~call) =>
+let observeStaticAsset = (
+  ~event: staticAssetEvent,
+  ~url,
+  ~request: Fetch.Request.init={},
+  ~details=?,
+  ~message=?,
+) =>
   SharedLoggerProducer.observeResource(
     ~event, ~severity=event->staticAssetSeverity, ~dataOf=SharedLoggerRuntime.eventDetails,
     ~run=(~category, ~spec, ~severity, ~data) =>
@@ -109,7 +115,8 @@ let observeStaticAsset = (~event: staticAssetEvent, ~url, ~details=?, ~message=?
           ("url", url->JSON.Encode.string),
           ("resource_type", "static_asset"->JSON.Encode.string),
         ]), ~details?,
-        ~failureOf=SharedLoggerRuntime.httpFailure, ~detailsOf=SharedLoggerRuntime.httpDetails, ~message?, ~call),
+        ~failureOf=SharedLoggerRuntime.httpFailure, ~detailsOf=SharedLoggerRuntime.httpDetails,
+        ~message?, ~call=() => Fetch.fetch(url, request)),
   )
 
 let logApi = (
