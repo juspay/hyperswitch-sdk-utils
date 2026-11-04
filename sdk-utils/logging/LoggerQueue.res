@@ -23,18 +23,6 @@ let awaitInitialSession = () =>
     initialSessionDeadline := Some(Date.now() +. Float.fromInt(LoggerConfig.defaultTimeoutMs))
   }
 
-let bindInitialSession = sessionId => {
-  if sessionId !== "" && initialSessionDeadline.contents->Option.isSome {
-    initialSessionDeadline := None
-    rows->Array.forEach(entry => {
-      if entry.awaitingInitialSession {
-        entry.sessionIdAtEnqueue = sessionId
-        entry.awaitingInitialSession = false
-      }
-    })
-  }
-}
-
 let waitingForInitialSession = () =>
   switch initialSessionDeadline.contents {
   | Some(deadline) if Date.now() < deadline => true
@@ -44,6 +32,18 @@ let waitingForInitialSession = () =>
     }
   | None => false
   }
+
+let bindInitialSession = sessionId => {
+  if sessionId !== "" && waitingForInitialSession() {
+    initialSessionDeadline := None
+    rows->Array.forEach(entry => {
+      if entry.awaitingInitialSession {
+        entry.sessionIdAtEnqueue = sessionId
+        entry.awaitingInitialSession = false
+      }
+    })
+  }
+}
 
 let configure = (~sendPayload) => send := sendPayload
 
