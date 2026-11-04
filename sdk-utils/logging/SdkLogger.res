@@ -191,6 +191,7 @@ let observeResource = (
   ~url,
   ~attributes=?,
   ~matchQuery=?,
+  ~inBody=?,
   ~paymentMethod=?,
   ~context=?,
   ~abandoned=?,
@@ -203,6 +204,6 @@ let observeResource = (
     ~run=(~spec, ~severity) =>
       SharedLoggerRuntime.observeResource(~spec, ~severity, ~url,
         ~resource=event->isStylesheet ? SharedLoggerRuntime.Stylesheet : SharedLoggerRuntime.Script,
-        ~context?, ~attributes?, ~matchQuery?, ~paymentMethod?, ~abandoned?,
+        ~context?, ~attributes?, ~matchQuery?, ~inBody?, ~paymentMethod?, ~abandoned?,
         ~message?, ~onLoad?, ~onError?),
   )
