@@ -14,6 +14,10 @@ type surface =
 
 type surfaceData = {surface: surface}
 
+type listenerInventoryData = {componentType: string, eventListeners: array<string>}
+
+type merchantStateEvent = PaymentElementEventListeners(listenerInventoryData)
+
 // Merchant call
 
 type merchantCallEvent =

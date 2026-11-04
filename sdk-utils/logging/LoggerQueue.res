@@ -3,6 +3,7 @@ open SharedLoggerTypes
 type entry = {
   row: row,
   backfill: bool,
+  sessionIdAtEnqueue: string,
   mutable pmSessionId: string,
 }
 
@@ -98,8 +99,8 @@ let drain = () => {
   }
 }
 
-let push = (row, ~backfill=true, ~pmSessionId="") => {
-  rows->Array.push({row, backfill, pmSessionId})
+let push = (row, ~backfill=true, ~pmSessionId="", ~sessionIdAtEnqueue="") => {
+  rows->Array.push({row, backfill, pmSessionId, sessionIdAtEnqueue})
   if rows->Array.length > LoggerConfig.maxQueuedRows {
     rows->Array.splice(~start=0, ~remove=rows->Array.length - LoggerConfig.maxQueuedRows, ~insert=[])
     droppedRows := droppedRows.contents + 1
@@ -111,7 +112,11 @@ let backfillContext = (context: context) =>
   rows->Array.forEach(entry => {
     let row = entry.row
     let fill = (current, value) =>
-      entry.backfill && current === "" && value !== "" ? value : current
+      entry.backfill &&
+      entry.sessionIdAtEnqueue === context.sessionId &&
+      current === "" && value !== ""
+        ? value
+        : current
     row.sessionId = fill(row.sessionId, context.sessionId)
     row.merchantId = fill(row.merchantId, context.merchantId)
     row.paymentId = fill(row.paymentId, context.paymentId)

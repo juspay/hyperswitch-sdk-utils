@@ -1,6 +1,15 @@
 open SharedLoggerTypes
 include HyperLoaderLoggerEvents
 
+let logEventListeners = (~componentType, ~events: array<string>, ~context=?) =>
+  SharedLoggerProducer.logState(
+    ~event=PaymentElementEventListeners({componentType, eventListeners: events}),
+    ~severity=Info,
+    ~dataOf=SharedLoggerRuntime.eventDetails,
+    ~emit=(~category, ~spec, ~severity, ~data) =>
+      SharedLoggerRuntime.emit(~category, ~spec, ~severity, ~data, ~context?),
+  )
+
 let observeMerchantCall = (
   ~event: merchantCallEvent,
   ~details=?,

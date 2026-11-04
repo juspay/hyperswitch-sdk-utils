@@ -179,6 +179,7 @@ let emit = (
           },
           ~backfill=!context.scoped,
           ~pmSessionId=context.pmSessionId,
+          ~sessionIdAtEnqueue=platform.getContext().sessionId,
         )
       }
     })
