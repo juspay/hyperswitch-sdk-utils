@@ -3,7 +3,8 @@ open SharedLoggerTypes
 type entry = {
   row: row,
   backfill: bool,
-  sessionIdAtEnqueue: string,
+  mutable sessionIdAtEnqueue: string,
+  mutable awaitingInitialSession: bool,
   mutable pmSessionId: string,
 }
 
@@ -13,6 +14,36 @@ let droppedRows = ref(0)
 let failures = ref(0)
 let sendFailures = ref(0)
 let send = ref((_payload: string) => false)
+let initialSessionWaitStarted = ref(false)
+let initialSessionDeadline = ref(None)
+
+let awaitInitialSession = () =>
+  if !initialSessionWaitStarted.contents {
+    initialSessionWaitStarted := true
+    initialSessionDeadline := Some(Date.now() +. Float.fromInt(LoggerConfig.defaultTimeoutMs))
+  }
+
+let bindInitialSession = sessionId => {
+  if sessionId !== "" && initialSessionDeadline.contents->Option.isSome {
+    initialSessionDeadline := None
+    rows->Array.forEach(entry => {
+      if entry.awaitingInitialSession {
+        entry.sessionIdAtEnqueue = sessionId
+        entry.awaitingInitialSession = false
+      }
+    })
+  }
+}
+
+let waitingForInitialSession = () =>
+  switch initialSessionDeadline.contents {
+  | Some(deadline) if Date.now() < deadline => true
+  | Some(_) => {
+      initialSessionDeadline := None
+      false
+    }
+  | None => false
+  }
 
 let configure = (~sendPayload) => send := sendPayload
 
@@ -51,7 +82,9 @@ let requeue = batch => {
 
 let rec flush = () => {
   clearTimer()
-  if rows->Array.length > 0 {
+  if rows->Array.length > 0 && waitingForInitialSession() {
+    scheduleFlush()
+  } else if rows->Array.length > 0 {
     switch sendNext() {
     | None => failures := 0
     | Some(batch) => {
@@ -100,7 +133,13 @@ let drain = () => {
 }
 
 let push = (row, ~backfill=true, ~pmSessionId="", ~sessionIdAtEnqueue="") => {
-  rows->Array.push({row, backfill, pmSessionId, sessionIdAtEnqueue})
+  rows->Array.push({
+    row,
+    backfill,
+    pmSessionId,
+    sessionIdAtEnqueue,
+    awaitingInitialSession: backfill && sessionIdAtEnqueue === "" && waitingForInitialSession(),
+  })
   if rows->Array.length > LoggerConfig.maxQueuedRows {
     rows->Array.splice(~start=0, ~remove=rows->Array.length - LoggerConfig.maxQueuedRows, ~insert=[])
     droppedRows := droppedRows.contents + 1
