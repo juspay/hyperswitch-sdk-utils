@@ -1,8 +1,7 @@
 open PaymentMessageTypes
 open CommonUtils
 
-/* This decodes the bridge JSON. Native adapters own merchant-facing builders,
- interpolation, generated element keys, and callback registration. */
+/* This decodes the bridge JSON. The wrappers own the merchant-facing API and callbacks. */
 let readField = (dict, key, decode) => dict->Dict.get(key)->Option.flatMap(decode)
 
 let readEnum = (json, values: array<(string, 'a)>) =>
@@ -42,81 +41,50 @@ let readStyle = (json): elementStyle =>
 let readOptionalStyle = (dict, key): elementStyle =>
   dict->Dict.get(key)->Option.mapOr(({}: elementStyle), readStyle)
 
-let readElement = (json): element => {
-  let dict = json->getDictFromJson
-  switch dict->getOptionString("label") {
-  | Some(label) =>
-    Action({
-      label,
-      style: dict->readOptionalStyle("style"),
-    })
-  | None => Invalid
-  }
-}
-
-let readElements = (dict): Dict.t<element> => {
-  let entries = []
-  let seen = []
-  let duplicates = []
-  switch dict->Dict.get("action") {
-  | None => ()
-  | Some(json) =>
-    json
-    ->JSON.Decode.array
-    ->Option.getOr([])
-    ->Array.forEach(item => {
-      let key = item->getDictFromJson->getString("key", "")
-      if %re("/^[a-zA-Z0-9_]+$/")->RegExp.test(key) {
-        if seen->Array.includes(key) {
-          duplicates->Array.push(key)
-        } else {
-          seen->Array.push(key)
-          entries->Array.push((key, readElement(item)))
-        }
-      }
-    })
-  }
-  entries->Array.filter(((key, _)) => !(duplicates->Array.includes(key)))->Dict.fromArray
-}
-
-let defaultMessage: message = {
-  displayMode: #default_sdk_message,
-  value: None,
-  elementStyles: {action: {}},
-  elements: Dict.make(),
-}
-
-let readMessage = (json): option<message> =>
-  switch json->JSON.Classify.classify {
-  | Null => None
-  | Object(dict) =>
-    let value = dict->getOptionString("value")
-    let displayMode = switch dict->getOptionString("displayMode") {
-    | Some("custom_message") => #custom_message
-    | Some("hidden") => #hidden
-    | None => value->Option.isSome ? #custom_message : #default_sdk_message
-    | Some(_) => #default_sdk_message
-    }
-    if displayMode !== #custom_message {
-      Some({...defaultMessage, displayMode})
+/* Tappable entries are counted even when malformed or not shown, so every later index
+ still matches the wrapper's action list. */
+let readSegments = (items: array<JSON.t>, ~actions: ref<int>): array<segment> =>
+  items->Array.filterMap(item => {
+    let dict = item->getDictFromJson
+    let text = dict->getOptionString("text")
+    if dict->getBool("tappable", false) {
+      let index = actions.contents
+      actions := index + 1
+      text->Option.map(text => Action({text, style: dict->readOptionalStyle("style"), index}))
     } else {
-      Some({
-        displayMode,
-        value,
-        elementStyles: {
-          action: dict
-          ->getDictFromDict("elementStyles")
-          ->readOptionalStyle("action"),
-        },
-        elements: dict->getDictFromDict("elements")->readElements,
-      })
+      text->Option.map(text => Text(text))
     }
+  })
+
+let readMessage = (json, ~actions): option<message> =>
+  switch json->JSON.Classify.classify {
+  | Object(dict) =>
+    Some({
+      displayMode: switch dict->getOptionString("displayMode") {
+      | Some("custom_message") => Some(#custom_message)
+      | Some("hidden") => Some(#hidden)
+      | Some("default_sdk_message") => Some(#default_sdk_message)
+      | _ => None
+      },
+      value: dict
+      ->Dict.get("value")
+      ->Option.flatMap(JSON.Decode.array)
+      ->Option.map(readSegments(_, ~actions)),
+      elementStyles: {
+        action: dict
+        ->getDictFromDict("elementStyles")
+        ->readOptionalStyle("action"),
+      },
+    })
   | _ => None
   }
 
-let readOptionalMessage = dict => dict->Dict.get("message")->Option.flatMap(readMessage)
+let readOptionalMessage = (dict, ~actions) =>
+  dict->Dict.get("message")->Option.flatMap(readMessage(_, ~actions))
 
-let readConfigs = (config: Dict.t<JSON.t>): array<paymentMethodConfig> =>
+let readConfigs = (config: Dict.t<JSON.t>): array<paymentMethodConfig> => {
+  /* One running count over every message, in the order the wrappers list their actions. */
+  let actions = ref(0)
   config
   ->getArray("paymentMethodsConfig")
   ->Array.filterMap(json =>
@@ -124,6 +92,7 @@ let readConfigs = (config: Dict.t<JSON.t>): array<paymentMethodConfig> =>
     ->JSON.Decode.object
     ->Option.map(dict => {
       let paymentMethod = dict->getString("paymentMethod", "")
+      let message = dict->readOptionalMessage(~actions)
       let paymentMethodTypes =
         dict
         ->getArray("paymentMethodTypes")
@@ -136,7 +105,7 @@ let readConfigs = (config: Dict.t<JSON.t>): array<paymentMethodConfig> =>
                 let paymentMethodType = typeDict->getString("paymentMethodType", "")
                 {
                   paymentMethodType,
-                  message: typeDict->readOptionalMessage,
+                  message: typeDict->readOptionalMessage(~actions),
                 }
               },
             ),
@@ -145,22 +114,12 @@ let readConfigs = (config: Dict.t<JSON.t>): array<paymentMethodConfig> =>
       let paymentMethodTypes = paymentMethod == "card" ? [] : paymentMethodTypes
       {
         paymentMethod,
-        message: dict->readOptionalMessage,
+        message,
         paymentMethodTypes,
       }
     })
   )
-
-/* A payment method type's message wins over its payment method's message. */
-let resolve = (configs: array<paymentMethodConfig>, ~paymentMethod, ~paymentMethodType) =>
-  configs
-  ->Array.find(config => config.paymentMethod == paymentMethod)
-  ->Option.flatMap(config =>
-    config.paymentMethodTypes
-    ->Array.find(typeConfig => typeConfig.paymentMethodType == paymentMethodType)
-    ->Option.flatMap(typeConfig => typeConfig.message)
-    ->Option.orElse(config.message)
-  )
+}
 
 /* The element's own style wins per property over the message's elementStyles.action;
  the renderer applies the theme for whatever is still unset. */
@@ -172,46 +131,36 @@ let mergeStyles = (base: elementStyle, override: elementStyle): elementStyle => 
   textDecoration: ?override.textDecoration->Option.orElse(base.textDecoration),
 }
 
-type interactiveText = {key: string, label: string, style: elementStyle}
-type segment =
-  | Text(string)
-  | CallbackAction(interactiveText)
-let renderContent = (message: message, ~subscribed): array<segment> => {
-  let segments = []
-  if message.displayMode === #custom_message {
-    let elementKeys = message.elements->Dict.keysToArray
-    /* Splitting on a capturing regex alternates literal text (even) and placeholder keys (odd). */
-    message.value
-    ->Option.getOr("")
-    ->String.splitByRegExp(%re("/\{\{([a-zA-Z0-9_]+)\}\}/"))
-    ->Array.forEachWithIndex((part, index) => {
-      let part = part->Option.getOr("")
-      if mod(index, 2) == 0 {
-        if part != "" {
-          segments->Array.push(Text(part))
-        }
-      } else {
-        let literal = "{{" ++ part ++ "}}"
-        /* The includes check keeps keys such as "constructor" off the object prototype. */
-        let element = elementKeys->Array.includes(part) ? message.elements->Dict.get(part) : None
-        segments->Array.push(
-          switch element {
-          | None => Text(literal)
-          | Some(Invalid) => Text(literal)
-          | Some(Action({label, style})) =>
-            if subscribed {
-              CallbackAction({
-                key: part,
-                label,
-                style: mergeStyles(message.elementStyles.action, style),
-              })
-            } else {
-              Text(label)
-            }
-          },
-        )
-      }
-    })
-  }
-  segments
-}
+/* Without an explicit display mode, a message with text is custom, as on web. */
+let displayModeOf = (message: message) =>
+  message.displayMode->Option.getOr(
+    message.value->Option.isSome ? #custom_message : #default_sdk_message,
+  )
+
+/* A payment method type's message wins over its payment method's message, field by field:
+ whatever the type leaves unset (text, display mode, each action style property) comes from
+ the payment method's message. Text set on the type makes it custom unless it says otherwise. */
+let resolve = (configs: array<paymentMethodConfig>, ~paymentMethod, ~paymentMethodType) =>
+  configs
+  ->Array.find(config => config.paymentMethod == paymentMethod)
+  ->Option.flatMap(config =>
+    switch (
+      config.paymentMethodTypes
+      ->Array.find(typeConfig => typeConfig.paymentMethodType == paymentMethodType)
+      ->Option.flatMap(typeConfig => typeConfig.message),
+      config.message,
+    ) {
+    | (Some(typeMessage), Some(method)) =>
+      Some({
+        displayMode: typeMessage.displayMode->Option.orElse(
+          typeMessage.value->Option.isSome ? Some(#custom_message) : method.displayMode,
+        ),
+        value: typeMessage.value->Option.orElse(method.value),
+        elementStyles: {
+          action: mergeStyles(method.elementStyles.action, typeMessage.elementStyles.action),
+        },
+      })
+    | (Some(typeMessage), None) => Some(typeMessage)
+    | (None, method) => method
+    }
+  )
