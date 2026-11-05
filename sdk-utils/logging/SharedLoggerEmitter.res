@@ -34,14 +34,14 @@ let rank = severity =>
   | Debug => 0
   | Info => 1
   | Warning => 2
-  | Error => 3
+  | SharedLoggerTypes.Error => 3
   }
 
 let isEnabled = severity =>
   LoggerConfig.enabled.contents && severity->rank >= LoggerConfig.minimumRank.contents
 
 let emit = (
-  logger,
+  logger: t,
   ~category,
   ~spec: eventSpec,
   ~severity: severity,

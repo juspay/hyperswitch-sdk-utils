@@ -1,4 +1,3 @@
-open SharedLoggerTypes
 include SdkLoggerEvents
 
 let namedField = field =>

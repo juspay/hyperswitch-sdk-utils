@@ -160,7 +160,7 @@ let merchantIssueSeverity = (issue): severity =>
   | InsecureProtocol
   | MissingParameter
   | MalformedValue =>
-    Error
+    SharedLoggerTypes.Error
   | ImmutableAfterMount
   | CalledAfterSessionEnd
   | ExpectedBoolean

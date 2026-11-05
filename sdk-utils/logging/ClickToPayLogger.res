@@ -1,4 +1,3 @@
-open SharedLoggerTypes
 include ClickToPayLoggerEvents
 
 let paymentMethod = SharedLoggerPaymentMethod.Card

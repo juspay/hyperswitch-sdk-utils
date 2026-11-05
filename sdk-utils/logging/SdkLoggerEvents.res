@@ -64,6 +64,18 @@ type threeDsPopupFailureData = {reason: ThreeDsPopup.failure}
 
 type unsupportedConnectorData = {connector: string}
 
+type idleData = {idleMs: int}
+
+type threeDsSdk = Netcetera
+type threeDsSdkData = {sdk: threeDsSdk}
+
+type firstInteractionData = {interaction: string}
+
+module CustomerRedirect = {
+  type result = Completed | Cancelled | Failed | Unknown
+}
+type redirectReturnData = {result: CustomerRedirect.result}
+
 type validationFailureData = {reason: string}
 
 type blockedOperation =
@@ -122,6 +134,11 @@ type lifecycleEvent =
   | CountryDataUnavailable
   | EligibilityCheckCancelled
   | EligibilityCheckFailed
+  | SdkClosed
+  | CustomerWentIdle(idleData)
+  | ThreeDsSdkUnavailable(threeDsSdkData)
+  | FirstUserInteraction(firstInteractionData)
+  | CustomerRedirectReturned(redirectReturnData)
 
 let walletFailureSeverity = reason =>
   switch reason {
@@ -140,14 +157,14 @@ let walletFailureSeverity = reason =>
   | MessageHandlingFailed
   | PaymentDataFailed
   | SheetFailed =>
-    Error
+    SharedLoggerTypes.Error
   }
 
 let lifecycleSeverity = value =>
   switch value {
   | PaymentAttempted | PaymentSucceeded(_) | PaymentFailed(_) => Info
   | PaymentStatusUnknown(_) | PaymentStatusPollExhausted => Warning
-  | PaymentRejected | PaymentRetriesExhausted(_) | PaymentErrorHandlingFailed => Error
+  | PaymentRejected | PaymentRetriesExhausted(_) | PaymentErrorHandlingFailed => SharedLoggerTypes.Error
   | ThreeDsMethodStarted
   | ThreeDsMethodCompleted
   | ThreeDsMethodSkipped
@@ -155,10 +172,10 @@ let lifecycleSeverity = value =>
     Debug
   | ThreeDsChallengeShown(_) | ThreeDsFrictionlessResolved(_) => Info
   | ThreeDsMethodTimedOut => Warning
-  | ThreeDsAuthContainerMissing(_) | ThreeDsAuthRequestFailed | ThreeDsPopupFailed(_) => Error
+  | ThreeDsAuthContainerMissing(_) | ThreeDsAuthRequestFailed | ThreeDsPopupFailed(_) => SharedLoggerTypes.Error
   | ThreeDsMethodFailed({reason}) =>
     switch reason {
-    | MissingContainer | FormSubmitFailed => Error
+    | MissingContainer | FormSubmitFailed => SharedLoggerTypes.Error
     | IframeLoadFailed => Warning
     }
   | ElementIframeMounted
@@ -189,9 +206,16 @@ let lifecycleSeverity = value =>
   | BankAuthSyncFailed(_)
   | CountryDataUnavailable
   | DdcFailed(_) =>
-    Error
-  | NextActionUnsupported({recovered}) => recovered ? Warning : Error
+    SharedLoggerTypes.Error
+  | NextActionUnsupported({recovered}) => recovered ? Warning : SharedLoggerTypes.Error
   | WalletFlowFailed({reason}) => reason->walletFailureSeverity
+  | SdkClosed | CustomerWentIdle(_) | FirstUserInteraction(_) => Info
+  | ThreeDsSdkUnavailable(_) => SharedLoggerTypes.Error
+  | CustomerRedirectReturned({result}) =>
+    switch result {
+    | CustomerRedirect.Completed | CustomerRedirect.Cancelled => Info
+    | CustomerRedirect.Failed | CustomerRedirect.Unknown => Warning
+    }
   }
 
 // State
@@ -229,7 +253,7 @@ type stateEvent =
 
 let stateSeverity = value =>
   switch value {
-  | LoaderStateChanged({state: LoadFailed}) => Error
+  | LoaderStateChanged({state: LoadFailed}) => SharedLoggerTypes.Error
   | LoaderStateChanged({state: Loaded}) => Info
   | NetworkStatusChanged({online}) => online ? Debug : Warning
   | LoaderStateChanged(_)
@@ -291,6 +315,7 @@ type userEvent =
   | FieldBlurred(fieldData)
   | ViewToggled(viewData)
   | ViewOpened(openedViewData)
+  | CardScanRequested
 
 let userSeverity = value =>
   switch value {
@@ -304,7 +329,8 @@ let userSeverity = value =>
   | ExpressCheckoutClicked
   | VoucherDownloadRequested
   | QrCodeCopyRequested
-  | BankDetailsConfirmed =>
+  | BankDetailsConfirmed
+  | CardScanRequested =>
     Info
   | FieldToggled(_)
   | FieldFocused(_)
@@ -331,6 +357,7 @@ type apiEvent =
   | PaymentMethodsAuthExchange
   | TaxCalculation
   | ClientList
+  | ThreeDsAuthorize
 
 let apiSeverity = value =>
   switch value {
@@ -347,7 +374,8 @@ let apiSeverity = value =>
   | CreateCustomerPaymentMethods
   | PaymentMethodsAuthLink
   | PaymentMethodsAuthExchange
-  | ClientList => defaultSeverity
+  | ClientList
+  | ThreeDsAuthorize => defaultSeverity
   }
 
 // Function
@@ -364,10 +392,17 @@ type functionEvent =
   | KlarnaLoad
   | PaypalButtonsRender
   | PlaidCreate
+  | LaunchApplePay
+  | LaunchScanCard
+  | InitialiseNetcetera
+  | GenerateAreqParams
+  | ReceiveChallengeParams
+  | GenerateChallenge
 
 let functionSeverity = value =>
   switch value {
   | IsReadyToPay => quietSuccessSoftFailure
+  | LaunchScanCard => softFailure
   | LoadPaymentSheet
   | LoadPaymentData
   | FinishApplePaymentV2
@@ -377,7 +412,12 @@ let functionSeverity = value =>
   | KlarnaInit
   | KlarnaLoad
   | PaypalButtonsRender
-  | PlaidCreate => quietSuccess
+  | PlaidCreate
+  | LaunchApplePay
+  | InitialiseNetcetera
+  | GenerateAreqParams
+  | ReceiveChallengeParams
+  | GenerateChallenge => quietSuccess
   }
 
 // Function callback
@@ -467,12 +507,13 @@ type staticAssetEvent =
   | CountryStateData
   | CountryStateDataFallback
   | SdkConfigs
+  | LocaleStrings
 
-let staticAssetSeverity = value =>
+let staticAssetSeverity = (value: staticAssetEvent) =>
   switch value {
   | SdkConfigs => quietSuccess
   | CountryStateData => quietAll
-  | CountryStateDataFallback => quietSuccessSoftFailure
+  | CountryStateDataFallback | LocaleStrings => quietSuccessSoftFailure
   }
 
 // Crash
@@ -495,5 +536,5 @@ let crashSeverity = origin =>
   | ElementConstructor
   | ParentWindowMessage
   | MerchantCallback =>
-    Error
+    SharedLoggerTypes.Error
   }
