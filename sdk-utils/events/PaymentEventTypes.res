@@ -29,6 +29,7 @@ type events =
   | CustomMessageElementClicked
   | SurchargeInfo
   | AppliedOffersInfo
+  | PaymentMethodFlowCancel
   | UnknownEvent
 
 let eventToString = (eventType: events): string => {
@@ -41,6 +42,7 @@ let eventToString = (eventType: events): string => {
   | CustomMessageElementClicked => "customMessageElementClicked"
   | SurchargeInfo => "surchargeInfo"
   | AppliedOffersInfo => "appliedOffersInfo"
+  | PaymentMethodFlowCancel => "paymentMethodFlowCancel"
   | UnknownEvent => "unknownEvent"
   }
 }
@@ -55,6 +57,7 @@ let eventFromString = (str: string): events => {
   | "customMessageElementClicked" => CustomMessageElementClicked
   | "surchargeInfo" => SurchargeInfo
   | "appliedOffersInfo" => AppliedOffersInfo
+  | "paymentMethodFlowCancel" => PaymentMethodFlowCancel
   | _ => UnknownEvent
   }
 }
