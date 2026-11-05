@@ -41,8 +41,13 @@ type rec fieldConfig = {
   maxInputLength: option<int>,
   layoutRowId: option<string>,
   layoutWidthRatio: option<float>,
-  merchantProvidedDisplayName: option<string>,
-  merchantProvidedPlaceholderText: option<string>,
+  customLabelText: option<string>,
+  customPlaceholderText: option<string>,
+}
+
+type fieldTexts = {
+  label: string,
+  placeholder: string,
 }
 
 type requiredFields = array<fieldConfig>

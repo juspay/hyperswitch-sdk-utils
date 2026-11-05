@@ -302,9 +302,9 @@ let convertConfigurationToRequiredFields = (resolvedConfig, ~isUseBillingAddress
       let maxInputLength = metadata->getOptionInt("max_input_length")
       let layoutRowId = metadata->getOptionString("layout_row_id")
       let layoutWidthRatio = metadata->getOptionFloat("layout_width_ratio")
-      let merchantProvidedDisplayName = metadata->getOptionString("merchant_provided_display_name")
-      let merchantProvidedPlaceholderText =
-        metadata->getOptionString("merchant_provided_placeholder_text")
+      let customLabelText = metadata->getOptionString("custom_label_text")
+      let customPlaceholderText =
+        metadata->getOptionString("custom_placeholder_text")
 
       Some({
         intentDataReadPath,
@@ -326,8 +326,8 @@ let convertConfigurationToRequiredFields = (resolvedConfig, ~isUseBillingAddress
         maxInputLength,
         layoutRowId,
         layoutWidthRatio,
-        merchantProvidedDisplayName,
-        merchantProvidedPlaceholderText,
+        customLabelText,
+        customPlaceholderText,
       })
     } else {
       None
