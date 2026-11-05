@@ -26,7 +26,6 @@ type events =
   | FormStatusChange
   | BillingDetailsChange
   | CvcStatusChange
-  | CustomMessageElementClicked
   | SurchargeInfo
   | AppliedOffersInfo
   | PaymentMethodFlowCancel
@@ -39,7 +38,6 @@ let eventToString = (eventType: events): string => {
   | FormStatusChange => "formStatusChange"
   | BillingDetailsChange => "billingDetailsChange"
   | CvcStatusChange => "cvcStatusChange"
-  | CustomMessageElementClicked => "customMessageElementClicked"
   | SurchargeInfo => "surchargeInfo"
   | AppliedOffersInfo => "appliedOffersInfo"
   | PaymentMethodFlowCancel => "paymentMethodFlowCancel"
@@ -54,7 +52,6 @@ let eventFromString = (str: string): events => {
   | "formStatusChange" => FormStatusChange
   | "billingDetailsChange" => BillingDetailsChange
   | "cvcStatusChange" => CvcStatusChange
-  | "customMessageElementClicked" => CustomMessageElementClicked
   | "surchargeInfo" => SurchargeInfo
   | "appliedOffersInfo" => AppliedOffersInfo
   | "paymentMethodFlowCancel" => PaymentMethodFlowCancel

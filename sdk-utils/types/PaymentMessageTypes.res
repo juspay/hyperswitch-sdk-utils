@@ -34,5 +34,3 @@ type paymentMethodConfig = {
   message: option<message>,
   paymentMethodTypes: array<paymentMethodTypeConfig>,
 }
-
-type elementClickedEvent = {index: int}
