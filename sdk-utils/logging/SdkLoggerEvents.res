@@ -77,6 +77,7 @@ type operationBlockedData = {operation: blockedOperation, reason: string}
 
 type lifecycleEvent =
   | ElementIframeMounted
+  | VaultScriptLoadFailed
   | PaymentAttempted
   | PaymentSucceeded(paymentOutcomeData)
   | PaymentFailed(paymentOutcomeData)
@@ -188,6 +189,7 @@ let lifecycleSeverity = value =>
     Warning
   | BankAuthSyncFailed(_)
   | CountryDataUnavailable
+  | VaultScriptLoadFailed
   | DdcFailed(_) =>
     Error
   | NextActionUnsupported({recovered}) => recovered ? Warning : Error

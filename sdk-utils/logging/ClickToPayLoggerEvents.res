@@ -31,6 +31,7 @@ type lifecycleEvent =
   | OtpRejected(providerDetails)
   | AuthenticationFailed(providerDetails)
   | PopupBlocked(providerDetails)
+  | SignOutCompleted(providerDetails)
   | SignOutFailed(providerDetails)
 
 let lifecycleSeverity = event =>
@@ -40,6 +41,7 @@ let lifecycleSeverity = event =>
   | CheckoutCancelled(_)
   | CardsListed(_) =>
     Debug
+  | SignOutCompleted(_) => Info
   | CustomerVerificationRequired(_)
   | CustomerRecognised(_)
   | CheckoutCompleted(_)
