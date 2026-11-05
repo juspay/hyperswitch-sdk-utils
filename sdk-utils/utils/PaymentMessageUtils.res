@@ -41,22 +41,23 @@ let readStyle = (json): elementStyle =>
 let readOptionalStyle = (dict, key): elementStyle =>
   dict->Dict.get(key)->Option.mapOr(({}: elementStyle), readStyle)
 
-/* Tappable entries are counted even when malformed or not shown, so every later index
- still matches the wrapper's action list. */
-let readSegments = (items: array<JSON.t>, ~actions: ref<int>): array<segment> =>
-  items->Array.filterMap(item => {
+/* An action keeps its position in the wire array, so a tap names it directly even when
+ malformed entries before it are dropped. */
+let readSegments = (items: array<JSON.t>): array<segment> =>
+  items
+  ->Array.mapWithIndex((item, index) => {
     let dict = item->getDictFromJson
-    let text = dict->getOptionString("text")
-    if dict->getBool("tappable", false) {
-      let index = actions.contents
-      actions := index + 1
-      text->Option.map(text => Action({text, style: dict->readOptionalStyle("style"), index}))
-    } else {
-      text->Option.map(text => Text(text))
-    }
+    dict
+    ->getOptionString("text")
+    ->Option.map(text =>
+      dict->getBool("tappable", false)
+        ? Action({text, style: dict->readOptionalStyle("style"), index})
+        : Text(text)
+    )
   })
+  ->Array.keepSome
 
-let readMessage = (json, ~actions): option<message> =>
+let readMessage = (json): option<message> =>
   switch json->JSON.Classify.classify {
   | Object(dict) =>
     Some({
@@ -69,7 +70,7 @@ let readMessage = (json, ~actions): option<message> =>
       value: dict
       ->Dict.get("value")
       ->Option.flatMap(JSON.Decode.array)
-      ->Option.map(readSegments(_, ~actions)),
+      ->Option.map(readSegments),
       elementStyles: {
         action: dict
         ->getDictFromDict("elementStyles")
@@ -79,12 +80,9 @@ let readMessage = (json, ~actions): option<message> =>
   | _ => None
   }
 
-let readOptionalMessage = (dict, ~actions) =>
-  dict->Dict.get("message")->Option.flatMap(readMessage(_, ~actions))
+let readOptionalMessage = dict => dict->Dict.get("message")->Option.flatMap(readMessage)
 
 let readConfigs = (config: Dict.t<JSON.t>): array<paymentMethodConfig> => {
-  /* One running count over every message, in the order the wrappers list their actions. */
-  let actions = ref(0)
   config
   ->getArray("paymentMethodsConfig")
   ->Array.filterMap(json =>
@@ -92,7 +90,7 @@ let readConfigs = (config: Dict.t<JSON.t>): array<paymentMethodConfig> => {
     ->JSON.Decode.object
     ->Option.map(dict => {
       let paymentMethod = dict->getString("paymentMethod", "")
-      let message = dict->readOptionalMessage(~actions)
+      let message = dict->readOptionalMessage
       let paymentMethodTypes =
         dict
         ->getArray("paymentMethodTypes")
@@ -105,7 +103,7 @@ let readConfigs = (config: Dict.t<JSON.t>): array<paymentMethodConfig> => {
                 let paymentMethodType = typeDict->getString("paymentMethodType", "")
                 {
                   paymentMethodType,
-                  message: typeDict->readOptionalMessage(~actions),
+                  message: typeDict->readOptionalMessage,
                 }
               },
             ),
@@ -139,8 +137,13 @@ let displayModeOf = (message: message) =>
 
 /* A payment method type's message wins over its payment method's message, field by field:
  whatever the type leaves unset (text, display mode, each action style property) comes from
- the payment method's message. Text set on the type makes it custom unless it says otherwise. */
-let resolve = (configs: array<paymentMethodConfig>, ~paymentMethod, ~paymentMethodType) =>
+ the payment method's message. Text set on the type makes it custom unless it says otherwise.
+ Also returns the payment method type a tap reports: the type when the shown text is the type
+ message's own, otherwise "" (the text, and so its actions, belong to the method's message). */
+let resolve = (configs: array<paymentMethodConfig>, ~paymentMethod, ~paymentMethodType): option<(
+  message,
+  string,
+)> =>
   configs
   ->Array.find(config => config.paymentMethod == paymentMethod)
   ->Option.flatMap(config =>
@@ -151,16 +154,19 @@ let resolve = (configs: array<paymentMethodConfig>, ~paymentMethod, ~paymentMeth
       config.message,
     ) {
     | (Some(typeMessage), Some(method)) =>
-      Some({
-        displayMode: typeMessage.displayMode->Option.orElse(
-          typeMessage.value->Option.isSome ? Some(#custom_message) : method.displayMode,
-        ),
-        value: typeMessage.value->Option.orElse(method.value),
-        elementStyles: {
-          action: mergeStyles(method.elementStyles.action, typeMessage.elementStyles.action),
+      Some((
+        {
+          displayMode: typeMessage.displayMode->Option.orElse(
+            typeMessage.value->Option.isSome ? Some(#custom_message) : method.displayMode,
+          ),
+          value: typeMessage.value->Option.orElse(method.value),
+          elementStyles: {
+            action: mergeStyles(method.elementStyles.action, typeMessage.elementStyles.action),
+          },
         },
-      })
-    | (Some(typeMessage), None) => Some(typeMessage)
-    | (None, method) => method
+        typeMessage.value->Option.isSome ? paymentMethodType : "",
+      ))
+    | (Some(typeMessage), None) => Some((typeMessage, paymentMethodType))
+    | (None, method) => method->Option.map(method => (method, ""))
     }
   )
