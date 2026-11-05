@@ -11,9 +11,8 @@ type elementStyle = {
   textDecoration?: textDecoration,
 }
 
-/* The message is sent as its pieces, so text is never parsed for placeholders. `index`
- counts tappable segments across the whole configuration in wire order (each payment
- method's message, then its types' messages), matching the wrapper's action list. */
+/* The message is sent as its pieces, so text is never parsed for placeholders. `index` is
+ the segment's position in its message's `value` array, as the wrapper sent it. */
 type segment = Text(string) | Action({text: string, style: elementStyle, index: int})
 
 type elementStyles = {action: elementStyle}
