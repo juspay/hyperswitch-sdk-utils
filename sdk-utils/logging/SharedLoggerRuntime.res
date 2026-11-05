@@ -139,7 +139,7 @@ let emitStep = (
   ~context=?,
   ~source=?,
   ~message=?,
-  step,
+  step: step,
 ) => {
   let severity = switch step.outcome {
   | Started => severity.start

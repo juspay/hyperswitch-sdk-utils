@@ -1,7 +1,3 @@
-open SharedLoggerTypes
-
-// Shared
-
 type provider =
   | VisaUctp
   | VisaDirect
@@ -39,9 +35,8 @@ let lifecycleSeverity = event =>
   | ProviderReady(_)
   | RecognitionTokenFound(_)
   | CheckoutCancelled(_)
-  | CardsListed(_) =>
-    Debug
-  | SignOutCompleted(_) => Info
+  | CardsListed(_) => SharedLoggerTypes.Debug
+  | SignOutCompleted(_) => SharedLoggerTypes.Info
   | CustomerVerificationRequired(_)
   | CustomerRecognised(_)
   | CheckoutCompleted(_)
@@ -62,7 +57,7 @@ let lifecycleSeverity = event =>
 
 type stateEvent = ClickToPayViewChanged({view: string})
 
-let stateSeverity = (_: stateEvent) => Debug
+let stateSeverity = (_: stateEvent) => SharedLoggerTypes.Debug
 
 type verificationSource = ClickToPayOtp | ClickToPayIdentity
 
@@ -78,8 +73,8 @@ let userSeverity = event =>
   switch event {
   | CustomerVerificationSubmitted(_)
   | ClickToPayOtpResendRequested
-  | ViewOpened(_) => Info
-  | FieldToggled(_) => Debug
+  | ViewOpened(_) => SharedLoggerTypes.Info
+  | FieldToggled(_) => SharedLoggerTypes.Debug
   }
 
 // Function
@@ -105,11 +100,11 @@ let functionSeverity = event =>
   | GetCards(_)
   | Authenticate(_)
   | UnbindAppInstance(_)
-  | SignOut(_) => quietSuccessSoftFailure
+  | SignOut(_) => SharedLoggerTypes.quietSuccessSoftFailure
   | EncryptCard(_)
   | Checkout(_)
   | CheckoutWithCard(_)
-  | CheckoutWithNewCard(_) => quietSuccess
+  | CheckoutWithNewCard(_) => SharedLoggerTypes.quietSuccess
   }
 
 // Merchant call
@@ -126,14 +121,14 @@ type merchantMethod =
 
 let merchantCallSeverity = (method: merchantMethod) =>
   switch method {
-  | CheckoutWithCard => defaultSeverity
+  | CheckoutWithCard => SharedLoggerTypes.defaultSeverity
   | InitSession
   | GetActiveSession
   | IsCustomerPresent
   | GetUserType
   | GetRecognizedCards
   | ValidateAuthentication
-  | SignOut => quietSuccessSoftFailure
+  | SignOut => SharedLoggerTypes.quietSuccessSoftFailure
   }
 
 // Api
@@ -147,7 +142,7 @@ let apiSeverity = event =>
   switch event {
   | EnabledAuthnMethodsToken
   | EligibilityCheck
-  | AuthenticationSync => defaultSeverity
+  | AuthenticationSync => SharedLoggerTypes.defaultSeverity
   }
 
 // Resource
@@ -163,7 +158,7 @@ let resourceSeverity = event =>
   | VisaSdkScript
   | MastercardSdkScript
   | UiKitScript
-  | UiKitStylesheet => quietSuccessSoftFailure
+  | UiKitStylesheet => SharedLoggerTypes.quietSuccessSoftFailure
   }
 
 let isStylesheet = value =>

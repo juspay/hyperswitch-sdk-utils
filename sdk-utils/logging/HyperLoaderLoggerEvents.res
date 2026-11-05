@@ -163,7 +163,7 @@ let merchantIssueSeverity = (issue): severity =>
   | ExpectedBoolean
   | ExpectedString
   | ExpectedNumber =>
-    Error
+    SharedLoggerTypes.Error
   | ImmutableAfterMount
   | CalledAfterSessionEnd
   | ValueOutOfRange

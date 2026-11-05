@@ -16,7 +16,7 @@ type cardIssuer =
 
 type cardPattern = {
   issuer: string,
-  pattern: Js.Re.t,
+  pattern: RegExp.t,
   cvcLength: array<int>,
   length: array<int>,
   maxCVCLength: int,
@@ -193,7 +193,7 @@ let slice = (val, start: int, end: int) => {
 }
 
 let containsOnlyDigits = text => {
-  %re("/^[0-9]*$/")->Js.Re.test_(text)
+  %re("/^[0-9]*$/")->RegExp.test(text)
 }
 
 let containsDigit = text => {
@@ -471,7 +471,7 @@ let isValidZip = (~zipCode, ~country) => {
     ->Array.find(item => item.iso == countryObj.country_code)
     ->Option.getOr(PostalCodes.defaultPostalCode)
 
-  let isZipCodeValid = RegExp.test(postalCode.regex->Js.Re.fromString, zipCode)
+  let isZipCodeValid = RegExp.test(postalCode.regex->RegExp.fromString, zipCode)
   zipCode->String.length > 0 && isZipCodeValid
 }
 

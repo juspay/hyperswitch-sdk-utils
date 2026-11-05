@@ -1,6 +1,6 @@
 type patterns = {
   issuer: string,
-  pattern: Js.Re.t,
+  pattern: RegExp.t,
   cvcLength: array<int>,
   length: array<int>,
   maxCVCLength: int,

@@ -1,4 +1,3 @@
-open SharedLoggerTypes
 include PaymentMethodSessionLoggerEvents
 
 let logState = (~event: stateEvent, ~context=?, ~durationMs=?) =>
