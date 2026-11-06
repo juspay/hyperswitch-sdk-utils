@@ -291,6 +291,7 @@ type userEvent =
   | FieldToggled(fieldToggleData)
   | FieldFocused(fieldData)
   | FieldBlurred(fieldData)
+  | FieldChanged(fieldData)
   | ViewToggled(viewData)
   | ViewOpened(openedViewData)
 
@@ -306,7 +307,8 @@ let userSeverity = value =>
   | ExpressCheckoutClicked
   | VoucherDownloadRequested
   | QrCodeCopyRequested
-  | BankDetailsConfirmed =>
+  | BankDetailsConfirmed
+  | FieldChanged(_) =>
     Info
   | FieldToggled(_)
   | FieldFocused(_)

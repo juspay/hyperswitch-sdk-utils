@@ -14,6 +14,7 @@ let normalizeUserEvent = event =>
   switch event {
   | FieldFocused({field}) => FieldFocused({field: field->namedField})
   | FieldBlurred({field}) => FieldBlurred({field: field->namedField})
+  | FieldChanged({field}) => FieldChanged({field: field->namedField})
   | FieldToggled({field, enabled}) => FieldToggled({field: field->namedField, enabled})
   | event => event
   }
