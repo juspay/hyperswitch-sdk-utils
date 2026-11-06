@@ -2,48 +2,54 @@ include ClickToPayLoggerEvents
 
 // A standalone authentication session must never inherit a payment identity,
 // including when the web queue backfills missing identifiers later.
-let context = () => {
+let defaultContext = () => {
   ...SharedLoggerRuntime.platform().getContext(),
   paymentId: "",
   pmSessionId: "",
   scoped: true,
 }
 
-let logLifecycle = (~event: lifecycleEvent, ~details=?, ~exn=?, ~message=?) =>
+let authenticationContext = (context: option<SharedLoggerTypes.context>) =>
+  switch context {
+  | Some(context) => {...context, paymentId: "", pmSessionId: "", scoped: true}
+  | None => defaultContext()
+  }
+
+let logLifecycle = (~event: lifecycleEvent, ~details=?, ~exn=?, ~message=?, ~context=?) =>
   ClickToPayLogger.logLifecycle(
     ~event,
     ~details?,
     ~exn?,
     ~message?,
-    ~context=context(),
+    ~context=context->authenticationContext,
     ~source=SharedLoggerRuntime.AuthenticationSession,
   )
 
-let logState = (~event: stateEvent) =>
+let logState = (~event: stateEvent, ~context=?) =>
   ClickToPayLogger.logState(
     ~event,
-    ~context=context(),
+    ~context=context->authenticationContext,
     ~source=SharedLoggerRuntime.AuthenticationSession,
   )
 
-let logUser = (~event: userEvent) =>
+let logUser = (~event: userEvent, ~context=?) =>
   ClickToPayLogger.logUser(
     ~event,
-    ~context=context(),
+    ~context=context->authenticationContext,
     ~source=SharedLoggerRuntime.AuthenticationSession,
   )
 
-let observeFunction = (~event: functionEvent, ~detailsOf=?, ~message=?, ~call) =>
+let observeFunction = (~event: functionEvent, ~detailsOf=?, ~message=?, ~context=?, ~call) =>
   ClickToPayLogger.observeFunction(
     ~event,
     ~detailsOf?,
     ~message?,
     ~call,
-    ~context=context(),
+    ~context=context->authenticationContext,
     ~source=SharedLoggerRuntime.AuthenticationSession,
   )
 
-let observeMerchantCall = (~method: merchantMethod, ~details=?, ~detailsOf=?, ~message=?, ~call) =>
+let observeMerchantCall = (~method: merchantMethod, ~details=?, ~detailsOf=?, ~message=?, ~context=?, ~call) =>
   ClickToPayLogger.observeMerchantCall(
     ~method,
     ~surface="AUTHENTICATION_SESSION",
@@ -51,17 +57,17 @@ let observeMerchantCall = (~method: merchantMethod, ~details=?, ~detailsOf=?, ~m
     ~detailsOf?,
     ~message?,
     ~call,
-    ~context=context(),
+    ~context=context->authenticationContext,
     ~source=SharedLoggerRuntime.AuthenticationSession,
   )
 
-let observeApi = (~event: apiEvent, ~url, ~request: Fetch.Request.init={}, ~message=?) =>
+let observeApi = (~event: apiEvent, ~url, ~request: Fetch.Request.init={}, ~message=?, ~context=?) =>
   ClickToPayLogger.observeApi(
     ~event,
     ~url,
     ~message?,
     ~request,
-    ~context=context(),
+    ~context=context->authenticationContext,
     ~source=SharedLoggerRuntime.AuthenticationSession,
   )
 
@@ -71,6 +77,7 @@ let observeResource = (
   ~attributes=?,
   ~matchQuery=?,
   ~message=?,
+  ~context=?,
   ~onLoad=?,
   ~onError=?,
 ) =>
@@ -82,6 +89,6 @@ let observeResource = (
     ~message?,
     ~onLoad?,
     ~onError?,
-    ~context=context(),
+    ~context=context->authenticationContext,
     ~source=SharedLoggerRuntime.AuthenticationSession,
   )

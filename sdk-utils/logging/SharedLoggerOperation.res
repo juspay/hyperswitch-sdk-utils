@@ -21,10 +21,19 @@ let settle = tracker =>
   }
 
 let isThenable: 'value => bool = %raw(`
-  (value) => value != null && typeof value.then === "function"
+  (value) => {
+    try { return value != null && typeof value.then === "function"; }
+    catch (_) { return false; }
+  }
 `)
 
-external asPromise: 'value => promise<'result> = "%identity"
+let observeThenable: ('value, ('result => unit), (exn => unit)) => unit = %raw(`
+  (value, onDone, onFailure) => {
+    try {
+      Promise.resolve(value).then(onDone, onFailure).catch(() => {});
+    } catch (_) {}
+  }
+`)
 external asResult: 'value => 'result = "%identity"
 
 let observe = (
@@ -86,22 +95,16 @@ let observe = (
             })
           }
         , timeoutMs))
-      value
-      ->asPromise
-      ->Promise.then(result => {
+      value->observeThenable(result => {
         if tracker->settle || timedOut.contents {
           result->finish(Done)
         }
-        Promise.resolve()
-      })
-      ->Promise.catch(error => {
+      }, error => {
         if tracker->settle || timedOut.contents {
           let error = error->summarizeExn
           failed(error->SharedLoggerFormatting.isAborted ? Aborted : Rejected, error)
         }
-        Promise.resolve()
       })
-      ->ignore
     } else if tracker->settle {
       value->asResult->finish(syncOutcome)
     }

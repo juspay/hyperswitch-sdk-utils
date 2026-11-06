@@ -71,13 +71,17 @@ let sendNext = () => {
   sent ? None : Some(batch)
 }
 
+let trimOverflow = () => {
+  while rows->Array.length > LoggerConfig.maxQueuedRows {
+    let disposable = rows->Array.findIndex(entry => entry.row.logType !== "ERROR")
+    rows->Array.splice(~start=disposable === -1 ? 0 : disposable, ~remove=1, ~insert=[])
+    droppedRows := droppedRows.contents + 1
+  }
+}
+
 let requeue = batch => {
   rows->Array.splice(~start=0, ~remove=0, ~insert=batch)
-  let overflow = rows->Array.length - LoggerConfig.maxQueuedRows
-  if overflow > 0 {
-    rows->Array.splice(~start=LoggerConfig.maxQueuedRows, ~remove=overflow, ~insert=[])
-    droppedRows := droppedRows.contents + overflow
-  }
+  trimOverflow()
 }
 
 let rec flush = () => {
@@ -141,8 +145,7 @@ let push = (row, ~backfill=true, ~pmSessionId="", ~sessionIdAtEnqueue="") => {
     awaitingInitialSession: backfill && sessionIdAtEnqueue === "" && waitingForInitialSession(),
   })
   if rows->Array.length > LoggerConfig.maxQueuedRows {
-    rows->Array.splice(~start=0, ~remove=rows->Array.length - LoggerConfig.maxQueuedRows, ~insert=[])
-    droppedRows := droppedRows.contents + 1
+    trimOverflow()
   }
   scheduleFlush()
 }

@@ -64,6 +64,7 @@ let emit = (
       let data = data->Option.getOr([])
       let details = details->Option.getOr([])
       let context = switch context {
+      | Some(started) if started.scoped => started
       | Some(started) => started->platform.fillContext(platform.getContext())
       | None => platform.getContext()
       }
@@ -179,7 +180,7 @@ let emit = (
           },
           ~backfill=!context.scoped,
           ~pmSessionId=context.pmSessionId,
-          ~sessionIdAtEnqueue=platform.getContext().sessionId,
+          ~sessionIdAtEnqueue=context.scoped ? context.sessionId : platform.getContext().sessionId,
         )
       }
     })

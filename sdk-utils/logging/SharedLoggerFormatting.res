@@ -7,10 +7,18 @@ let truncateTo = (value, limit) =>
 
 let sanitizeUrl = url => url->String.replaceRegExp(%re("/[?#].*$/"), "")
 
+let isUrlValue = text =>
+  %re("/^(?:[a-z][a-z0-9+.-]*:\/\/|\/\/|\/[^\/])/i")->RegExp.test(text)
+
 let redact = text =>
   text
   ->String.replaceRegExp(%re("/[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}/g"), "[email]")
   ->String.replaceRegExp(%re("/\d(?:[ -]?\d){5,}/g"), "[digits]")
+
+let safeErrorName = value =>
+  %re("/^[A-Za-z][A-Za-z0-9_]{0,63}$/")->RegExp.test(value)
+    ? value->SharedLoggerEvent.screamingSnakeCase
+    : "UNKNOWN_ERROR"
 
 let jsonKind: JSON.t => int = %raw(`
   (v) => {
@@ -29,7 +37,7 @@ let rec normalize = (key, value, ~maxTextLength) =>
       text
     } else if key === "url" || key === "href" || key === "uri" || %re("/_(?:url|href|uri)$/")->RegExp.test(key) {
       text->sanitizeUrl
-    } else if key === "message" || key->String.endsWith("_message") {
+    } else if key === "message" || key->String.endsWith("_message") || key === "reason" || key->String.endsWith("_reason") {
       text->redact
     } else if %re("/^[A-Z][A-Za-z0-9]*$/")->RegExp.test(text) {
       text->SharedLoggerEvent.screamingSnakeCase
@@ -122,7 +130,7 @@ let summarizeValue = value => {
       ~name=object
       ->firstString(["name", "code", "type", "reason", "statusCode"])
       ->Option.getOr("UNKNOWN_ERROR")
-      ->SharedLoggerEvent.screamingSnakeCase,
+      ->safeErrorName,
       ~message=?object->firstString(["message", "description", "statusMessage"]),
     )
   | _ => summary(~name="UNKNOWN_ERROR")
@@ -156,7 +164,7 @@ let summarizeErrorResponse = result =>
           ~name=object
           ->firstString(["type", "code", "reason"])
           ->Option.getOr("ERROR_RESPONSE")
-          ->SharedLoggerEvent.screamingSnakeCase,
+          ->safeErrorName,
           ~message=?object->firstString(["message"]),
           ~details=[
             ("error_code", object->firstString(["code"])),
@@ -236,7 +244,17 @@ let configSnapshot = (
   let rec walk = (value, path, depth) =>
     switch value->JSON.Decode.string {
     | Some(text) => {
-        let text = isSensitive(path) ? redactedValue(text) : text->truncateTo(256)->JSON.Encode.string
+        let parts = path->String.split(".")
+        let key = parts->Array.get(parts->Array.length - 1)->Option.getOr("")->SharedLoggerEvent.snakeCase
+        let text = if isSensitive(path) {
+          redactedValue(text)
+        } else if key === "url" || key === "href" || key === "uri" || %re("/_(?:url|href|uri)$/")->RegExp.test(key) || text->isUrlValue {
+          text->sanitizeUrl->truncateTo(256)->JSON.Encode.string
+        } else if key === "reason" || key->String.endsWith("_reason") || key === "message" || key->String.endsWith("_message") {
+          text->redact->truncateTo(256)->JSON.Encode.string
+        } else {
+          text->truncateTo(256)->JSON.Encode.string
+        }
         charge(text->JSON.Decode.string->Option.getOr("")->String.length + 2)
           ? Some(text)
           : omit(path)

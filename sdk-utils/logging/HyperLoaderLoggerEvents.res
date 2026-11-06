@@ -159,13 +159,13 @@ let merchantIssueSeverity = (issue): severity =>
   | InvalidPublishableKey
   | InsecureProtocol
   | MissingParameter
-  | MalformedValue =>
+  | MalformedValue
+  | ExpectedBoolean
+  | ExpectedString
+  | ExpectedNumber =>
     Error
   | ImmutableAfterMount
   | CalledAfterSessionEnd
-  | ExpectedBoolean
-  | ExpectedString
-  | ExpectedNumber
   | ValueOutOfRange
   | ConnectorMisconfigured
   | DynamicFieldsConfig
