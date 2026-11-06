@@ -1,14 +1,12 @@
 type displayMode = [#custom_message | #default_sdk_message | #hidden]
-type fontStyle = [#normal | #italic]
-type textDecoration = [#none | #underline]
 
 type elementStyle = {
   color?: string,
   fontSize?: float,
-  /* Platform-specific weight names pass through; each renderer maps what it supports. */
+  /* Font values pass through as strings (web takes CSS); each renderer maps what it supports. */
   fontWeight?: string,
-  fontStyle?: fontStyle,
-  textDecoration?: textDecoration,
+  fontStyle?: string,
+  textDecoration?: string,
 }
 
 /* The message is sent as its pieces, so text is never parsed for placeholders. `index` is

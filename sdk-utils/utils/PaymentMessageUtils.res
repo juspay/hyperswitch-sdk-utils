@@ -4,12 +4,6 @@ open CommonUtils
 /* This decodes the bridge JSON. The wrappers own the merchant-facing API and callbacks. */
 let readField = (dict, key, decode) => dict->Dict.get(key)->Option.flatMap(decode)
 
-let readEnum = (json, values: array<(string, 'a)>) =>
-  json
-  ->JSON.Decode.string
-  ->Option.flatMap(str => values->Array.find(((name, _)) => name == str))
-  ->Option.map(((_, value)) => value)
-
 let readStyle = (json): elementStyle =>
   switch json->JSON.Decode.object {
   | None => {}
@@ -25,16 +19,8 @@ let readStyle = (json): elementStyle =>
         json->JSON.Decode.float->Option.filter(size => size >= 0. && Float.isFinite(size))
       ),
       fontWeight: ?readField(dict, "fontWeight", JSON.Decode.string),
-      fontStyle: ?readField(
-        dict,
-        "fontStyle",
-        readEnum(_, [("normal", #normal), ("italic", #italic)]),
-      ),
-      textDecoration: ?readField(
-        dict,
-        "textDecoration",
-        readEnum(_, [("none", #none), ("underline", #underline)]),
-      ),
+      fontStyle: ?readField(dict, "fontStyle", JSON.Decode.string),
+      textDecoration: ?readField(dict, "textDecoration", JSON.Decode.string),
     }
   }
 
