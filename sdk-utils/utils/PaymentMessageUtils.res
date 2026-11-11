@@ -8,13 +8,7 @@ let readStyle = (json): elementStyle =>
   switch json->JSON.Decode.object {
   | None => {}
   | Some(dict) => {
-      color: ?readField(dict, "color", json =>
-        json
-        ->JSON.Decode.string
-        ->Option.filter(color =>
-          %re("/^#(?:[0-9a-fA-F]{3,4}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})$/")->RegExp.test(color)
-        )
-      ),
+      color: ?readField(dict, "color", JSON.Decode.string),
       fontSize: ?readField(dict, "fontSize", json =>
         json->JSON.Decode.float->Option.filter(size => size >= 0. && Float.isFinite(size))
       ),
