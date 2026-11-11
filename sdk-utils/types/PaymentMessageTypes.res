@@ -1,9 +1,10 @@
 type displayMode = [#custom_message | #default_sdk_message | #hidden]
 
 type elementStyle = {
+  /* Colour and font values pass through as strings, like the theme colours; each renderer
+   uses what it supports. */
   color?: string,
   fontSize?: float,
-  /* Font values pass through as strings (web takes CSS); each renderer maps what it supports. */
   fontWeight?: string,
   fontStyle?: string,
   textDecoration?: string,
