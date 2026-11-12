@@ -77,6 +77,7 @@ let observeApi = (
   ~context=?,
   ~source=?,
   ~message=?,
+  ~checkBody=?,
 ) =>
   SharedLoggerProducer.observeApi(
     ~event,
@@ -95,7 +96,7 @@ let observeApi = (
         ~context?,
         ~source?,
         ~message?,
-        ~call=() => Fetch.fetch(url, request),
+        ~call=() => SharedLoggerRuntime.fetchApi(~checkBody?, url, request),
       ),
   )
 

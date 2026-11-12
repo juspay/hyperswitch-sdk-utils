@@ -173,7 +173,7 @@ let observeApi = (
         ~failureOf=SharedLoggerRuntime.httpFailure,
         ~detailsOf=SharedLoggerRuntime.httpDetails,
         ~message?,
-        ~call=() => Fetch.fetch(url, request),
+        ~call=() => SharedLoggerRuntime.fetchApi(url, request),
       ),
   )
 

@@ -5,6 +5,8 @@ open SharedLoggerTypes
 type walletStage =
   | ConfirmRequestReceived
   | OneClickDeclined
+  // Native SDKs: the native wallet module received the request from JS.
+  | BridgeReached
 
 type walletFlow =
   | Normal

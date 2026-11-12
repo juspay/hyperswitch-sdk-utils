@@ -75,13 +75,98 @@ let summarizeErrorResponse = value =>
   ->SharedLoggerFormatting.summarizeErrorResponse
   ->Option.map(summary => {...summary, message: summary.message->Option.map(truncate)})
 
+// Backend error type and code of failed replies, read by `fetchApi`. The message and the rest of
+// the body are never kept.
+let backendErrors: WeakMap.t<Fetch.Response.t, details> = WeakMap.make()
+
+let backendErrorDetails = (summary: errorSummary) =>
+  [("backend_error_type", summary.name->JSON.Encode.string)]->Array.concat(summary.details)
+
+let readBackendError = response =>
+  try {
+    response
+    ->Fetch.Response.clone
+    ->Fetch.Response.json
+    ->Promise.thenResolve(json =>
+      json
+      ->SharedLoggerFormatting.summarizeErrorResponse
+      ->Option.forEach(summary =>
+        backendErrors->WeakMap.set(response, summary->backendErrorDetails)->ignore
+      )
+    )
+    ->Promise.catch(_ => Promise.resolve())
+  } catch {
+  | _ => Promise.resolve()
+  }
+
+// Successful replies whose body is not JSON, with the parser's error name (never its message,
+// which can quote the body). Read by `fetchApi` when `checkBody` is set.
+let unreadableBodies: WeakMap.t<Fetch.Response.t, string> = WeakMap.make()
+
+let readSuccessBody = response =>
+  try {
+    response
+    ->Fetch.Response.clone
+    ->Fetch.Response.json
+    ->Promise.thenResolve(_ => ())
+    ->Promise.catch(error => {
+      let name = try platform().summarizeExn(error).name catch {
+      | _ => "UNKNOWN_ERROR"
+      }
+      unreadableBodies->WeakMap.set(response, name)->ignore
+      Promise.resolve()
+    })
+  } catch {
+  | _ => Promise.resolve()
+  }
+
+// `fetch` for observed API calls. Before the reply is handed on, a copy of its body is read, so
+// the caller still reads the body and the API row reports what was in it:
+// - a failed reply: its backend error type and code;
+// - a successful reply, when `checkBody` is set: whether the body is readable. An unreadable one
+//   makes the row a failure instead of `done`. Off by default, since it parses the body twice.
+let fetchApi = (~checkBody=false, url, request) =>
+  Fetch.fetch(url, request)->Promise.then(response =>
+    if response->Fetch.Response.status === 0 {
+      Promise.resolve(response)
+    } else if !(response->Fetch.Response.ok) {
+      response->readBackendError->Promise.thenResolve(() => response)
+    } else if checkBody {
+      response->readSuccessBody->Promise.thenResolve(() => response)
+    } else {
+      Promise.resolve(response)
+    }
+  )
+
 let httpError = response => {
   let status = response->Fetch.Response.status
-  {name: "HTTP_ERROR", message: Some(status->Int.toString), details: []}
+  {
+    name: "HTTP_ERROR",
+    message: Some(status->Int.toString),
+    details: try backendErrors->WeakMap.get(response)->Option.getOr([]) catch {
+    | _ => []
+    },
+  }
+}
+
+let unreadableError = parseError => {
+  name: "UNREADABLE_RESPONSE",
+  message: None,
+  details: [("parse_error", parseError->JSON.Encode.string)],
 }
 
 let httpDetails = response => [("status_code", response->Fetch.Response.status->JSON.Encode.int)]
-let httpFailure = response => response->Fetch.Response.ok ? None : Some(response->httpError)
+let httpFailure = response =>
+  if !(response->Fetch.Response.ok) {
+    Some(response->httpError)
+  } else {
+    switch try unreadableBodies->WeakMap.get(response) catch {
+    | _ => None
+    } {
+    | Some(parseError) => Some(parseError->unreadableError)
+    | None => None
+    }
+  }
 external anyToJson: 'value => JSON.t = "%identity"
 
 let emit = (
@@ -230,13 +315,21 @@ let observe = (
   ~syncOutcome=Returned,
   ~message=?,
   ~call,
-) => {
-  let runtime = platform()
-  let context = context->Option.getOr(runtime.getContext())
-  let base = SharedLoggerFormatting.mergeDetails(
-    ~data=data->Option.getOr([]),
-    ~details=details->Option.getOr([]),
-  )
+) =>
+  // A logger that cannot set up must still let the call run.
+  switch try {
+    let runtime = platform()
+    let context = context->Option.getOr(runtime.getContext())
+    let base = SharedLoggerFormatting.mergeDetails(
+      ~data=data->Option.getOr([]),
+      ~details=details->Option.getOr([]),
+    )
+    Some((runtime, context, base))
+  } catch {
+  | _ => None
+  } {
+  | None => call()
+  | Some((runtime, context, base)) =>
   SharedLoggerOperation.observe(
     ~timeoutMs=timeoutMs->Option.getOr(runtime.defaultTimeoutMs),
     ~summarizeExn=runtime.summarizeExn,
@@ -261,7 +354,7 @@ let observe = (
       ),
     ~call,
   )
-}
+  }
 
 let observeCallback = (
   ~category,

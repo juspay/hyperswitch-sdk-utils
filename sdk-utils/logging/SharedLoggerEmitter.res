@@ -3,6 +3,7 @@ open SharedLoggerTypes
 type platform = {
   component: string,
   version: string,
+  clientCoreVersion?: string,
   appId: string,
   platform: string,
   userAgent: string,
@@ -163,6 +164,7 @@ let emit = (
             category: (category :> string),
             source,
             version: platform.version,
+            clientCoreVersion: ?platform.clientCoreVersion,
             value,
             sessionId: context.sessionId,
             merchantId: context.merchantId,

@@ -48,13 +48,24 @@ let observe = (
 ): 'value => {
   let tracker = makeTracker()
   let timedOut = ref(false)
+  // Logging must never change what the call returns or throws, so every logging step is guarded.
+  let guard = action =>
+    try action() catch {
+    | _ => ()
+    }
   let emit = (step, ~details=[]) =>
-    onStep(
-      step,
-      timedOut.contents
-        ? details->Array.concat([("settled_after_timeout", true->JSON.Encode.bool)])
-        : details,
+    guard(() =>
+      onStep(
+        step,
+        timedOut.contents
+          ? details->Array.concat([("settled_after_timeout", true->JSON.Encode.bool)])
+          : details,
+      )
     )
+  let summarize = error =>
+    try error->summarizeExn catch {
+    | _ => {name: "UNKNOWN_ERROR", message: None, details: []}
+    }
 
   let failed = (failureClass, error) =>
     emit({
@@ -67,7 +78,7 @@ let observe = (
 
   let finish = (result, outcome) =>
     switch try failureOf->Option.flatMap(failureOf => failureOf(result)) catch {
-    | error => Some(error->summarizeExn)
+    | error => Some(error->summarize)
     } {
     | Some(error) => failed(ReturnedFailure, error)
     | None =>
@@ -79,43 +90,53 @@ let observe = (
       )
     }
 
-  try {
-    let value = call()
-    if value->isThenable {
-      emit({outcome: Started, durationMs: None, failureClass: None, error: None, timeoutMs: 0})
-      tracker.timer = Some(setTimeout(() =>
-          if tracker->settle {
-            timedOut := true
-            emit({
-              outcome: TimedOut,
-              durationMs: Some(tracker->elapsed),
-              failureClass: None,
-              error: None,
-              timeoutMs,
-            })
-          }
-        , timeoutMs))
-      value->observeThenable(result => {
-        if tracker->settle || timedOut.contents {
-          result->finish(Done)
-        }
-      }, error => {
-        if tracker->settle || timedOut.contents {
-          let error = error->summarizeExn
-          failed(error->SharedLoggerFormatting.isAborted ? Aborted : Rejected, error)
-        }
-      })
-    } else if tracker->settle {
-      value->asResult->finish(syncOutcome)
-    }
-    value
-  } catch {
-  | error => {
+  switch try Ok(call()) catch {
+  | error => Error(error)
+  } {
+  | Error(error) => {
       if tracker->settle {
-        failed(Threw, error->summarizeExn)
+        failed(Threw, error->summarize)
       }
       rethrow(error)
     }
+  | Ok(value) =>
+    guard(() =>
+      if value->isThenable {
+        emit({outcome: Started, durationMs: None, failureClass: None, error: None, timeoutMs: 0})
+        // A timeout of 0 or less means the call is never reported as timed out.
+        if timeoutMs > 0 {
+          tracker.timer = Some(setTimeout(() =>
+              if tracker->settle {
+                timedOut := true
+                emit({
+                  outcome: TimedOut,
+                  durationMs: Some(tracker->elapsed),
+                  failureClass: None,
+                  error: None,
+                  timeoutMs,
+                })
+              }
+            , timeoutMs))
+        }
+        value->observeThenable(result =>
+          guard(() =>
+            if tracker->settle || timedOut.contents {
+              result->finish(Done)
+            }
+          )
+        , error =>
+          guard(() =>
+            if tracker->settle || timedOut.contents {
+              let error = error->summarize
+              failed(error->SharedLoggerFormatting.isAborted ? Aborted : Rejected, error)
+            }
+          )
+        )
+      } else if tracker->settle {
+        value->asResult->finish(syncOutcome)
+      }
+    )
+    value
   }
 }
 

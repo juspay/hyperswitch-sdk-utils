@@ -99,6 +99,8 @@ type row = {
   category: string,
   source: string,
   version: string,
+  // Native only: the client-core (JS bundle) version, from its package.json.
+  @as("client_core_version") clientCoreVersion?: string,
   value: string,
   @as("session_id") mutable sessionId: string,
   @as("merchant_id") mutable merchantId: string,
