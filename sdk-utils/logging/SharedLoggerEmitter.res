@@ -29,16 +29,9 @@ let reset = logger => {
   logger.onceKeys := Dict.make()
 }
 
-let rank = severity =>
-  switch severity {
-  | Debug => 0
-  | Info => 1
-  | Warning => 2
-  | Error => 3
-  }
-
 let isEnabled = severity =>
-  LoggerConfig.enabled.contents && severity->rank >= LoggerConfig.minimumRank.contents
+  LoggerConfig.enabled.contents &&
+  severity->LoggerConfig.severityRank >= LoggerConfig.minimumRank.contents
 
 let emit = (
   logger,
@@ -184,7 +177,7 @@ let emit = (
           },
           ~backfill=!context.scoped,
           ~pmSessionId=context.pmSessionId,
-          ~sessionIdAtEnqueue=context.scoped ? context.sessionId : platform.getContext().sessionId,
+          ~sessionIdAtEnqueue=context.sessionId,
         )
       }
     })

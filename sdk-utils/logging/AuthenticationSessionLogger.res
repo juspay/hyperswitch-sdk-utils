@@ -68,25 +68,3 @@ let observeApi = (~event: apiEvent, ~url, ~request: Fetch.Request.init={}, ~mess
     ~context=context->authenticationContext,
     ~source=SharedLoggerRuntime.AuthenticationSession,
   )
-
-let observeResource = (
-  ~event: resourceEvent,
-  ~url,
-  ~attributes=?,
-  ~matchQuery=?,
-  ~message=?,
-  ~context=?,
-  ~onLoad=?,
-  ~onError=?,
-) =>
-  ClickToPayLogger.observeResource(
-    ~event,
-    ~url,
-    ~attributes?,
-    ~matchQuery?,
-    ~message?,
-    ~onLoad?,
-    ~onError?,
-    ~context=context->authenticationContext,
-    ~source=SharedLoggerRuntime.AuthenticationSession,
-  )

@@ -18,8 +18,6 @@ let sourceName = source =>
   | Fullscreen(overlay) => `FULLSCREEN_${overlay->SharedLoggerEvent.screamingSnakeCase}`
   }
 
-type resource = Script | Stylesheet
-
 type platform = {
   emit: (
     ~category: category,
@@ -37,28 +35,11 @@ type platform = {
     ~message: string=?,
     ~once: bool=?,
   ) => unit,
-  resource: (
-    ~spec: eventSpec,
-    ~severity: operationSeverity,
-    ~url: string,
-    ~resource: resource,
-    ~attributes: array<(string, string)>=?,
-    ~matchQuery: bool=?,
-    ~inBody: bool=?,
-    ~paymentMethod: SharedLoggerPaymentMethod.paymentMethod=?,
-    ~context: context=?,
-    ~source: source=?,
-    ~abandoned: unit => bool=?,
-    ~message: string=?,
-    ~onLoad: unit => unit=?,
-    ~onError: exn => unit=?,
-  ) => unit,
   isEnabled: severity => bool,
   shouldLogMerchantConfig: unit => bool,
   getContext: unit => context,
   setSession: (~sessionId: string=?, ~merchantId: string=?, unit) => unit,
   summarizeExn: exn => errorSummary,
-  rethrow: exn => unit,
   defaultTimeoutMs: int,
   summarizeUnknown: JSON.t => errorSummary,
 }
@@ -66,10 +47,11 @@ type platform = {
 let current: ref<option<platform>> = ref(None)
 let configure = platform => current := Some(platform)
 let platform = () => current.contents->Option.getExn
-let eventDetails = event => SharedLoggerFormatting.eventDetails(event, ~maxTextLength=256)
+let eventDetails = event =>
+  SharedLoggerFormatting.eventDetails(event, ~maxTextLength=LoggerConfig.maxTextLength)
 let shouldLogMerchantConfig = () => platform().shouldLogMerchantConfig()
 
-let truncate = text => text->SharedLoggerFormatting.truncateTo(256)
+let truncate = text => text->SharedLoggerFormatting.truncateTo(LoggerConfig.maxTextLength)
 let summarizeErrorResponse = value =>
   value
   ->SharedLoggerFormatting.summarizeErrorResponse
@@ -248,10 +230,6 @@ let observe = (
   SharedLoggerOperation.observe(
     ~timeoutMs=timeoutMs->Option.getOr(runtime.defaultTimeoutMs),
     ~summarizeExn=runtime.summarizeExn,
-    ~rethrow=error => {
-      runtime.rethrow(error)
-      raise(error)
-    },
     ~failureOf?,
     ~dataOf=?sharedDetailsOf,
     ~syncOutcome,
@@ -301,37 +279,4 @@ let observeCallback = (
       ~message?,
       ~call=invoke,
     )
-  )
-
-let observeResource = (
-  ~spec,
-  ~severity,
-  ~url,
-  ~resource,
-  ~attributes=?,
-  ~matchQuery=?,
-  ~inBody=?,
-  ~paymentMethod=?,
-  ~context=?,
-  ~source=?,
-  ~abandoned=?,
-  ~message=?,
-  ~onLoad=?,
-  ~onError=?,
-) =>
-  platform().resource(
-    ~spec,
-    ~severity,
-    ~url,
-    ~resource,
-    ~attributes?,
-    ~matchQuery?,
-    ~inBody?,
-    ~paymentMethod?,
-    ~context?,
-    ~source?,
-    ~abandoned?,
-    ~message?,
-    ~onLoad?,
-    ~onError?,
   )

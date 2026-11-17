@@ -3,14 +3,14 @@ open SharedLoggerTypes
 // Lifecycle
 
 type walletStage =
-  | ConfirmRequestReceived
-  | OneClickDeclined
+  | @as("CONFIRM_REQUEST_RECEIVED") ConfirmRequestReceived
+  | @as("ONE_CLICK_DECLINED") OneClickDeclined
 
 type walletFlow =
-  | Normal
-  | Delayed
-  | ThirdParty
-  | PaypalSdkTabs
+  | @as("NORMAL") Normal
+  | @as("DELAYED") Delayed
+  | @as("THIRD_PARTY") ThirdParty
+  | @as("PAYPAL_SDK_TABS") PaypalSdkTabs
 
 type walletFailure =
   | MissingIntent
@@ -69,11 +69,11 @@ type unsupportedConnectorData = {connector: string}
 type validationFailureData = {reason: string}
 
 type blockedOperation =
-  | PaymentConfirm
-  | PaymentSync
-  | PaymentCompleteAuthorize
-  | PaymentPostSessionTokens
-  | IntentUpdate
+  | @as("PAYMENT_CONFIRM") PaymentConfirm
+  | @as("PAYMENT_SYNC") PaymentSync
+  | @as("PAYMENT_COMPLETE_AUTHORIZE") PaymentCompleteAuthorize
+  | @as("PAYMENT_POST_SESSION_TOKENS") PaymentPostSessionTokens
+  | @as("INTENT_UPDATE") IntentUpdate
 
 type operationBlockedData = {operation: blockedOperation, reason: string}
 
@@ -200,11 +200,18 @@ let lifecycleSeverity = value =>
 
 // State
 
-type loaderState = Loading | SemiLoaded | Loaded | LoadFailed
+type loaderState =
+  | @as("LOADING") Loading
+  | @as("SEMI_LOADED") SemiLoaded
+  | @as("LOADED") Loaded
+  | @as("LOAD_FAILED") LoadFailed
 
 type networkData = {online: bool}
 
-type loaderSource = IframeMount | PaymentMethodsList | SdkConfigs
+type loaderSource =
+  | @as("IFRAME_MOUNT") IframeMount
+  | @as("PAYMENT_METHODS_LIST") PaymentMethodsList
+  | @as("SDK_CONFIGS") SdkConfigs
 
 type loaderData = {state: loaderState, source: loaderSource, savedMethods?: int}
 
@@ -251,19 +258,19 @@ let stateSeverity = value =>
 // User
 
 type view =
-  | SavedMethodList
-  | MorePaymentMethods
-  | InstallmentOptions
+  | @as("SAVED_METHOD_LIST") SavedMethodList
+  | @as("MORE_PAYMENT_METHODS") MorePaymentMethods
+  | @as("INSTALLMENT_OPTIONS") InstallmentOptions
 
 type openedView =
-  | NewPaymentMethods
-  | ManageSavedMethod
-  | CardSchemeMenu
+  | @as("NEW_PAYMENT_METHODS") NewPaymentMethods
+  | @as("MANAGE_SAVED_METHOD") ManageSavedMethod
+  | @as("CARD_SCHEME_MENU") CardSchemeMenu
 
 type submitSource =
-  | PayButton
-  | SaveCardButton
-  | MerchantApi
+  | @as("PAY_BUTTON") PayButton
+  | @as("SAVE_CARD_BUTTON") SaveCardButton
+  | @as("MERCHANT_API") MerchantApi
 
 type fieldData = {field: string}
 

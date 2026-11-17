@@ -3,14 +3,14 @@ open SharedLoggerTypes
 // Surface
 
 type surface =
-  | Hyper
-  | Elements
-  | PaymentElement
-  | CardForm
-  | CardField
-  | PaymentSession
-  | PaymentMethodsSession
-  | PaymentMethodsManagement
+  | @as("HYPER") Hyper
+  | @as("ELEMENTS") Elements
+  | @as("PAYMENT_ELEMENT") PaymentElement
+  | @as("CARD_FORM") CardForm
+  | @as("CARD_FIELD") CardField
+  | @as("PAYMENT_SESSION") PaymentSession
+  | @as("PAYMENT_METHODS_SESSION") PaymentMethodsSession
+  | @as("PAYMENT_METHODS_MANAGEMENT") PaymentMethodsManagement
 
 type surfaceData = {surface: surface}
 

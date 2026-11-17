@@ -20,26 +20,42 @@ let settle = tracker =>
     true
   }
 
-let isThenable: 'value => bool = %raw(`
-  (value) => {
-    try { return value != null && typeof value.then === "function"; }
-    catch (_) { return false; }
-  }
-`)
-
-let observeThenable: ('value, ('result => unit), (exn => unit)) => unit = %raw(`
-  (value, onDone, onFailure) => {
-    try {
-      Promise.resolve(value).then(onDone, onFailure).catch(() => {});
-    } catch (_) {}
-  }
-`)
 external asResult: 'value => 'result = "%identity"
+external asNullable: 'value => Nullable.t<'value> = "%identity"
+external throwValue: 'value => 'result = "%raise"
+@get external thenProperty: 'value => 'then = "then"
+@send external onSettled: (promise<'result>, 'result => unit, 'reason => unit) => promise<unit> = "then"
+
+let isThenable = value =>
+  try {
+    value->asNullable->Nullable.toOption->Option.mapOr(false, value =>
+      typeof(value->thenProperty) === #function
+    )
+  } catch {
+  | _ => false
+  }
+
+let observeThenable = (value, onDone, onFailure) =>
+  try {
+    value
+    ->asResult
+    ->Promise.resolve
+    ->onSettled(onDone, reason => onFailure(reason->Js.Exn.anyToExnInternal))
+    ->Promise.catch(_ => Promise.resolve())
+    ->ignore
+  } catch {
+  | _ => ()
+  }
+
+let rethrow = error =>
+  switch error {
+  | Js.Exn.Error(jsError) => throwValue(jsError)
+  | error => raise(error)
+  }
 
 let observe = (
   ~timeoutMs,
   ~summarizeExn: exn => errorSummary,
-  ~rethrow: exn => 'value,
   ~failureOf: option<'result => option<errorSummary>>=?,
   ~dataOf: option<'result => details>=?,
   ~syncOutcome=Returned,

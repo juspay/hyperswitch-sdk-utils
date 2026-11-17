@@ -201,36 +201,3 @@ let observeApi = (
         ~call=() => Fetch.fetch(url, request),
       ),
   )
-
-let observeResource = (
-  ~event: resourceEvent,
-  ~url,
-  ~attributes=?,
-  ~matchQuery=?,
-  ~inBody=?,
-  ~context=?,
-  ~source=?,
-  ~message=?,
-  ~onLoad=?,
-  ~onError=?,
-) =>
-  SharedLoggerProducer.resource(~event, ~severity=event->resourceSeverity, ~run=(
-    ~spec,
-    ~severity,
-  ) =>
-    SharedLoggerRuntime.observeResource(
-      ~spec,
-      ~severity,
-      ~url,
-      ~resource=event->isStylesheet ? SharedLoggerRuntime.Stylesheet : SharedLoggerRuntime.Script,
-      ~attributes?,
-      ~matchQuery?,
-      ~inBody?,
-      ~paymentMethod,
-      ~context?,
-      ~source?,
-      ~message?,
-      ~onLoad?,
-      ~onError?,
-    )
-  )

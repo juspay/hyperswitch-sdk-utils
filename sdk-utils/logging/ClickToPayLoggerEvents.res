@@ -3,10 +3,10 @@ open SharedLoggerTypes
 // Shared
 
 type provider =
-  | VisaUctp
-  | VisaDirect
-  | MastercardUctp
-  | MastercardDirect
+  | @as("VISA_UCTP") VisaUctp
+  | @as("VISA_DIRECT") VisaDirect
+  | @as("MASTERCARD_UCTP") MastercardUctp
+  | @as("MASTERCARD_DIRECT") MastercardDirect
 
 type providerDetails = {provider: provider}
 type identityLookupData = {provider: provider, consumerPresent?: bool}
@@ -63,19 +63,28 @@ let lifecycleSeverity = event =>
 
 // State and user actions
 
-type stateEvent = ClickToPayViewChanged({view: string})
+type viewData = {view: string}
+
+type stateEvent = ClickToPayViewChanged(viewData)
 
 let stateSeverity = (_: stateEvent) => Debug
 
-type verificationSource = ClickToPayOtp | ClickToPayIdentity
+type verificationSource =
+  | @as("CLICK_TO_PAY_OTP") ClickToPayOtp
+  | @as("CLICK_TO_PAY_IDENTITY") ClickToPayIdentity
 
-type openedView = ClickToPayIdentityChange
+type openedView =
+  | @as("CLICK_TO_PAY_IDENTITY_CHANGE") ClickToPayIdentityChange
+
+type verificationData = {source: verificationSource, provider: option<provider>}
+type openedViewData = {view: openedView}
+type fieldToggleData = {field: string, enabled: bool}
 
 type userEvent =
-  | CustomerVerificationSubmitted({source: verificationSource, provider: option<provider>})
+  | CustomerVerificationSubmitted(verificationData)
   | ClickToPayOtpResendRequested
-  | ViewOpened({view: openedView})
-  | FieldToggled({field: string, enabled: bool})
+  | ViewOpened(openedViewData)
+  | FieldToggled(fieldToggleData)
 
 let userSeverity = event =>
   switch event {

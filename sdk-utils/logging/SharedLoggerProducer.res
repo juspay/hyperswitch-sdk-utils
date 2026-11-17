@@ -53,6 +53,3 @@ let logMerchantIssue = (~event, ~severity, ~dataOf, ~emit) =>
 
 let observeResource = (~event, ~severity, ~dataOf, ~run) =>
   observe(~event, ~category=Resource, ~action=Load, ~severity, ~dataOf, ~run)
-
-let resource = (~event, ~severity, ~run) =>
-  run(~spec=event->SharedLoggerEvent.spec(~action=Load), ~severity)

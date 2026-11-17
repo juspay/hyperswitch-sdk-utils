@@ -53,18 +53,61 @@ let clearTimer = () =>
     flushTimer := None
   })
 
+let utf8ByteLength = value => {
+  let bytes = ref(0)
+  let index = ref(0)
+  while index.contents < value->String.length {
+    let codePoint = value->String.codePointAt(index.contents)->Option.getOr(0)
+    let width = codePoint <= 0x7F ? 1 : codePoint <= 0x7FF ? 2 : codePoint <= 0xFFFF ? 3 : 4
+    bytes := bytes.contents + width
+    index := index.contents + (codePoint > 0xFFFF ? 2 : 1)
+  }
+  bytes.contents
+}
+
 let sendNext = () => {
-  let count = Math.Int.min(rows->Array.length, LoggerConfig.batchSize)
-  let batch = rows->Array.slice(~start=0, ~end=count)
-  rows->Array.splice(~start=0, ~remove=count, ~insert=[])
-  // The log API currently only accepts payment_id, not PM-session ID.
+  let batch = []
+  let serializedRows = []
+  let bytes = ref(2)
+  let consumed = ref(0)
+  let full = ref(false)
+  let serializationFailed = ref(false)
+  while (
+    !full.contents &&
+    consumed.contents < rows->Array.length &&
+    batch->Array.length < LoggerConfig.batchSize
+  ) {
+    let entry = rows->Array.getUnsafe(consumed.contents)
+    // The log API currently only accepts payment_id, not PM-session ID.
+    let paymentId = entry.row.paymentId !== "" ? entry.row.paymentId : entry.pmSessionId
+    let serialized = try {
+      {...entry.row, paymentId}->JSON.stringifyAny->Option.getOr("")
+    } catch {
+    | _ => ""
+    }
+    let rowBytes = serialized->utf8ByteLength
+    let nextBytes = bytes.contents + rowBytes + (batch->Array.length > 0 ? 1 : 0)
+    if serialized === "" {
+      batch->Array.push(entry)
+      consumed := consumed.contents + 1
+      serializationFailed := true
+      full := true
+    } else if rowBytes + 2 > LoggerConfig.maxBatchBytes {
+      consumed := consumed.contents + 1
+      droppedRows := droppedRows.contents + 1
+    } else if nextBytes > LoggerConfig.maxBatchBytes {
+      full := true
+    } else {
+      batch->Array.push(entry)
+      serializedRows->Array.push(serialized)
+      bytes := nextBytes
+      consumed := consumed.contents + 1
+    }
+  }
+  rows->Array.splice(~start=0, ~remove=consumed.contents, ~insert=[])
   let sent = try {
-    count === 0 || send.contents(
-      `[${batch->Array.map(entry => {
-        let paymentId = entry.row.paymentId !== "" ? entry.row.paymentId : entry.pmSessionId
-        {...entry.row, paymentId}->JSON.stringifyAny->Option.getOr("")
-      })->Array.join(",")}]`,
-    )
+    !serializationFailed.contents &&
+    (batch->Array.length === 0 || send.contents(`[${serializedRows->Array.join(",")}]`))
   } catch {
   | _ => false
   }

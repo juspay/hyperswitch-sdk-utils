@@ -1,4 +1,5 @@
-type cardFormScope = VaultForm
+type cardFormScope =
+  | @as("VAULT_FORM") VaultForm
 type cardFormData = {scope: cardFormScope}
 type cardFieldData = {scope: cardFormScope, field: string}
 type cardFormCompletionData = {scope: cardFormScope, fields: array<string>}
@@ -28,13 +29,16 @@ type stateEvent =
   | CardFormCompleted(cardFormCompletionData)
   | CardFieldUnmounted(cardFieldData)
 
-type paymentMethodSaveOperation = Save | Update
+type paymentMethodSaveOperation =
+  | @as("SAVE") Save
+  | @as("UPDATE") Update
 type paymentMethodSaveData = {operation: paymentMethodSaveOperation}
 type paymentMethodSaveOutcomeData = {operation: paymentMethodSaveOperation, status: string}
+type operationBlockedData = {operation: paymentMethodSaveOperation, reason: string}
 
 type lifecycleEvent =
   | VaultFlowFailed(vaultFailureData)
-  | OperationBlocked({operation: paymentMethodSaveOperation, reason: string})
+  | OperationBlocked(operationBlockedData)
   | PaymentMethodSaveRejected(paymentMethodSaveData)
   | PaymentMethodSaveSucceeded(paymentMethodSaveOutcomeData)
   | PaymentMethodSaveFailed(paymentMethodSaveOutcomeData)
@@ -51,7 +55,9 @@ type functionEvent = VaultFormCreate
 type functionCallbackEvent = OnSuccess | OnError
 type resourceEvent = VaultScript
 
-type vaultTokenizeScope = SaveCardCvc | FullCard
+type vaultTokenizeScope =
+  | @as("SAVE_CARD_CVC") SaveCardCvc
+  | @as("FULL_CARD") FullCard
 type vaultTokenizeData = {scope: vaultTokenizeScope, vault?: string}
 type apiEvent =
   | VaultTokenization(vaultTokenizeData)

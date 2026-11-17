@@ -185,25 +185,3 @@ let observeFunctionCallback = (
       SharedLoggerRuntime.observeCallback(~category, ~spec, ~severity, ~data,
         ~details?, ~timeoutMs?, ~paymentMethod?, ~context?, ~message?, ~callback),
   )
-
-let observeResource = (
-  ~event: resourceEvent,
-  ~url,
-  ~attributes=?,
-  ~matchQuery=?,
-  ~inBody=?,
-  ~paymentMethod=?,
-  ~context=?,
-  ~abandoned=?,
-  ~message=?,
-  ~onLoad=?,
-  ~onError=?,
-) =>
-  SharedLoggerProducer.resource(
-    ~event, ~severity=event->resourceSeverity,
-    ~run=(~spec, ~severity) =>
-      SharedLoggerRuntime.observeResource(~spec, ~severity, ~url,
-        ~resource=event->isStylesheet ? SharedLoggerRuntime.Stylesheet : SharedLoggerRuntime.Script,
-        ~context?, ~attributes?, ~matchQuery?, ~inBody?, ~paymentMethod?, ~abandoned?,
-        ~message?, ~onLoad?, ~onError?),
-  )

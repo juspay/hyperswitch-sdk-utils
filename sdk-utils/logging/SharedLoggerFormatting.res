@@ -20,13 +20,13 @@ let safeErrorName = value =>
     ? value->SharedLoggerEvent.screamingSnakeCase
     : "UNKNOWN_ERROR"
 
-let jsonKind: JSON.t => int = %raw(`
-  (v) => {
-    var t = Object.prototype.toString.call(v);
-    return t == "[object Undefined]" ? 1 : t == "[object Array]" ? 2
-      : t == "[object Null]" || t == "[object Number]" || t == "[object Boolean]" || t == "[object String]" ? 0 : 3;
+let jsonKind = (value: JSON.t) =>
+  switch value->Type.Classify.classify {
+  | Undefined => 1
+  | Null | Number(_) | Bool(_) | String(_) => 0
+  | Object(_) if value->Array.isArray => 2
+  | _ => 3
   }
-`)
 external asArray: JSON.t => array<JSON.t> = "%identity"
 external asDict: JSON.t => Dict.t<JSON.t> = "%identity"
 
@@ -39,8 +39,6 @@ let rec normalize = (key, value, ~maxTextLength) =>
       text->sanitizeUrl
     } else if key === "message" || key->String.endsWith("_message") || key === "reason" || key->String.endsWith("_reason") {
       text->redact
-    } else if %re("/^[A-Z][A-Za-z0-9]*$/")->RegExp.test(text) {
-      text->SharedLoggerEvent.screamingSnakeCase
     } else {
       text
     }
@@ -123,24 +121,46 @@ let firstString = (object, keys) =>
 
 let summarizeValue = value => {
   let json = value->anyTypeToJson
-  switch JSON.Classify.classify(json) {
-  | String(value) => summary(~name="THROWN_VALUE", ~message=value)
-  | Object(object) =>
-    summary(
-      ~name=object
-      ->firstString(["name", "code", "type", "reason", "statusCode"])
-      ->Option.getOr("UNKNOWN_ERROR")
-      ->safeErrorName,
-      ~message=?object->firstString(["message", "description", "statusMessage"]),
-    )
-  | _ => summary(~name="UNKNOWN_ERROR")
+  if typeof(json) === #undefined {
+    summary(~name="UNKNOWN_ERROR")
+  } else {
+    switch JSON.Classify.classify(json) {
+    | String(value) => summary(~name="THROWN_VALUE", ~message=value)
+    | Object(object) =>
+      summary(
+        ~name=object
+        ->firstString(["name", "code", "type", "reason", "statusCode"])
+        ->Option.getOr("UNKNOWN_ERROR")
+        ->safeErrorName,
+        ~message=?object->firstString(["message", "description", "statusMessage"]),
+      )
+    | _ => summary(~name="UNKNOWN_ERROR")
+    }
   }
 }
 
-let summarizeExn = error =>
-  error->summarizeValue
+let summarizeExn = (error: exn) =>
+  switch error->anyTypeToJson->JSON.Decode.object {
+  | None => error->summarizeValue
+  | Some(object) =>
+    switch error {
+    | Js.Exn.Error(value) => value->summarizeValue
+    | _ =>
+      switch object->firstString(["RE_EXN_ID"]) {
+      | Some(name) =>
+        summary(
+          ~name=name
+          ->String.replaceRegExp(%re("/\/\d+$/"), "")
+          ->SharedLoggerEvent.screamingSnakeCase
+          ->safeErrorName,
+          ~message=?object->firstString(["message"]),
+        )
+      | None => error->summarizeValue
+      }
+    }
+  }
 
-let summarizeUnknown = value => value->summarizeExn
+let summarizeUnknown = (value: JSON.t) => value->Js.Exn.anyToExnInternal->summarizeExn
 
 let isAborted = summary => summary.name === "ABORT_ERROR"
 
@@ -249,11 +269,11 @@ let configSnapshot = (
         let text = if isSensitive(path) {
           redactedValue(text)
         } else if key === "url" || key === "href" || key === "uri" || %re("/_(?:url|href|uri)$/")->RegExp.test(key) || text->isUrlValue {
-          text->sanitizeUrl->truncateTo(256)->JSON.Encode.string
+          text->sanitizeUrl->truncateTo(LoggerConfig.maxTextLength)->JSON.Encode.string
         } else if key === "reason" || key->String.endsWith("_reason") || key === "message" || key->String.endsWith("_message") {
-          text->redact->truncateTo(256)->JSON.Encode.string
+          text->redact->truncateTo(LoggerConfig.maxTextLength)->JSON.Encode.string
         } else {
-          text->truncateTo(256)->JSON.Encode.string
+          text->truncateTo(LoggerConfig.maxTextLength)->JSON.Encode.string
         }
         charge(text->JSON.Decode.string->Option.getOr("")->String.length + 2)
           ? Some(text)

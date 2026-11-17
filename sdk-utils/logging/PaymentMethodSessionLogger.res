@@ -89,20 +89,3 @@ let logApi = (
       SharedLoggerRuntime.emitPhase(~category, ~spec, ~severity, ~data, ~outcome,
         ~context?, ~details?, ~startedAt?, ~exn?, ~paymentMethod, ~message?),
   )
-
-let observeResource = (
-  ~event: resourceEvent,
-  ~url,
-  ~attributes=?,
-  ~matchQuery=?,
-  ~context=?,
-  ~abandoned=?,
-  ~onLoad=?,
-  ~onError=?,
-) =>
-  SharedLoggerProducer.resource(
-    ~event, ~severity=event->resourceSeverity,
-    ~run=(~spec, ~severity) =>
-      SharedLoggerRuntime.observeResource(~spec, ~severity, ~url, ~resource=SharedLoggerRuntime.Script,
-        ~attributes?, ~matchQuery?, ~context?, ~abandoned?, ~onLoad?, ~onError?),
-  )
