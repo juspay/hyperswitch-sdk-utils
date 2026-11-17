@@ -15,7 +15,6 @@ let observeMerchantCall = (
   ~details=?,
   ~timeoutMs=?,
   ~failureOf=SharedLoggerRuntime.summarizeErrorResponse,
-  ~detailsOf=?,
   ~source=?,
   ~context=?,
   ~message=?,
@@ -34,7 +33,13 @@ let observeMerchantCall = (
         ~details?,
         ~timeoutMs?,
         ~failureOf,
-        ~detailsOf?,
+        ~sharedDetailsOf=result =>
+          switch event {
+          | GetElement(data) =>
+            GetElement({...data, found: typeof(result) !== #undefined})
+            ->SharedLoggerRuntime.eventDetails
+          | _ => []
+          },
         ~source?,
         ~context?,
         ~message?,

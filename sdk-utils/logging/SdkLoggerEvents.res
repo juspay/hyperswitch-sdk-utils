@@ -36,11 +36,13 @@ type ddcFailure =
 
 type walletStageData = {stage: walletStage, connector?: string}
 
+type walletTokenData = {flow?: walletFlow}
+
 type walletFlowData = {flow: walletFlow, connector?: string}
 
 type walletFailureData = {reason: walletFailure, connector?: string}
 
-type ddcFailureData = {reason: ddcFailure}
+type ddcFailureData = {reason: ddcFailure, nextAction?: string}
 
 type bankAuthSyncFailureData = {status: string}
 
@@ -105,7 +107,7 @@ type lifecycleEvent =
   | WalletStageReached(walletStageData)
   | WalletFlowFailed(walletFailureData)
   | WalletFlowExited
-  | WalletTokenReceived
+  | WalletTokenReceived(walletTokenData)
   | BankAuthSyncFailed(bankAuthSyncFailureData)
   | BankAuthConnectorUnsupported(unsupportedConnectorData)
   | CustomerRedirectStarted(customerRedirectData)
@@ -172,7 +174,7 @@ let lifecycleSeverity = value =>
     Debug
   | ElementInitReceived
   | AppRendered
-  | WalletTokenReceived
+  | WalletTokenReceived(_)
   | CustomerRedirectStarted(_)
   | QrCodeShown
   | VoucherShown
@@ -204,7 +206,7 @@ type networkData = {online: bool}
 
 type loaderSource = IframeMount | PaymentMethodsList | SdkConfigs
 
-type loaderData = {state: loaderState, source: loaderSource}
+type loaderData = {state: loaderState, source: loaderSource, savedMethods?: int}
 
 type updateIntentData = {inProgress: bool}
 
@@ -214,6 +216,7 @@ type merchantControlData = {control: string}
 
 type paymentFormData = {scope: string}
 type cardFieldData = {scope: string, field: string}
+type cardCoBadgeData = {coBadgedSchemes: array<string>}
 
 type stateEvent =
   | CardFormCreated(paymentFormData)
@@ -223,7 +226,7 @@ type stateEvent =
   | NetworkStatusChanged(networkData)
   | ElementOptionsChanged
   | LoaderStateChanged(loaderData)
-  | CardCoBadgeDetected
+  | CardCoBadgeDetected(cardCoBadgeData)
   | MerchantControlReceived(merchantControlData)
   | DynamicFieldsChanged
   | PaymentFormCompleted(formCompletionData)
@@ -236,7 +239,7 @@ let stateSeverity = value =>
   | NetworkStatusChanged({online}) => online ? Debug : Warning
   | LoaderStateChanged(_)
   | ElementOptionsChanged
-  | CardCoBadgeDetected
+  | CardCoBadgeDetected(_)
   | MerchantControlReceived(_)
   | DynamicFieldsChanged
   | PaymentFormCompleted(_)
@@ -267,8 +270,14 @@ type fieldData = {field: string}
 type fieldToggleData = {field: string, enabled: bool}
 
 type methodData = {method: string}
+type paymentMethodSelectionData = {method: string, selectionSource?: string}
 
-type savedMethodSelectionData = {requiresCvv: bool, isCardExpired: bool}
+type savedMethodSelectionData = {
+  requiresCvv: bool,
+  isCardExpired: bool,
+  listSource?: string,
+  cardBrand?: string,
+}
 
 type viewData = {view: view, expanded: bool}
 
@@ -276,16 +285,18 @@ type openedViewData = {view: openedView}
 
 type submitData = {source: submitSource}
 
+type expressCheckoutData = {testMode?: bool}
+
 type userEvent =
   | ThreeDsPopupDismissed
-  | PaymentMethodSelected(methodData)
+  | PaymentMethodSelected(paymentMethodSelectionData)
   | CardSchemeSelected(methodData)
   | SavedMethodSelected(savedMethodSelectionData)
   | SavedMethodUpdateRequested
   | SavedMethodDeleteRequested
   | PaymentSubmitted(submitData)
   | BankDetailsConfirmed
-  | ExpressCheckoutClicked
+  | ExpressCheckoutClicked(expressCheckoutData)
   | VoucherDownloadRequested
   | QrCodeCopyRequested
   | FieldToggled(fieldToggleData)
@@ -303,7 +314,7 @@ let userSeverity = value =>
   | SavedMethodUpdateRequested
   | SavedMethodDeleteRequested
   | PaymentSubmitted(_)
-  | ExpressCheckoutClicked
+  | ExpressCheckoutClicked(_)
   | VoucherDownloadRequested
   | QrCodeCopyRequested
   | BankDetailsConfirmed =>

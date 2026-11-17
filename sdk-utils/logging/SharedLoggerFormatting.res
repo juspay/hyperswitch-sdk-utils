@@ -33,7 +33,7 @@ external asDict: JSON.t => Dict.t<JSON.t> = "%identity"
 let rec normalize = (key, value, ~maxTextLength) =>
   switch value->JSON.Decode.string {
   | Some(text) =>
-    let text = if key === "" {
+    let text = if key === "" || key === "request_id" {
       text
     } else if key === "url" || key === "href" || key === "uri" || %re("/_(?:url|href|uri)$/")->RegExp.test(key) {
       text->sanitizeUrl
@@ -81,12 +81,12 @@ let eventDetails = (event, ~maxTextLength): details =>
   ->Option.flatMap(payload => normalize("", payload, ~maxTextLength)->JSON.Decode.object)
   ->Option.mapOr([], Dict.toArray)
 
-let mergeDetails = (~data: details, ~details: details): details => {
-  let typedKeys = data->Array.map(((key, _)) => key)
-  data->Array.concat(
-    details->Array.map(((key, value)) =>
-      typedKeys->Array.includes(key) ? ("detail_" ++ key, value) : (key, value)
-    ),
+let additionalDetails = (~data: details, ~details: details): details => {
+  let typedKeys = data->Array.map(((key, _)) => key->SharedLoggerEvent.snakeCase)
+  details->Array.map(((key, value)) =>
+    typedKeys->Array.includes(key->SharedLoggerEvent.snakeCase)
+      ? ("detail_" ++ key, value)
+      : (key, value)
   )
 }
 

@@ -14,6 +14,28 @@ type surface =
 
 type surfaceData = {surface: surface}
 
+type fieldData = {surface: surface, field?: string, vault?: string}
+type containerData = {
+  surface: surface,
+  field?: string,
+  componentType?: string,
+  vault?: string,
+}
+type updateData = {
+  surface: surface,
+  field?: string,
+  vault?: string,
+  fieldCount?: int,
+  componentType?: string,
+}
+type confirmData = {surface: surface, source?: string}
+type foundData = {surface: surface, found: bool}
+type elementLookupData = {surface: surface, found?: bool}
+type implementedData = {surface: surface, implemented?: bool}
+type supportedData = {surface: surface, supported?: bool}
+type vaultData = {surface: surface, vault?: string}
+type testModeData = {surface: surface, testMode?: bool}
+
 type listenerInventoryData = {componentType: string, eventListeners: array<string>}
 
 type merchantStateEvent = PaymentElementEventListeners(listenerInventoryData)
@@ -27,14 +49,14 @@ type merchantCallEvent =
   | LoadHyper(surfaceData)
   | CreateElements(surfaceData)
   | CreateWidgets(surfaceData)
-  | Create(surfaceData)
-  | CreateCardForm(surfaceData)
-  | GetElement(surfaceData)
-  | Mount(surfaceData)
-  | Unmount(surfaceData)
-  | Destroy(surfaceData)
-  | Update(surfaceData)
-  | ConfirmPayment(surfaceData)
+  | Create(fieldData)
+  | CreateCardForm(vaultData)
+  | GetElement(elementLookupData)
+  | Mount(containerData)
+  | Unmount(containerData)
+  | Destroy(containerData)
+  | Update(updateData)
+  | ConfirmPayment(confirmData)
   | ConfirmCardPayment(surfaceData)
   | ConfirmOneClickPayment(surfaceData)
   | ConfirmWithCustomerDefaultPaymentMethod(surfaceData)
@@ -46,13 +68,13 @@ type merchantCallEvent =
   | InitAuthenticationSession(surfaceData)
   | PaymentMethodsManagementElements(surfaceData)
   | GetCustomerSavedPaymentMethods(surfaceData)
-  | GetCustomerDefaultSavedPaymentMethodData(surfaceData)
-  | GetCustomerLastUsedPaymentMethodData(surfaceData)
-  | UpdateIntent(surfaceData)
+  | GetCustomerDefaultSavedPaymentMethodData(foundData)
+  | GetCustomerLastUsedPaymentMethodData(foundData)
+  | UpdateIntent(supportedData)
   | InitiateUpdateIntent(surfaceData)
   | CompleteUpdateIntent(surfaceData)
-  | FetchUpdates(surfaceData)
-  | Tokenize(surfaceData)
+  | FetchUpdates(implementedData)
+  | Tokenize(vaultData)
   | ConfirmTokenization(surfaceData)
 
 let merchantCallSeverity = event =>
@@ -101,7 +123,7 @@ type merchantPropEvent =
   | Fonts(surfaceData)
   | PaymentElementOptions(surfaceData)
   | PreloadSdkWithParams(surfaceData)
-  | TestMode(surfaceData)
+  | TestMode(testModeData)
   | BlockConfirm(surfaceData)
   | CustomPodUri(surfaceData)
   | CustomBackendUrl(surfaceData)

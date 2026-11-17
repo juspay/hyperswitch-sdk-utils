@@ -28,7 +28,7 @@ let configure = (
   userEventLimit->Option.forEach(value => maxUserEventsPerName := Math.Int.max(1, value))
 }
 
-let schemaVersion = 8
+let schemaVersion = 9
 let defaultTimeoutMs = 30000
 let userGatedTimeoutMs = 600000
 

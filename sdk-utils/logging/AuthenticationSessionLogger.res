@@ -39,22 +39,20 @@ let logUser = (~event: userEvent, ~context=?) =>
     ~source=SharedLoggerRuntime.AuthenticationSession,
   )
 
-let observeFunction = (~event: functionEvent, ~detailsOf=?, ~message=?, ~context=?, ~call) =>
+let observeFunction = (~event: functionEvent, ~message=?, ~context=?, ~call) =>
   ClickToPayLogger.observeFunction(
     ~event,
-    ~detailsOf?,
     ~message?,
     ~call,
     ~context=context->authenticationContext,
     ~source=SharedLoggerRuntime.AuthenticationSession,
   )
 
-let observeMerchantCall = (~method: merchantMethod, ~details=?, ~detailsOf=?, ~message=?, ~context=?, ~call) =>
+let observeMerchantCall = (~method: merchantMethod, ~details=?, ~message=?, ~context=?, ~call) =>
   ClickToPayLogger.observeMerchantCall(
     ~method,
     ~surface="AUTHENTICATION_SESSION",
     ~details?,
-    ~detailsOf?,
     ~message?,
     ~call,
     ~context=context->authenticationContext,

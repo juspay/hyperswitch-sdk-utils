@@ -91,7 +91,7 @@ let observeApi = (
         ~data=data->Array.concat([("url", url->JSON.Encode.string)]),
         ~details?,
         ~failureOf=SharedLoggerRuntime.httpFailure,
-        ~detailsOf=SharedLoggerRuntime.httpDetails,
+        ~sharedDetailsOf=SharedLoggerRuntime.httpDetails,
         ~paymentMethod?,
         ~context?,
         ~source?,
@@ -115,7 +115,7 @@ let observeStaticAsset = (
           ("url", url->JSON.Encode.string),
           ("resource_type", "static_asset"->JSON.Encode.string),
         ]), ~details?,
-        ~failureOf=SharedLoggerRuntime.httpFailure, ~detailsOf=SharedLoggerRuntime.httpDetails,
+        ~failureOf=SharedLoggerRuntime.httpFailure, ~sharedDetailsOf=SharedLoggerRuntime.httpDetails,
         ~message?, ~call=() => Fetch.fetch(url, request)),
   )
 

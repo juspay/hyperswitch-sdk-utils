@@ -71,7 +71,7 @@ let observe = (
   ~data,
   ~details=?,
   ~failureOf,
-  ~detailsOf=?,
+  ~sharedDetailsOf=?,
   ~context=?,
   ~source=?,
   ~message=?,
@@ -84,7 +84,7 @@ let observe = (
     ~data,
     ~details?,
     ~failureOf,
-    ~detailsOf?,
+    ~sharedDetailsOf?,
     ~paymentMethod,
     ~context?,
     ~source?,
@@ -94,7 +94,6 @@ let observe = (
 
 let observeFunction = (
   ~event: functionEvent,
-  ~detailsOf=?,
   ~context=?,
   ~source=?,
   ~message=?,
@@ -113,7 +112,20 @@ let observeFunction = (
         ~context?,
         ~source?,
         ~failureOf=SharedLoggerRuntime.summarizeErrorResponse,
-        ~detailsOf?,
+        ~sharedDetailsOf=result =>
+          switch event {
+          | IdentityLookup(data) =>
+            IdentityLookup({
+              ...data,
+              consumerPresent: result
+              ->SharedLoggerRuntime.anyToJson
+              ->JSON.Decode.object
+              ->Option.flatMap(object => object->Dict.get("consumerPresent"))
+              ->Option.flatMap(JSON.Decode.bool)
+              ->Option.getOr(false),
+            })->SharedLoggerRuntime.eventDetails
+          | _ => []
+          },
         ~message?,
         ~call,
       ),
@@ -123,7 +135,6 @@ let observeMerchantCall = (
   ~method: merchantMethod,
   ~surface=?,
   ~details=?,
-  ~detailsOf=?,
   ~context=?,
   ~source=?,
   ~message=?,
@@ -145,7 +156,20 @@ let observeMerchantCall = (
         ~context?,
         ~source?,
         ~failureOf=SharedLoggerRuntime.summarizeErrorResponse,
-        ~detailsOf?,
+        ~sharedDetailsOf=result =>
+          switch method {
+          | IsCustomerPresent(data) =>
+            IsCustomerPresent({
+              ...data,
+              customerPresent: result
+              ->SharedLoggerRuntime.anyToJson
+              ->JSON.Decode.object
+              ->Option.flatMap(object => object->Dict.get("customerPresent"))
+              ->Option.flatMap(JSON.Decode.bool)
+              ->Option.getOr(false),
+            })->SharedLoggerRuntime.eventDetails
+          | _ => []
+          },
         ~message?,
         ~call,
       ),
@@ -172,7 +196,7 @@ let observeApi = (
         ~context?,
         ~source?,
         ~failureOf=SharedLoggerRuntime.httpFailure,
-        ~detailsOf=SharedLoggerRuntime.httpDetails,
+        ~sharedDetailsOf=SharedLoggerRuntime.httpDetails,
         ~message?,
         ~call=() => Fetch.fetch(url, request),
       ),

@@ -27,7 +27,7 @@ let observeApi = (
         ~data=data->Array.concat([("url", url->JSON.Encode.string)]),
         ~details?,
         ~failureOf=SharedLoggerRuntime.httpFailure,
-        ~detailsOf=SharedLoggerRuntime.httpDetails,
+        ~sharedDetailsOf=SharedLoggerRuntime.httpDetails,
         ~context?,
         ~call=() => Fetch.fetch(url, request),
       ),

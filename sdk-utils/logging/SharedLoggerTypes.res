@@ -121,6 +121,7 @@ type rowValue = {
   occurrence: int,
   message?: string,
   details: Dict.t<JSON.t>,
+  @as("additional_details") additionalDetails: Dict.t<JSON.t>,
 }
 
 external rowValueToJson: rowValue => JSON.t = "%identity"

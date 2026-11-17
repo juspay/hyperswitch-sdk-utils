@@ -118,22 +118,23 @@ let emit = (
         | Some(exn) => Some(exn->platform.summarizeExn)
         | None => failure->Option.flatMap(platform.summarizeErrorResponse)
         }->Option.mapOr([], SharedLoggerFormatting.errorDetails)
-        let details =
-          SharedLoggerFormatting.mergeDetails(~data, ~details)
+        let sharedDetails = data
           ->Array.concat(errorDetails)
+          ->SharedLoggerFormatting.normalizeDetails(~maxTextLength=LoggerConfig.maxTextLength)
+        let additionalDetails = SharedLoggerFormatting.additionalDetails(~data=sharedDetails, ~details)
           ->SharedLoggerFormatting.normalizeDetails(~maxTextLength=LoggerConfig.maxTextLength)
           ->Array.concat(verbatim->Option.getOr([]))
         let counter = (key, counter) => {
           let count = counter.contents
           counter := 0
           if count > 0 {
-            details->Array.push((key, count->JSON.Encode.int))
+            additionalDetails->Array.push((key, count->JSON.Encode.int))
           }
         }
         counter("dropped_rows", LoggerQueue.droppedRows)
         counter("send_failures", LoggerQueue.sendFailures)
         if limit->Option.isNone && seen === cap {
-          details->Array.push(("rate_limited", true->JSON.Encode.bool))
+          additionalDetails->Array.push(("rate_limited", true->JSON.Encode.bool))
         }
 
         let value =
@@ -148,9 +149,12 @@ let emit = (
                 ->SharedLoggerFormatting.truncateTo(LoggerConfig.maxTextLength)
               )
             ),
-            details: details
-            ->SharedLoggerFormatting.fitToBudget(~maxDetailBytes=LoggerConfig.maxDetailBytes)
-            ->Dict.fromArray,
+            details: sharedDetails
+              ->SharedLoggerFormatting.fitToBudget(~maxDetailBytes=LoggerConfig.maxDetailBytes)
+              ->Dict.fromArray,
+            additionalDetails: additionalDetails
+              ->SharedLoggerFormatting.fitToBudget(~maxDetailBytes=LoggerConfig.maxDetailBytes)
+              ->Dict.fromArray,
           }
           ->rowValueToJson
           ->JSON.stringify

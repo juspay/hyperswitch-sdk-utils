@@ -75,12 +75,24 @@ let summarizeErrorResponse = value =>
   ->SharedLoggerFormatting.summarizeErrorResponse
   ->Option.map(summary => {...summary, message: summary.message->Option.map(truncate)})
 
-let httpError = response => {
-  let status = response->Fetch.Response.status
-  {name: "HTTP_ERROR", message: Some(status->Int.toString), details: []}
+let httpDetails = response => {
+  let details = [("status_code", response->Fetch.Response.status->JSON.Encode.int)]
+  response
+  ->Fetch.Response.headers
+  ->Fetch.Headers.get("x-request-id")
+  ->Option.forEach(requestId => {
+    if requestId !== "" {
+      details->Array.push(("request_id", requestId->JSON.Encode.string))
+    }
+  })
+  details
 }
 
-let httpDetails = response => [("status_code", response->Fetch.Response.status->JSON.Encode.int)]
+let httpError = response => {
+  let status = response->Fetch.Response.status
+  {name: "HTTP_ERROR", message: Some(status->Int.toString), details: response->httpDetails}
+}
+
 let httpFailure = response => response->Fetch.Response.ok ? None : Some(response->httpError)
 external anyToJson: 'value => JSON.t = "%identity"
 
@@ -223,7 +235,7 @@ let observe = (
   ~details=?,
   ~timeoutMs=?,
   ~failureOf=?,
-  ~detailsOf=?,
+  ~sharedDetailsOf=?,
   ~paymentMethod=?,
   ~context=?,
   ~source=?,
@@ -233,10 +245,6 @@ let observe = (
 ) => {
   let runtime = platform()
   let context = context->Option.getOr(runtime.getContext())
-  let base = SharedLoggerFormatting.mergeDetails(
-    ~data=data->Option.getOr([]),
-    ~details=details->Option.getOr([]),
-  )
   SharedLoggerOperation.observe(
     ~timeoutMs=timeoutMs->Option.getOr(runtime.defaultTimeoutMs),
     ~summarizeExn=runtime.summarizeExn,
@@ -245,15 +253,15 @@ let observe = (
       raise(error)
     },
     ~failureOf?,
-    ~detailsOf?,
+    ~dataOf=?sharedDetailsOf,
     ~syncOutcome,
-    ~onStep=(step, outcomeDetails) =>
+    ~onStep=(step, sharedData, outcomeDetails) =>
       step->emitStep(
         ~category,
         ~spec,
         ~severity,
-        ~data=base,
-        ~details=outcomeDetails,
+        ~data=data->Option.getOr([])->Array.concat(sharedData),
+        ~details=details->Option.getOr([])->Array.concat(outcomeDetails),
         ~paymentMethod?,
         ~context,
         ~source?,

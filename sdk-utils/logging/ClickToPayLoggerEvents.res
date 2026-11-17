@@ -9,10 +9,13 @@ type provider =
   | MastercardDirect
 
 type providerDetails = {provider: provider}
+type identityLookupData = {provider: provider, consumerPresent?: bool}
+type customerPresenceData = {emailProvided?: bool, customerPresent?: bool}
+type checkoutWithCardData = {rememberMe: bool, cardCount: int}
 
 type cardsData = {provider: provider, actionCode: string, visa: int, mastercard: int}
 
-type declineData = {provider: provider, code: string}
+type declineData = {provider: provider, code: string, actionCode?: string}
 
 // Lifecycle
 
@@ -87,7 +90,7 @@ let userSeverity = event =>
 type functionEvent =
   | Initialize(providerDetails)
   | Init(providerDetails)
-  | IdentityLookup(providerDetails)
+  | IdentityLookup(identityLookupData)
   | GetCards(providerDetails)
   | Authenticate(providerDetails)
   | EncryptCard(providerDetails)
@@ -117,19 +120,19 @@ let functionSeverity = event =>
 type merchantMethod =
   | InitSession
   | GetActiveSession
-  | IsCustomerPresent
+  | IsCustomerPresent(customerPresenceData)
   | GetUserType
   | GetRecognizedCards
   | ValidateAuthentication
-  | CheckoutWithCard
+  | CheckoutWithCard(checkoutWithCardData)
   | SignOut
 
 let merchantCallSeverity = (method: merchantMethod) =>
   switch method {
-  | CheckoutWithCard => defaultSeverity
+  | CheckoutWithCard(_) => defaultSeverity
   | InitSession
   | GetActiveSession
-  | IsCustomerPresent
+  | IsCustomerPresent(_)
   | GetUserType
   | GetRecognizedCards
   | ValidateAuthentication

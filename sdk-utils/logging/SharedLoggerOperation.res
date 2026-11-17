@@ -41,19 +41,20 @@ let observe = (
   ~summarizeExn: exn => errorSummary,
   ~rethrow: exn => 'value,
   ~failureOf: option<'result => option<errorSummary>>=?,
-  ~detailsOf: option<'result => details>=?,
+  ~dataOf: option<'result => details>=?,
   ~syncOutcome=Returned,
-  ~onStep: (step, details) => unit,
+  ~onStep: (step, details, details) => unit,
   ~call: unit => 'value,
 ): 'value => {
   let tracker = makeTracker()
   let timedOut = ref(false)
-  let emit = (step, ~details=[]) =>
+  let emit = (step, ~data=[]) =>
     onStep(
       step,
+      data,
       timedOut.contents
-        ? details->Array.concat([("settled_after_timeout", true->JSON.Encode.bool)])
-        : details,
+        ? [("settled_after_timeout", true->JSON.Encode.bool)]
+        : [],
     )
 
   let failed = (failureClass, error) =>
@@ -73,7 +74,7 @@ let observe = (
     | None =>
       emit(
         {outcome, durationMs: Some(tracker->elapsed), failureClass: None, error: None, timeoutMs: 0},
-        ~details=try detailsOf->Option.mapOr([], detailsOf => detailsOf(result)) catch {
+        ~data=try dataOf->Option.mapOr([], dataOf => dataOf(result)) catch {
         | _ => []
         },
       )

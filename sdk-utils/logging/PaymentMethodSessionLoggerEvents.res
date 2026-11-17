@@ -11,7 +11,13 @@ type vaultFailure =
   | FormCreationFailed
   | TokenizationFailed
 
-type vaultFailureData = {reason: vaultFailure}
+type vaultFailureData = {
+  reason: vaultFailure,
+  code?: string,
+  field?: string,
+  vault?: string,
+  operation?: string,
+}
 
 type stateEvent =
   | CardFormCreated(cardFormData)
@@ -46,7 +52,7 @@ type functionCallbackEvent = OnSuccess | OnError
 type resourceEvent = VaultScript
 
 type vaultTokenizeScope = SaveCardCvc | FullCard
-type vaultTokenizeData = {scope: vaultTokenizeScope}
+type vaultTokenizeData = {scope: vaultTokenizeScope, vault?: string}
 type apiEvent =
   | VaultTokenization(vaultTokenizeData)
   | PaymentMethodsList
