@@ -67,6 +67,9 @@ let getJsonFromDict = (dict, key, default) => {
 let getJsonObjFromDict = (dict, key, default) => {
   dict->Dict.get(key)->Option.flatMap(JSON.Decode.object)->Option.getOr(default)
 }
+
+let getJsonStringFromArrayOfJson = arr => arr->Dict.fromArray->JSON.Encode.object->JSON.stringify
+
 let getDecodedStringFromJson = (json, callbackFunc, defaultValue) => {
   json
   ->JSON.Decode.object
