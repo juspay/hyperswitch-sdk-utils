@@ -67,6 +67,13 @@ type superpositionContext = {
   connector: string,
 }
 
+type sdkPropsContext = {
+  platform: string,
+  profile_id?: string,
+  processor_merchant_id?: string,
+  organization_id?: string,
+}
+
 let stringToFieldType = str => {
   switch str {
   | "Dropdown" => Dropdown
